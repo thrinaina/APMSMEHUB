@@ -1,0 +1,80 @@
+<div class="h-100 w-100 p-2 overflow-hidden" cdkDrag cdkDragPreviewContainer="parent">
+  <!-- Headers Section -->
+  <div class="flex-row cursor position-relative">
+    <form [formGroup]="widgetForm" class="flex flex-column position-absolute w-100"
+      *ngIf="(store.settings.mode() === 'edit') && (data()?.url != null)">
+      <div class="flex gap-2 align-items-center text-12">
+        <mat-form-field class="w-100">
+          <input matInput name="url" formControlName="url" />
+        </mat-form-field>
+      </div>
+    </form>
+    <button mat-icon-button (click)="showOptions.set(true)" *ngIf="store.settings.mode() === 'edit'"
+      class="settings-icon display-web">
+      <mat-icon [style.--mdc-icon-button-icon-color]="data().color ?? 'inherit'">more_vert</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content Section -->
+  <ng-container class="mat-elevation-z10 " *ngIf="!showOptions()" [ngComponentOutlet]="widgetContent"
+    [ngComponentOutletInjector]="dataInjector" />
+
+  <!-- Options Section (Shown when 'showOptions' is true) -->
+  <div class="widget-options" *ngIf="showOptions()">
+    <div class="widget-actions">
+      <button mat-icon-button class="delete-btn" (click)="store.removeWidget(data().id)"
+        [style.view-transition-name]="'widget-delete-' + data().id">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button (click)="showOptions.set(false)"
+        [style.view-transition-name]="'widget-close-' + data().id">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="flex gap-2 align-items-center mt-2 text-12" [style.view-transition-name]="'widget-width-' + data().id">
+       <strong class="mx-1">{{'Dashboard.Width' | translate}} :</strong>
+      <mat-button-toggle-group name="width" [value]="data().columns ?? 1"
+        (change)="store.updateWidget(data().id, { columns: +$event.value })" hideSingleSelectionIndicator="true">
+        <mat-button-toggle [disabled]="true" class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="1">1</mat-button-toggle>
+        <mat-button-toggle [disabled]="true" class="custom-toggle-button shadow-none bg-transparent border border-0 "
+          [value]="2">2</mat-button-toggle>
+        <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0 "
+          [value]="3">3</mat-button-toggle>
+        <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0 "
+          [value]="4">4</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="5">5</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="6">6</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="7">7</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="8">8</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div class="align-items-center text-12 mt-2">
+       <strong class="mx-1">{{'Dashboard.Height' | translate}} :</strong>
+      <mat-button-toggle-group class="shadow-none" name="height" [value]="data().rows ?? 1"
+        (change)="store.updateWidget(data().id, { rows: +$event.value })" hideSingleSelectionIndicator="true">
+        <mat-button-toggle [disabled]="true" class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="1">1</mat-button-toggle>
+        <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="2">2</mat-button-toggle>
+        <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="3">3</mat-button-toggle>
+        <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="4">4</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="5">5</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="6">6</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="7">7</mat-button-toggle>
+          <mat-button-toggle class="custom-toggle-button shadow-none bg-transparent border border-0"
+          [value]="8">8</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  <div *cdkDragPlaceholder></div>
+</div>

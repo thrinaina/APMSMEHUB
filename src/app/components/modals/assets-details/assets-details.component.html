@@ -1,0 +1,104 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<!-- Award & Certification Details -->
+<div class="dialog-container" *ngIf="type === 'awardCertificationDetails'">
+  <div class="dialog-header">
+    <span>{{title | translate}}</span>
+    <mat-icon class="pointer" (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body py-20">
+    <div class="row row-gap-20 w-100 m-0 justify-content-center">
+      <div class="col-md-5 oveflow-hidden" *ngIf="assetData?.documents?.length">
+        <div class="carousel-container">
+          <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true" [noPause]="true"
+            [(activeSlide)]="activeIndex" (activeSlideChange)="onActiveSlideChange($event)">
+            <slide *ngFor="let img of assetData.documents">
+              <div class="object-slide">
+                <img [src]="img.assetImage" class="w-100 rounded border product-image">
+              </div>
+            </slide>
+          </carousel>
+        </div>
+        <div class="d-flex justify-content-center gap-4 mt-3">
+          <img *ngFor="let img of safeImages | slice:thumbStartIndex:(thumbStartIndex + thumbWindowSize); let i = index"
+            [src]="img" class="img-thumbnails border rounded-2 flex-shrink-0 pointer" alt="Thumbnail"
+            [class.opacity-50]="activeIndex !== (thumbStartIndex + i)"
+            [class.opacity-100]="activeIndex === (thumbStartIndex + i)"
+            (click)="onActiveSlideChange(thumbStartIndex + i)">
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <h6 class="text-26 fw-bold text-responsive-3-line">{{ assetData.assetName }}</h6>
+        <div class="text-16 text-muted mb-3" *ngIf="assetData.assetType == 'Certifications'">
+          {{ assetData.validFromDate | date: 'mediumDate' }} - {{ assetData.validToDate | date: 'mediumDate' }}
+        </div>
+         <p #description class="text-14 text-secondary" [ngClass]="{ 'text-responsive-3-line': !contentExpanded }">
+              {{ assetData.assetDescription }}
+          </p>
+          <p
+            *ngIf="contentExpanded  || (description && description.scrollHeight > description.clientHeight)"
+            class="text-14 text-primary cursor-pointer m-0" style="text-decoration: underline;" (click)="contentExpanded = !contentExpanded">
+            {{contentExpanded ? ('Common.ViewLess' | translate) : ('Common.ViewMore' | translate)}}
+          </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Brochures & Images Details -->
+<div class="dialog-container" *ngIf="type === 'Brochures' || type === 'Images'">
+
+  <div class="dialog-header">
+    <span>{{'Profile.'+ data.title | translate}}</span>
+    <mat-icon class="pointer" (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body justify-content-center">
+    <div class="row row-gap-20 w-100">
+      <div class="carousel-container">
+        <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true" [noPause]="true">
+            <slide *ngFor="let img of safeImages">
+              <div class="object-wrapper  h-auto carousel-image rounded">
+                <pdf-viewer *ngIf="type === 'Brochures'" [src]="img" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+                [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+                [external-link-target]="'blank'" [autoresize]="true" [show-borders]="true"
+                style="width: 100%; margin: auto;height: 350px;"></pdf-viewer>
+                <img *ngIf="type === 'Images'" [src]="img" class="w-100 border" style="height: 300px;">
+              </div>
+            </slide>
+        </carousel>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Brochures & Images Details -->
+<div class="dialog-container" *ngIf="type === 'gallery'">
+
+  <div class="dialog-header">
+    <span>{{data.title}}</span>
+    <mat-icon class="pointer" (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body justify-content-center">
+    <div class="row row-gap-20 w-100">
+      <div class="carousel-container">
+        <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true" [noPause]="true" [(activeSlide)]="currentIndex">
+            <slide *ngFor="let img of data.gallaryData">
+              <div class="object-wrapper h-auto carousel-image rounded">
+                <img *ngIf="img.assetType != 'Brochures'" [src]="img.assetImage" class="w-100 border" style="height: 300px;">
+                <pdf-viewer *ngIf="img.assetType === 'Brochures'" [src]="img.safeUrl" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+                [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+                [external-link-target]="'blank'" [autoresize]="true" [show-borders]="true"
+                style="width: 100%; margin: auto;height: 300px;"></pdf-viewer>
+              </div>
+            </slide>
+        </carousel>
+      </div>
+    </div>
+  </div>
+</div>

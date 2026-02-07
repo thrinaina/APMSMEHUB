@@ -1,0 +1,332 @@
+<!-- Loader -->
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="body-div">
+  <img src="assets/images/landing-page.png" class="bg-img" alt="">
+  <div class="d-flex justify-content-end me-3 position-absolute right-0">
+    <button class="proceed border-primary bg-primary w-fit px-3 mb-0" (click)="routeTo()">{{'Auth.Discovery' |
+      translate}}</button>
+  </div>
+  <div class="register-set">
+
+    <div class="entry-div" [ngClass]="{ 'conditional-style': activeDiv == 'SET-PASSWORD-INPUT' }">
+      <div class="form-div">
+        <form [formGroup]="loginForm" autocomplete="off">
+          <div class="title-set" *ngIf="activeDiv == 'LOGIN-INPUT'">
+            <img src="assets/images/apmsme-logo.png">
+            <!-- <div class="divider"></div>
+            <img src="assets/images/Fame Logo.png"> -->
+          </div>
+
+          <!-- LOGIN DIV -->
+          <div *ngIf="activeDiv == 'LOGIN-INPUT'">
+            <div class="header-set">
+              <div class="sub1-header">
+                <label class="title text-18">{{'Auth.LoginToDepartmentPortal' | translate}}</label>
+              </div>
+            </div>
+
+            <div class="full-width mt-10">
+              <mat-form-field floatLabel="always" class="w-100">
+                <mat-label>{{ 'Auth.EmailId' | translate }}</mat-label>
+                <div class="input-wrapper">
+                  <input matInput type="text" name="loginName" formControlName="loginName">
+                </div>
+              </mat-form-field>
+              <div *ngIf="loginForm.invalid && isSaved" class="error-div">
+                <div *ngIf="loginForm.controls['loginName'].errors?.['required']">
+                  {{'Auth.EmailID' | translate }} {{'Common.RequiredError' | translate}}
+                </div>
+                <div *ngIf="loginForm.controls['loginName'].errors?.['pattern']">
+                  {{'Common.PatternError' | translate}} {{ 'Auth.EmailID' | translate }}
+                </div>
+                <div *ngIf="loginForm.controls['loginName'].errors?.['minlength']">
+                  {{'Auth.MobileNumber' | translate }} {{'Common.FixedLengthError' | translate}}
+                </div>
+                <div *ngIf="loginForm.controls['loginName'].errors?.['maxlength']">
+                  {{'Auth.MobileNumber' | translate }} {{'Common.FixedLengthError' | translate}}
+                </div>
+                <div *ngIf="loginForm.controls['loginName'].errors?.['email']">
+                  {{'Common.Invalid' | translate}} {{ 'Auth.EmailID' | translate}}
+                </div>
+              </div>
+            </div>
+
+            <div class="full-width mt-10">
+              <mat-form-field floatLabel="always" class="w-100">
+                <mat-label>{{'Auth.Password' | translate}}</mat-label>
+                <div class="input-wrapper">
+                  <input matInput type="text" name="uniquePwd456" formControlName="password" autocomplete="off"
+                    [value]="maskedPassword" (input)="onPasswordInput($event)" (paste)="onPasswordPaste($event)">
+                  <button mat-icon-button class="position-absolute right-10 top-10" (mousedown)="togglePasswordVisibility(false)"
+                    (mouseup)="togglePasswordVisibility(true)" (mouseleave)="togglePasswordVisibility(true)"
+                    aria-label="Hold to show password" class="w-auto pt-10">
+                    <mat-icon style="color: black">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                </div>
+              </mat-form-field>
+            </div>
+
+            <div class="w-100 d-flex flex-row align-items-center justify-content-end mt-10">
+              <label class="text-12 fw-semibold lh-1 text-center text-primary pointer" (click)="otpForgotPassword()">
+                {{'Auth.ForgotPassword' | translate}}
+              </label>
+            </div>
+
+            <div class="row row-gap-16 my-3">
+              <div class="col-md-6 col-sm-12 d-flex flex-row align-items-center justify-content-between gap-1">
+                <img [src]="captchaImage" alt="CAPTCHA" class="captcha-image rounded" />
+                <mat-icon (click)="refreshCaptcha()">refresh</mat-icon>
+              </div>
+
+              <mat-form-field floatLabel="always" appearance="outline" class="col-md-6 col-sm-12 no-top-padding">
+                <mat-label>{{'Auth.Captcha' | translate}}</mat-label>
+                <mat-icon matPrefix class="pr-0">key</mat-icon>
+                <input matInput type="text" name="captcha" formControlName="captcha" autocomplete="off" class="pl-0">
+              </mat-form-field>
+            </div>
+
+            <button mat-flat-button class="proceed primary border-primary my-3"
+              [disabled]="loginForm.controls['loginName'].invalid || (!loginForm.controls['captcha'].value || loginForm.controls['captcha'].value.length < 6)"
+              (click)="loginWithPassword()">
+              {{'Auth.Proceed' | translate}}
+            </button>
+          </div>
+
+          <!-- FORGOT - OTP DIV -->
+
+          <div *ngIf="activeDiv == 'FORGOT-OTP-INPUT'" class="otp">
+            <div class="flex-column d-flex text-center">
+              <label class="header-title pt-3">{{'Auth.WehavesentyouanOTP' | translate}}</label>
+              <div class="subtitle">
+                <label>
+                  {{loginForm.value.loginType == 'EMAIL' ?  ('Auth.WehavesentanOTPtoyouremailaddress' | translate) : ('Auth.WehavesentanOTPtoyourregisteredmobilenumberviaSMS' | translate) }}
+                  <em>{{maskedLoginName}}</em>
+                  {{ 'Auth.PleaseentertheOTPbelowtoproceedDidntgettheOTP' | translate }}
+                  <span class="disabled-Label" [class.disabled]="!canResend" (click)="resendOtp()">
+                    {{ 'Auth.ResendOTP' | translate }}
+                    <ng-container *ngIf="!canResend">
+                      {{'Auth.in' | translate}} {{ formattedTime }}
+                    </ng-container>
+                  </span>
+                </label>
+              </div>
+
+            </div>
+            <div class="full-width" autocomplete="off">
+              <div class="pb-1">
+                <label class="otp-label">{{'Auth.EnterOTP' | translate}}</label>
+              <ng-otp-input #ngOtpInput [config]="config" (onInputChange)="onOtpChange($event)">
+              </ng-otp-input>
+                <div class="message-div">
+                  <label class="fail" *ngIf="invalidOTP">{{'Auth.PleaseenteravalidOTP' | translate}}</label>
+                </div>
+              </div>
+            </div>
+
+            <button [disabled]="otpValue.length !== config.length" mat-flat-button class="proceed-btn primary mb-30"
+              (click)="verifyInput(activeDiv)">{{'Auth.VerifyAndContinue' | translate}}</button>
+          </div>
+
+          <!-- NEW PASSWORD DIV -->
+
+          <!-- <div *ngIf="activeDiv == 'SET-PASSWORD-INPUT'" class="new-Password">
+            <div class="flex-column">
+              <label class="header-title text-18">{{'SetNewPassword' | translate}}</label>
+              <label class="subtitle text-14">{{'Updateyourpasswordandsecureyouraccount' | translate}}</label>
+            </div>
+
+            <div class="flex-column">
+              <mat-form-field floatLabel="always">
+                <mat-label>{{'Password' | translate}}</mat-label>
+                <input matInput type="password" name="password" formControlName="password"
+                  (keyup)="onPasswordEntry()">
+              </mat-form-field>
+            </div>
+
+            <div class="password-specs">
+              <div class="strength">
+                <ul class="strengthBar mt-2">
+                  <li class="point" [class.point-success]="validCount > 0"></li>
+                  <li class="point" [class.point-success]="validCount > 1"></li>
+                  <li class="point" [class.point-success]="validCount > 2"></li>
+                  <li class="point" [class.point-success]="validCount > 3"></li>
+                  <li class="point" [class.point-success]="validCount > 4"></li>
+                </ul>
+              </div>
+              <div class="col-gap-min text-14 pl-2">
+                <span class="font-weight-500">{{'Level' | translate}}</span>
+                <span>:</span>
+                <span class="font-weight-700">{{ getPasswordStrengthLevel() | translate }}</span>
+              </div>
+
+              <label class="contain-lab">{{'Yourpasswordmustcontain' | translate}} :</label>
+              <ul>
+                <li class="no-marker" [class.text-success]="validLength">
+                  <mat-icon class="close-icon" *ngIf="!validLength">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validLength">check</mat-icon>
+                  {{'Minimumnumberofcharactersis8' | translate}}
+                </li>
+                <li [class.text-success]="validLowerCase">
+                  <mat-icon class="close-icon" *ngIf="!validLowerCase">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validLowerCase">check</mat-icon>
+                  {{'Shouldcontainlowercase' | translate}}
+                </li>
+                <li [class.text-success]="validUpperCase">
+                  <mat-icon class="close-icon" *ngIf="!validUpperCase">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validUpperCase">check</mat-icon>
+                  {{'Shouldcontainuppercase' | translate}}
+                </li>
+                <li [class.text-success]="validNumber">
+                  <mat-icon class="close-icon" *ngIf="!validNumber">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validNumber">check</mat-icon>
+                  {{'Shouldcontainnumbers' | translate}}
+                </li>
+                <li [class.text-success]="validSpecial">
+                  <mat-icon class="close-icon" *ngIf="!validSpecial">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validSpecial">check</mat-icon>
+                  {{'Shouldcontainspecialcharacterseg' | translate}}
+                </li>
+              </ul>
+            </div>
+
+            <div class="flex-column">
+              <mat-form-field floatLabel="always">
+                <mat-label>{{'ConfirmPassword' | translate}}</mat-label>
+                <input matInput type="password" name="confirmPassword" formControlName="confirmPassword">
+              </mat-form-field>
+              <div *ngIf="isSaved && loginForm.invalid" class="error-div-btn">
+                <div *ngIf="loginForm.controls['confirmPassword'].errors?.['mismatch']">
+                  {{'PasswordMismatchError' | translate}}
+                </div>
+              </div>
+            </div>
+
+            <button mat-flat-button color="primary" class="proceed mb-3" [disabled]="validCount != 5"
+              (click)="verifyInput(activeDiv)">{{'SetPassword' | translate}}
+            </button>
+          </div> -->
+
+          <div *ngIf="activeDiv == 'SET-PASSWORD-INPUT'" class="new-Password">
+            <div class="flex-column text-center d-flex">
+              <label class="header-title">{{'Auth.SetNewPassword' | translate}}</label>
+              <label class="subtitle">{{'Auth.Updateyourpasswordandsecureyouraccount' | translate}}</label>
+            </div>
+
+            <div class="flex-column">
+              <mat-form-field floatLabel="always" class="udyam-no">
+                <mat-label>{{'Auth.Password' | translate}}</mat-label>
+                <div class="input-wrapper">
+                  <input matInput [type]="hidePassword ? 'password' : 'text'" name="password" formControlName="password"
+                    (keyup)="onPasswordEntry()">
+                  <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" class="pt-10 w-auto">
+                    <mat-icon style="color: black">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                </div>
+              </mat-form-field>
+            </div>
+
+            <div class="password-specs">
+              <div class="strength">
+                <ul class="strengthBar mt-2">
+                  <li class="point" [class.point-success]="validCount > 0"></li>
+                  <li class="point" [class.point-success]="validCount > 1"></li>
+                  <li class="point" [class.point-success]="validCount > 2"></li>
+                  <li class="point" [class.point-success]="validCount > 3"></li>
+                  <li class="point" [class.point-success]="validCount > 4"></li>
+                </ul>
+              </div>
+              <div class="col-gap-min level-text ps-4">
+                <span class="font-weight-500">{{'Auth.Level' | translate}}</span>
+                <span>:</span>
+                <span class="font-weight-700">{{ getPasswordStrengthLevel() | translate }}</span>
+              </div>
+
+              <label class="contain-lab">{{'Auth.Yourpasswordmustcontain' | translate}} :</label>
+              <ul>
+                <li class="no-marker" [class.text-success]="validLength">
+                  <mat-icon class="close-icon" *ngIf="!validLength">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validLength">check</mat-icon>
+                  {{'Auth.Minimumnumberofcharactersare8' | translate}}
+                </li>
+                <li [class.text-success]="validLowerCase">
+                  <mat-icon class="close-icon" *ngIf="!validLowerCase">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validLowerCase">check</mat-icon>
+                  {{'Auth.Shouldcontainlowercase' | translate}}
+                </li>
+                <li [class.text-success]="validUpperCase">
+                  <mat-icon class="close-icon" *ngIf="!validUpperCase">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validUpperCase">check</mat-icon>
+                  {{'Auth.Shouldcontainuppercase' | translate}}
+                </li>
+                <li [class.text-success]="validNumber">
+                  <mat-icon class="close-icon" *ngIf="!validNumber">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validNumber">check</mat-icon>
+                  {{'Auth.Shouldcontainnumbers' | translate}}
+                </li>
+                <li [class.text-success]="validSpecial">
+                  <mat-icon class="close-icon" *ngIf="!validSpecial">close</mat-icon>
+                  <mat-icon class="success-icon" *ngIf="validSpecial">check</mat-icon>
+                  {{'Auth.Shouldcontainspecialcharacterseg' | translate}}
+                </li>
+              </ul>
+            </div>
+
+            <div class="flex-column">
+              <mat-form-field floatLabel="always" class="udyam-no">
+                <mat-label>{{'Auth.ConfirmPassword' | translate}}</mat-label>
+                <div class="input-wrapper">
+                  <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" name="confirmPassword"
+                    formControlName="confirmPassword">
+                  <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword" class="pt-10 w-auto">
+                    <mat-icon style="color: black">{{hideConfirmPassword ? 'visibility_off' :
+                      'visibility'}}</mat-icon>
+                  </button>
+                </div>
+              </mat-form-field>
+              <div *ngIf="isSaved && loginForm.invalid" class="error-div">
+
+                <div *ngIf="loginForm.controls['confirmPassword'].errors?.['required']">
+                  {{ 'Auth.ConfirmPassword' | translate }} {{ 'Common.RequiredError' | translate }}
+                </div>
+
+                <div *ngIf="loginForm.controls['confirmPassword'].errors?.['mismatch']">
+                  {{ 'Auth.PasswordMismatchError' | translate }}
+                </div>
+              </div>
+            </div>
+            <button class="proceed-btn mb-3" [disabled]="validCount != 5 || loginForm.controls['password'].errors" (click)="verifyInput(activeDiv)">
+              {{'Auth.SetPassword' | translate}}</button>
+          </div>
+
+          <!-- ALTERT DIV -->
+          <!-- <div *ngIf="activeDiv == 'SUCCESS'" class="altert">
+            <div class="sucees-img">
+              <mat-icon svgIcon="success"></mat-icon>
+            </div>
+            <div class="flex-column pt-2">
+              <label class="header-title">{{'Yourpasswordhasbeenset' | translate}}</label>
+              <label class="subtitle">{{'Youcannowloginusingyournewpassword' | translate}}</label>
+            </div>
+            <button mat-flat-button color="primary" class="proceed"
+              (click)="verifyInput(activeDiv)">{{'LogIntoYourAccount' |
+              translate}}</button>
+          </div> -->
+          <div *ngIf="activeDiv == 'SUCCESS'" class="altert">
+            <div class="sucees-img">
+              <mat-icon svgIcon="success"></mat-icon>
+            </div>
+            <div class="flex-column pt-2 text-center d-flex">
+              <label class="header-title">{{'Auth.Yourpasswordhasbeenset' | translate}}</label>
+              <label class="subtitle">{{'Auth.Youcannowloginusingyournewpassword' | translate}}</label>
+            </div>
+            <button mat-flat-button class="proceed-btn bg-primary border-primary"
+              (click)="verifyInput(activeDiv)">{{'Auth.LogIntoYourAccount' | translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+    <div class="dialog-header">
+        <span>{{'Profile.EnterpriseDetails' | translate}}</span>
+        <mat-icon (click)="onNoClick()">close</mat-icon>
+    </div>
+    <div class="dialog-body">
+        <form [formGroup]="enterpriseForm">
+            <!-- About Enterprise -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Profile.AboutEnterprise' | translate}}</mat-label>
+                    <textarea matInput rows="3" name="aboutEnterprise" formControlName="aboutEnterprise"></textarea>
+                </mat-form-field>
+                <div *ngIf="isSavedEnterprise && enterpriseForm.invalid" class="error-div">
+                    <div *ngIf="enterpriseForm.controls['aboutEnterprise'].errors?.['required']">
+                        {{'Profile.AboutEnterprise' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                    <div *ngIf="enterpriseForm.controls['aboutEnterprise'].errors?.['pattern']">
+                        {{'Common.PatternError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vision -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Profile.Vision' | translate}}</mat-label>
+                    <textarea matInput rows="3" name="vision" formControlName="vision"></textarea>
+                </mat-form-field>
+                <div *ngIf="isSavedEnterprise && enterpriseForm.invalid" class="error-div">
+                    <div *ngIf="enterpriseForm.controls['vision'].errors?.['pattern']">
+                        {{'Common.PatternError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mission -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Profile.Mission' | translate}}</mat-label>
+                    <textarea matInput rows="3" name="mission" formControlName="mission"></textarea>
+                </mat-form-field>
+                <div *ngIf="isSavedEnterprise && enterpriseForm.invalid" class="error-div">
+                    <div *ngIf="enterpriseForm.controls['mission'].errors?.['pattern']">
+                        {{'Common.PatternError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Values -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Profile.CoreValues' | translate}}</mat-label>
+                    <textarea matInput rows="3" name="coreValue" formControlName="coreValue"></textarea>
+                </mat-form-field>
+                <div *ngIf="isSavedEnterprise && enterpriseForm.invalid" class="error-div">
+                    <div *ngIf="enterpriseForm.controls['coreValue'].errors?.['pattern']">
+                        {{'Common.PatternError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="dialog-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="saveEnterpriseDetails()">{{'Common.Submit' | translate}}</button>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+.products-card {
+  .product-name {
+    font-size: var(--size-30);
+  }
+  .product-price {
+    font-size: var(--size-28);
+  }
+  .product-description {
+    font-size: var(--size-14);
+  }
+  .product-desc{
+    font-size: var(--size-18);
+  }
+  .product-quantity {
+    font-size: var(--size-16);
+  }
+  .product-image{
+    height: 200px;
+  }
+  .w-fit {
+    width: fit-content;
+  }
+}
+
+.product-image{
+  height: 150px;
+}
+
+@media(max-width: 576px){
+  .dialog-body{
+      margin-bottom: 10px;
+  }
+}

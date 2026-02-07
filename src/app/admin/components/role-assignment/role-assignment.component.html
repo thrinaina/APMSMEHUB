@@ -1,0 +1,114 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="listing-container">
+  <div class="d-flex justify-content-between align-items-center mt-1 mb-20">
+    <span class="text-26 fw-semibold d-flex">{{'Admin.RoleAssignment' | translate}}</span>
+  </div>
+  <form [formGroup]="roleAssignForm">
+    <div class="col-md-6 mb-20">
+      <div class="float-select mb-10">
+        <ng-select formControlName="userMenuRoleId" [virtualScroll]="true" [searchable]="true"
+          [clearOnBackspace]="false" dropdownPosition="auto" notFoundText="{{'Common.NoResultsFound' | translate}}"
+          [closeOnSelect]="true" (change)="changeRole($event)">
+          <ng-option *ngFor="let role of rolesData" [value]="role.userMenuRoleId">{{'Menu.'+role.label | translate}} -
+            {{role.userMenuRole}}
+          </ng-option>
+        </ng-select>
+        <label>{{'Admin.Role' | translate}}*</label>
+      </div>
+      <div *ngIf="isSavedAssignment && roleAssignForm.invalid" class="error-div">
+        <div *ngIf="roleAssignForm.controls['userMenuRoleId'].errors?.['required']">
+          {{'Admin.Role' | translate}} {{'Common.RequiredError' | translate}}
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="text-16 fw-semibold">{{'Admin.MSMEDetails' | translate}}</span>
+
+    <div class="form-group ml-2 mr-2">
+      <div class="d-flex align-items-center input-group-alternative search-box">
+        <mat-icon class="search-icon" svgIcon="search"></mat-icon>
+        <input class="form-control search-res ml-auto" placeholder="{{ 'Common.SearchHere' | translate }}" type="text"
+          (keyup)="searchFilter($event)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="table-content mt-10">
+    <div class="table-container d-none d-sm-block">
+      <table id="dataTable" matSort mat-table [dataSource]="dataSource">
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef class="checkbox-width">
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row" class="checkbox-width">
+            <mat-checkbox (click)="$event.stopPropagation();setSelectedStatus(row)"
+              (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="userName">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef>{{'Admin.UserName' | translate}} </th>
+          <td mat-cell *matCellDef="let User"> {{ User.userName }} </td>
+        </ng-container>
+
+      </table>
+      <div *ngIf="!dataSource || dataSource.data.length == 0"
+        class="d-flex w-100 h-50 justify-content-center align-items-center">
+        <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+      </div>
+    </div>
+
+    <div class="d-block d-sm-none table-container border-0" style="overflow-x: hidden;">
+      <div class="row g-2">
+        <div class="d-flex">
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"> {{'Admin.SelectAll' | translate}}
+          </mat-checkbox>
+        </div>
+        <div class="col-12" *ngFor="let User of dataSourceCards | async">
+          <div class="card shadow-none border rounded-sm">
+            <div class="card-body flex-column">
+              <div class="mb-1 d-flex  flex-column">
+                <div class="d-flex align-items-start justify-content-between">
+                  <span class="text-12 fw-semibold">{{ 'Admin.UserName' | translate }}</span>
+                  <mat-checkbox (click)="$event.stopPropagation();setSelectedStatus(User)"
+                    (change)="$event ? selection.toggle(User) : null" [checked]="selection.isSelected(User)">
+                  </mat-checkbox>
+                </div>
+                <span class="text-12 fw-medium mx-2" style="margin-top: -5px;">{{ User.userName }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+        class="d-flex w-100 h-50 justify-content-center align-items-center">
+        <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+       <div class="d-flex col-gap-10 align-items-center">
+        <button mat-stroked-button class="border-primary text-primary text-14 rounded "
+          (click)="back()">{{'Common.Cancel'
+          |
+          translate}}</button>
+        <button mat-flat-button class="bg-primary text-14 rounded" (click)="postUserRoleAssignment()">{{'Common.Submit'
+          |
+          translate}}</button>
+      </div>
+      <div [hidden]="!dataSource || dataSource.data.length == 0">
+        <mat-paginator [pageSize]="defaultPageSize" [pageSizeOptions]="pageSizeOptions"
+          showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

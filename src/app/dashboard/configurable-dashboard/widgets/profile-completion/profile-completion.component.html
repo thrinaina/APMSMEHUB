@@ -1,0 +1,29 @@
+
+<div class="widget-div border h-100 rounded p-3">
+
+  <div class="profile-card">
+
+    <h3 class="title text-16">{{'Dashboard.ProfileCompletion' | translate}}</h3>
+
+    <div class="content d-flex align-items-center row">
+
+      <!-- LEFT : DONUT -->
+      <div class="chart-wrapper col-12 col-md-6 bg-white">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"
+           style="height: auto !important; margin: 0 auto; display: block;">
+        </highcharts-chart>
+      </div>
+
+      <!-- RIGHT : CHECKLIST -->
+      <div class="checklist col-12 col-md-6">
+        <div class="item" *ngFor="let item of checklist">
+          <span class="icon" [class.completed]="item.completed">
+            <mat-icon>done</mat-icon>
+          </span>
+          <span class="label text-14">{{ 'Dashboard.'+item.label | translate}}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

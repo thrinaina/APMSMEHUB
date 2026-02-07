@@ -1,0 +1,164 @@
+<div class="widget-div border w-100 overflow-auto h-100 rounded p-3">
+  <form [formGroup]="udyamForm">
+
+    <div *ngIf="activeDiv == 'UDYAM-SELECTION'">
+
+      <div class="radio-div">
+        <span *ngIf="udyams.length == 0"
+          class="d-flex text-center justify-content-center fw-500">{{'Dashboard.YouhavenotlinkedyourUDYAMtothehubifnotlinkedwithin30daysyourprofilewillbedeactivated'
+          | translate}}</span>
+
+        <mat-radio-group aria-label="Select an option" formControlName="selectedudyamRegistrationNo"
+          (change)="onUdyamChange($event.value)">
+          <mat-radio-button class="radio-box" *ngFor="let udyam of udyams" [value]="udyam.udyamRegistrationNo">
+            <div class="udyam-section">
+              <div>
+                <div class="text-14 font-weight-600 mw-37 col-9 col-xl-12 text-responsive-2-line text-break text-break-anywhere">
+                  {{ udyam.enterpriseName }}
+                </div>
+                <div class="text-14 text-responsive-2-line text-break text-break-anywhere">
+                  {{ udyam.maskedudyamRegistrationNo }}
+                </div>
+              </div>
+              <!-- web view Edit button -->
+              <button class=" display-web proceed-btn mt-0 rounded w-fit bg-primary border-primary edit-btn"
+                type="button" (click)="$event.stopPropagation(); editProfile(udyam)"
+                [disabled]="udyamForm.get('selectedudyamRegistrationNo')?.value !== udyam.udyamRegistrationNo">
+                {{'Dashboard.EditProfile' | translate}}
+              </button>
+
+              <button class=" display-mobile proceed-btn mt-0 rounded w-fit bg-primary border-primary edit-btn"
+                (click)="$event.stopPropagation(); editProfile(udyam)"
+                [disabled]="udyamForm.get('selectedudyamRegistrationNo')?.value !== udyam.udyamRegistrationNo">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <button (click)="verifyInput(activeDiv)"
+        class="proceed-btn bg-primary border-primary rounded">{{'Dashboard.AddUdyam' |
+        translate}}</button>
+    </div>
+
+    <div *ngIf="activeDiv == 'UDYAM-INPUT'">
+      <div class="flex-column">
+        <div class="d-flex w-100 align-items-center">
+          <mat-form-field class="w-100" floatLabel="always">
+            <mat-label>{{ 'Dashboard.UdyamNumber' | translate }}</mat-label>
+            <div class="input-wrapper">
+              <span class="fix-label align-right">{{ 'UDYAM-AP-' }}</span>
+              <input [readonly]="activeDiv != 'UDYAM-INPUT'" matInput type="text" name="udyamRegistrationNo"
+                formControlName="udyamRegistrationNo">
+            </div>
+          </mat-form-field>
+
+          <button (click)="verifyInput(activeDiv)" [disabled]="udyamForm.controls['udyamRegistrationNo'].invalid"
+            class="proceed-btn bg-primary w-fit h-fit p-custom mt-auto ms-2 text-white border-primary">{{'Dashboard.Verify'
+            | translate}}</button>
+        </div>
+        <label class="example">{{'Eg: UDYAM-AP-00-0000000'}}</label>
+        <div *ngIf="udyamForm.controls['udyamRegistrationNo'].invalid" class="error-div">
+          <div *ngIf="udyamForm.controls['udyamRegistrationNo'].errors?.['pattern']">{{'Common.Invalid' |
+            translate}} {{'Dashboard.UdyamNumber' | translate}}</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-outline-primary d-flex ms-auto text-16"
+      (click)="activeDiv = 'UDYAM-SELECTION'">{{'Common.Cancel' | translate}}</button>
+
+    </div>
+
+    <div *ngIf="activeDiv == 'OTP-INPUT'">
+      <div class="d-flex flex-column align-items-center mb-3">
+        <label class="header-title fw-bold pt-3 text-16">{{'Dashboard.WehavesentyouanOTP' | translate}}</label>
+        <label class="subtitle mb-unset text-14"> {{ 'Dashboard.WehavesentanOTPtoyouremailaddress' | translate }}
+          <!-- {{maskedEmailId}} -->
+          <!-- for testing -->
+          <!-- {{ udyamForm.value.loginName }} -->
+        </label>
+        <div>
+          <label>{{ 'Dashboard.PleaseentertheOTPbelowtoproceedDidntgettheOTP' | translate }}</label>
+        </div>
+        <span class="disabled-Label text-primary  text-14" [class.disabled]="!canResend" (click)="resendOtp()">
+          {{ 'Dashboard.ResendOTP' | translate }}
+          <ng-container *ngIf="!canResend">
+            {{'Auth.in' | translate}} {{ formattedTime }}
+          </ng-container>
+        </span>
+      </div>
+      <div class="full-width">
+        <div class="otp-div mb-1 d-flex flex-column align-items-center">
+          <label class="otp-label text-16 fw-bold">{{'Dashboard.EnterOTP' | translate}}</label>
+          <ng-otp-input #ngOtpInput [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>
+          <div class="message-div">
+            <label class="fail" *ngIf="invalidOTP">{{'Dashboard.PleaseEnterAValidOTP' | translate}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button [disabled]="otpValue.length !== config.length" mat-flat-button class="proceed-btn mb-3 mx-2 w-fit"
+          (click)="verifyInput(activeDiv)">{{'Dashboard.VerifyandContinue' | translate}}</button>
+      </div>
+
+    </div>
+
+    <div *ngIf="activeDiv == 'DECLARATION-INPUT' || activeDiv == 'CONSENT-INPUT'">
+
+      <div class="declaration-consent mt-2">
+
+        <h4 class="text-24">{{'Dashboard.Declaration1' | translate}}</h4>
+
+        <p class="mb-2">
+          {{'Dashboard.Declaration2' | translate}}
+          <strong class="mr-1">{{tempUdyamData.enterprenuerName}}</strong>{{'Dashboard.Declaration3' | translate}}
+          <strong>{{tempUdyamData.enterpriseName}}</strong>{{'Dashboard.Declaration4' | translate}}
+        </p>
+
+        <ul class="mb-2">
+          <li>
+            <strong>{{'Dashboard.Declaration5' | translate}}</strong>
+            {{'Dashboard.Declaration6' | translate}}
+          </li>
+
+          <li>
+            <strong>{{'Dashboard.Declaration7' | translate}}</strong>
+            {{'Dashboard.Declaration8' | translate}}<strong>{{'Dashboard.Declaration9' | translate}}</strong>
+            {{'Dashboard.Declaration10' | translate}}
+          </li>
+
+          <li>
+            <strong>{{'Dashboard.Declaration11' | translate}}</strong>
+            {{'Dashboard.Declaration12' | translate}}
+            <a href="#" target="_blank">{{'Dashboard.Declaration13' | translate}}</a>.
+            {{'Dashboard.Declaration14' | translate}}
+          </li>
+
+          <li>
+            <strong>{{'Dashboard.Declaration15' | translate}}</strong>
+            {{'Dashboard.Declaration16' | translate}}
+          </li>
+        </ul>
+
+        <div class="consent-checkbox">
+          <label>
+            <mat-checkbox name="termsAndConditions" formControlName="termsAndConditions" class="example-margin">
+              {{'Dashboard.Declaration17' | translate}}</mat-checkbox>
+          </label>
+        </div>
+        <strong class="m-10">{{'Dashboard.Declaration18' | translate}}</strong><span>{{consentDate | date:'mediumDate'}}</span>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button [disabled]="udyamForm.value.termsAndConditions == false" mat-flat-button
+          class="proceed-btn mt-0 mx-2 w-fit" (click)="verifyInput(activeDiv)">{{'Dashboard.Submit' |
+          translate}}</button>
+        <button mat-flat-button class="cancel-btn mx-2 mt-0 w-fit text-16" (click)="cancel()">{{'Dashboard.Cancel' |
+          translate}}</button>
+      </div>
+    </div>
+
+  </form>
+</div>

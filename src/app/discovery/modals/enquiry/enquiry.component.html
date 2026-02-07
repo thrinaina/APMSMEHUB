@@ -1,0 +1,244 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="flex-row">
+      <h4 class="modal-title text-24"> {{'Discovery.Enquiry' | translate}} </h4>
+    </div>
+    <mat-icon class="close-icon pointer" color="black" (click)="onNoClick()">close</mat-icon>
+  </div>
+  <div class="dialog-body d-flex flex-column gap-4">
+    <div class="row m-0 border rounded py-3" *ngIf="safeImages && productData">
+      <div class="col-xl-5 col-md-5 px-4" *ngIf="safeImages.length > 0">
+        <div class="carousel-container">
+          <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true" [noPause]="true"
+            [(activeSlide)]="activeIndex" (activeSlideChange)="onActiveSlideChange($event)">
+            <slide *ngFor="let img of safeImages">
+              <div class="object-slide">
+                <img [src]="img" class="w-100 rounded border product-image">
+              </div>
+            </slide>
+          </carousel>
+        </div>
+        <div class="d-flex justify-content-center gap-4 mt-3">
+          <img *ngFor="let img of safeImages | slice:thumbStartIndex:(thumbStartIndex + thumbWindowSize); let i = index"
+            [src]="img" class="img-thumbnails border rounded-2 flex-shrink-0 pointer" alt="Thumbnail"
+            [class.opacity-50]="activeIndex !== (thumbStartIndex + i)"
+            [class.opacity-100]="activeIndex === (thumbStartIndex + i)"
+            (click)="onActiveSlideChange(thumbStartIndex + i)">
+        </div>
+      </div>
+
+      <div class="col-xl-5 col-md-5 px-4" *ngIf="safeImages.length == 0">
+        <img src="assets/images/no-image-available.png" class="w-100 rounded border product-image">
+        <div class="d-flex justify-content-center gap-4 mt-3">
+          <img src="assets/images/no-image-available.png" class="img-thumbnails border rounded-2 flex-shrink-0 pointer"
+            alt="Thumbnail">
+        </div>
+      </div>
+
+      <div class="col-xl-7 col-md-7 ps-4 d-flex flex-column justify-content-center ">
+        <span class="fw-normal mb-10 text-24">
+          {{ productData.productName }}
+        </span>
+
+        <span class="fw-normal mb-10 text-18">
+          {{ productData.enterpriseName }}
+        </span>
+
+        <span class="fw-normal text-16">
+          {{ 'Common.ProductCategory' | translate }}
+        </span>
+
+        <p class="ms-2 mb-10 text-responsive-3-line text-14 fw-light">
+          {{ productData.categoryName }}
+        </p>
+
+        <div class="mb-10">
+          <div class="fw-normal text-16">
+            {{ 'Common.Description' | translate }}
+          </div>
+          <p #description class=" text-14 fw-light mb-0 ms-2"
+            [ngClass]="{ 'text-responsive-3-line': !contentExpanded }">
+            {{ productData.productDescription }}
+          </p>
+          <p *ngIf="contentExpanded  || (description && description.scrollHeight > description.clientHeight)"
+            class="text-14 fw-light text-primary cursor-pointer mb-0 ms-2" style="text-decoration: underline;"
+            (click)="contentExpanded = !contentExpanded">
+            {{contentExpanded ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' | translate)}}
+          </p>
+        </div>
+
+        <p class=" mb-10 text-responsive-3-line text-16 fw-normal">
+          {{ productData.productQuantity }} {{ productData.productUnit }} {{ 'Common.Available' | translate }}
+        </p>
+
+        <div class="flex-column d-flex border rounded p-2" *ngIf="selectedEnterprise">
+          <span class="fw-bold text-18">{{'Profile.ContactInformation' | translate}}</span>
+          <!-- <span class="text-14 fw-400 text-break text-break-anywhere">{{selectedEnterprise?.enterpriseName}}</span> -->
+          <span class="text-14 text-break text-break-anywhere">{{selectedEnterprise?.contactPersonName}}</span>
+          <span class="text-14 text-break text-break-anywhere">{{selectedEnterprise?.contactPersonEmailId ?? selectedEnterprise?.emailId}}</span>
+          <span class="text-14 text-break text-break-anywhere" *ngIf="selectedEnterprise.contactPersonMobileNo">+{{selectedEnterprise?.countryCode}} {{selectedEnterprise?.contactPersonMobileNo}}</span>
+          <span class="text-14 text-break text-break-anywhere" *ngIf="!selectedEnterprise.contactPersonMobileNo">{{selectedEnterprise?.mobileNumber}}</span>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="enquiryForm">
+      <div class="d-grid mt-2" *ngIf="data.type !== 'general' && data.type !== 'product-details'">
+        <div class="float-select mt-2">
+          <ng-select formControlName="enterprises" [items]="enterprises" bindValue="udyamRegistrationNo"
+            bindLabel="enterpriseName" [multiple]="true" [virtualScroll]="true" [searchable]="true"
+            [closeOnSelect]="false" dropdownPosition="auto" notFoundText="{{ 'Common.NoResultsFound' | translate }}">
+            <ng-template ng-option-tmp let-item="item">
+              <img [src]="item.enterpriseLogo || 'assets/images/no-image-available.png'" height="25" class="mr-2" />
+              <span>{{ item.enterpriseName }}</span>
+            </ng-template>
+          </ng-select>
+          <label>{{'Discovery.Enterprises' | translate}}*</label>
+        </div>
+        <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div ">
+          <div *ngIf="enquiryForm.controls['enterprises'].errors?.['required']">{{'Discovery.Enterprises' |
+            translate}} {{'Common.RequiredError' | translate}}</div>
+        </div>
+      </div>
+      <div class="d-grid  mt-2">
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>{{'Discovery.Name' | translate}}</mat-label>
+          <input matInput type="text" name="contactName" formControlName="contactName">
+        </mat-form-field>
+        <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div ">
+          <div *ngIf="enquiryForm.controls['contactName'].errors?.['required']">{{'Discovery.Name' |
+            translate}} {{'Common.RequiredError' | translate}}</div>
+          <div *ngIf="enquiryForm.controls['contactName'].errors?.['maxlength']">{{'Discovery.Name' |
+            translate}} {{'Common.MaxLengthError' | translate}} 100</div>
+          <div *ngIf="enquiryForm.controls['contactName'].errors?.['pattern']">{{'Common.PatternError' |
+            translate}}</div>
+        </div>
+      </div>
+      <div class="row row-gap-16">
+
+        <div class="col-md-2 pe-md-0">
+          <mat-form-field appearance="outline" floatLabel="always" class="w-100">
+            <mat-label>{{'Profile.CountryCode' | translate}}</mat-label>
+            <span class="ml-2" matPrefix>+</span>
+            <input matInput type="text" autocomplete="off" name="countryCode" formControlName="countryCode">
+          </mat-form-field>
+          <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div ">
+            <div *ngIf="enquiryForm.controls['countryCode'].errors?.['required']">
+              {{'Profile.CountryCode' | translate}}
+              {{'Common.RequiredError' | translate}}</div>
+            <div *ngIf="enquiryForm.controls['countryCode'].errors?.['pattern']">
+              {{'Common.Invalid' | translate}}
+              {{'Profile.CountryCode' | translate}}</div>
+            <div *ngIf="enquiryForm.controls['countryCode'].errors?.['min']">
+              {{'Profile.CountryCode' | translate}}
+              {{'Common.MinLengthError' | translate}} 2</div>
+            <div *ngIf="enquiryForm.controls['countryCode'].errors?.['max']">
+              {{'Profile.CountryCode' | translate}}
+              {{'Common.MaxLengthError' | translate}} 2</div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3 pe-md-0">
+          <div class="d-grid">
+            <mat-form-field appearance="outline" floatLabel="always" class="">
+              <mat-label>{{'Discovery.MobileNo' | translate}}</mat-label>
+              <input matInput type="text" name="contactMobileNo" formControlName="contactMobileNo">
+            </mat-form-field>
+            <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div ">
+              <div *ngIf="enquiryForm.controls['contactMobileNo'].errors?.['required']">{{'Discovery.MobileNo' |
+                translate}}
+                {{'Common.RequiredError' | translate}}</div>
+              <div *ngIf="enquiryForm.controls['contactMobileNo'].errors?.['pattern']">{{'Common.Invalid' | translate}}
+                {{'Discovery.MobileNo' | translate}}</div>
+              <div *ngIf="enquiryForm.controls['contactMobileNo'].errors?.['min']">{{'Discovery.MobileNo' | translate}}
+                {{'Common.MinLengthError' | translate}} 10</div>
+              <div *ngIf="enquiryForm.controls['contactMobileNo'].errors?.['max']">{{'Discovery.MobileNo' | translate}}
+                {{'Common.MaxLengthError' | translate}} 10</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-7">
+          <div class="d-grid">
+            <mat-form-field appearance="outline" floatLabel="always" class="width-100">
+              <mat-label>{{'Discovery.EmailID' | translate}}</mat-label>
+              <input matInput type="email" name="contactEmail" formControlName="contactEmail" class="form-control">
+            </mat-form-field>
+            <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div">
+              <div *ngIf="enquiryForm.controls['contactEmail'].errors?.['required']">{{'Discovery.EmailID' |
+                translate}} {{'Common.RequiredError' | translate}}</div>
+              <div *ngIf="enquiryForm.controls['contactEmail'].errors?.['maxlength']">{{'Discovery.EmailID' |
+                translate}} {{'Common.MaxLengthError' | translate}} 50</div>
+              <div *ngIf="enquiryForm.controls['contactEmail'].errors?.['pattern']">{{'Common.PatternError' |
+                translate}}</div>
+              <div *ngIf="enquiryForm.controls['contactEmail'].errors?.['email']">{{'Common.Invalid' | translate}}
+                {{'Discovery.EmailID' | translate}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex" *ngIf="productData">
+        <div class="col-6 pe-2">
+          <div class="d-grid">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>{{'Discovery.Quantity' | translate}}</mat-label>
+              <input matInput type="number" name="productQuantity" formControlName="productQuantity">
+            </mat-form-field>
+
+            <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div">
+              <div *ngIf="enquiryForm.controls['productQuantity'].errors?.['required']">{{'Discovery.Quantity' |
+                translate}} {{'Common.RequiredError' | translate}}</div>
+              <div *ngIf="enquiryForm.controls['productQuantity'].errors?.['min']">{{'Discovery.Quantity' | translate}}
+                {{'MinValueError' | translate}} 0 </div>
+              <div *ngIf="enquiryForm.controls['productQuantity'].errors?.['max']">{{'Discovery.Quantity' | translate}}
+                {{'Common.MaxLengthError' | translate}} 999999 </div>
+              <div *ngIf="enquiryForm.controls['productQuantity'].errors?.['pattern']">{{'Discovery.Quantity' |
+                translate}}
+                {{'Common.PatternError' | translate}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-grid">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>{{'Discovery.timeLimitResponse' | translate}}</mat-label>
+              <input matInput [matDatepicker]="timeLimitResponse" name="timeLimitResponse"
+                formControlName="timeLimitResponse" readonly [min]="currentDate">
+              <mat-datepicker #timeLimitResponse></mat-datepicker>
+              <mat-datepicker-toggle matSuffix [for]="timeLimitResponse"></mat-datepicker-toggle>
+            </mat-form-field>
+            <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div">
+              <div *ngIf="enquiryForm.controls['timeLimitResponse'].errors?.['required']">
+                {{'Discovery.timeLimitResponse' |
+                translate}} {{'Common.RequiredError' | translate}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-grid">
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>{{'Discovery.Remarks' | translate}}</mat-label>
+          <textarea matInput type="text" name="enquiryDescription" formControlName="enquiryDescription"></textarea>
+        </mat-form-field>
+        <div *ngIf="isSavedEnquiry && enquiryForm.invalid" class="error-div ">
+          <div *ngIf="enquiryForm.controls['enquiryDescription'].errors?.['maxlength']">{{'Discovery.Remarks'
+            | translate}} {{'Common.MaxLengthError' | translate}} 5000</div>
+          <div *ngIf="enquiryForm.controls['enquiryDescription'].errors?.['pattern']">{{'Discovery.Remarks' |
+            translate}} {{'Common.PatternError' | translate}}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-footer">
+    <div class="d-flex gap-3">
+      <button class="btn btn-outline-primary" (click)="onNoClick()">{{ 'Discovery.Cancel' | translate
+        }}</button>
+      <button class="btn btn-primary" (click)="sendEnquiry()">{{ 'Discovery.Submit' | translate
+        }}</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="widgets-container" [class.dragging]="isDragging">
+  <div class="header text-16">
+    {{ 'Dashboard.Widgets' | translate }}
+  </div>
+
+  <ng-container *ngIf="store.widgetsToAdd().length > 0; else emptyState">
+    <ng-container *ngFor="let widget of store.widgetsToAdd(); trackBy: trackByWidgetId">
+      <div *ngIf="hasAccessToWidget(widget)"
+           cdkDrag
+           class="widget-item"
+           [cdkDragData]="widget?.id"
+           (cdkDragStarted)="isDragging = true"
+           (cdkDragEnded)="isDragging = false">
+
+        {{ 'Dashboard.' + widget?.label | translate}}
+
+        <div>
+          <div *cdkDragPlaceholder class="widget-placeholder"></div>
+          <div *cdkDragPreview class="widget-preview">{{ 'Dashboard.' + widget?.label | translate}}</div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-state text-14">
+      {{ 'Dashboard.DragWidgetsHereToRemove' | translate }}
+    </div>
+  </ng-template>
+</div>

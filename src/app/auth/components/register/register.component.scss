@@ -1,0 +1,5 @@
+.disabled-Label.disabled {
+  pointer-events: none; /* ⛔ Disable click */
+  opacity: 0.5;
+  cursor: not-allowed;
+}

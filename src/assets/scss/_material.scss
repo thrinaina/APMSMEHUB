@@ -1,0 +1,85 @@
+// Paginator
+.mat-mdc-paginator {
+    background-color: unset !important;
+}
+
+// Select
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled):not(.mat-mdc-option-multiple) {
+    background-color: var(--primary-color) !important;
+}
+
+.mat-mdc-paginator-range-actions {
+    button:disabled {
+        background-color: unset !important;
+    }
+}
+
+// Text Field
+.mdc-text-field--filled .mdc-floating-label {
+    font-size: var(--size-16) !important;
+}
+
+.mdc-text-field--filled {
+    background-color: unset !important;
+}
+
+.mdc-line-ripple::before {
+    border-bottom-width: unset !important;
+    border-bottom-style: unset !important;
+}
+
+.mdc-line-ripple::after {
+    border-bottom-width: unset !important;
+    border-bottom-style: unset !important;
+}
+
+.mat-mdc-text-field-wrapper:hover .mat-mdc-form-field-focus-overlay {
+    opacity: 1 !important;
+    background-color: unset !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.mdc-text-field {
+    overflow: unset !important;
+    padding: 0 !important;
+}
+
+.mat-mdc-select {
+    padding: 0px 10px !important;
+}
+
+.mat-mdc-form-field-infix {
+    padding-bottom: 0px !important;
+}
+
+// Input
+.mat-mdc-input-element {
+    padding: 0px 10px !important;
+}
+
+// Checkbox
+.mat-pseudo-checkbox {
+    display: none !important;
+}
+
+// Button Toggle
+.mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    line-height: 30px !important;
+}
+
+.mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+    background-color: var(--primary-color) !important;
+}
+
+// Expansion Panel
+.mat-expansion-panel-header-title{
+    font-size: var(--size-16);
+}
+
+// Icon
+mat-icon {
+  overflow: visible !important;
+}

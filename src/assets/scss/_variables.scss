@@ -1,0 +1,152 @@
+/***************/
+/** Variables **/
+/***************/
+$sizes: ();
+@for $i from 0 through 100 {
+  $value: $i * 2;
+  $sizes: map-merge($sizes, ($value: #{$value}px));
+}
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+
+$spacers: (
+  0: 0,
+  1: .25rem,
+  2: .5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 3rem
+);
+
+// $offsets: (
+//   1200px: 2, // LG and below
+//   992px:  2, // MD and below
+//   768px:  4, // SM and below
+//   576px:  4  // XS and below
+// );
+
+/****************/
+/** Color Vars **/
+/****************/
+:root {
+  /* Base colors */
+  --white: #fff;
+  --purple: #800080;
+  --black: #000;
+  --text-dark: #333;
+  --text-label: #757575;
+  --success-green: #28a745;
+
+  /* Primary & secondary */
+  --primary-color: #FF9933;
+  --secondary-color: #EAB308;
+  --tertiary-color: #FFC300;
+  --accent-color: #D4AF37;
+  --secondary-color-light: #FEF9C3;
+  --bg-secondary-light: #FAFAFA;
+  --primary-two-color: #ff9f43;
+
+
+  /* Status colors */
+  --success-color: #14B8A6;
+  --warning-color: #ff5733;
+  --danger-color: #ef4444;
+
+  /* Background colors */
+  --header-bg-color: #ffffff;
+  --body-bg-color: #f4f6f8;
+  --bg-light: #f8f9fa;
+  --bg-secondary-light: #FAFAFA;
+  --green-bg-color: #C9F8C5;
+  --red-bg-color: #E03232;
+  --red-light-bg-color: #fdecea;
+  --cancel-bg-color: #999999;
+  --bg-purple: #800080;
+  --bg-success-light-green: #e6f4ea;
+  --bg-primary-light : #fff4e5;
+  --hover-bg: rgba(0, 0, 0, 0.55) !important;
+  --table-bg-color: #f7f9fc;
+
+  /* Borders & selection */
+  --border-color: #ced4da;
+  --selection-color: #3E5684;
+  --border-secondary: #1c1c1c;
+
+  /* Gradients */
+  --linear-bg-color: linear-gradient(90deg, #FFFFFF 0%, #999999 100%);
+
+  /* Font & spacing sizes */
+  @for $i from 0 through 100 {
+    --size-#{$i}: #{$i}px;
+  }
+
+  /* Material */
+  --mdc-filled-text-field-focus-label-text-color: #EAB308;
+  --mdc-dialog-container-shape: 8px;
+  --mat-form-field-container-vertical-padding: 10px;
+  --mat-form-field-container-height: 40px;
+}
+
+/* Font & spacing sizes (based on screen size) */
+// @each $width, $reduction in $offsets {
+//   @media (max-width: $width) {
+//     :root {
+//       @for $i from 0 through 100 {
+//         --size-#{$i}: #{$i - $reduction}px;
+//       }
+//     }
+//   }
+// }
+
+/****************/
+/** Custom CSS **/
+/****************/
+@import 'bootstrap.min'; // Remove this when final deployment & the file too
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+
+@import 'classes';
+
+@import 'bootstrap';
+@import 'material';
+@import 'modal';
+@import 'ng-select';
+@import 'owl-carousel';
+@import 'table';
+@import 'toastr';
+
+@import 'ngx-toastr/toastr';
+
+/**************************/
+/** Offline Fonts/Styles **/
+/**************************/
+@import 'material-icons/iconfont/material-icons'; // Remove this when final deployment
+
+/* Upright (Regular) Variable Font */
+@font-face {
+  font-family: 'Roboto Flex';
+  src: url('../fonts/Roboto-VariableFont_wdth\,wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-stretch: 25% 151%;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic Variable Font */
+@font-face {
+  font-family: 'Roboto Flex';
+  src: url('../fonts/Roboto-Italic-VariableFont_wdth\,wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-stretch: 25% 151%;
+  font-style: italic;
+  font-display: swap;
+}

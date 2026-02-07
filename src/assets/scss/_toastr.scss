@@ -1,0 +1,29 @@
+.toast-success {
+    background-color: var(--secondary-color) !important;
+}
+
+.toast-container .ngx-toastr {
+    width: 500px !important;
+    max-width: 90vw;
+
+    @media (max-width: 576px) {
+        max-width: 95vw !important;
+    }
+}
+
+.toast-message{
+    font-size: var(--size-16);
+}
+
+.toast-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: auto !important;
+    width: 100% !important;
+
+    @media (max-width: 576px) {
+        width: unset !important;
+    }
+}

@@ -1,0 +1,119 @@
+<mat-sidenav-container>
+  <mat-sidenav  [disableClose]="true" [mode]="sidenavMode" id="sidenav" [position]="sidenavPosition" #sidenav [class.menu-open]="isMenuOpen"
+    [class.menu-close]="!isMenuOpen" [opened]="true">
+    <mat-list id="menus">
+      <div class="menu-main">
+
+        <div class="title-div-menu">
+          <!-- <div [class.logo-div-menu-open]="isMenuOpen" [class.logo-div-menu-close]="!isMenuOpen">
+            <img [class.logo-menu-open]="isMenuOpen" [class.logo-menu-close]="!isMenuOpen"
+              src="assets/images/apmsme-logo.png">
+          </div> -->
+          <div class="title-set" *ngIf="!isMenuOpen">
+            <img class="pro-pic"[src]="userImage || 'assets/images/profile-picture.jpeg'" alt="User Image">
+          </div>
+          <div class="title-set" *ngIf="isMenuOpen">
+            <img [src]="userImage || 'assets/images/profile-picture.jpeg'" alt="User Image">
+            <span class="menu-header">{{tokenStorageService.getUserName()}}</span>
+            <span class="menu-subheader"> {{tokenStorageService.getUser().loginName}} </span>
+            <span class="menu-subheader-2"> {{'Menu.lastLogin' | translate}} :
+              {{tokenStorageService.getLastSession() | date: 'medium'}} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-items-div">
+        <div class="menu-items" *ngFor="let menuItem of menuItems">
+
+          <div *ngIf="menuItem.children">
+            <mat-list-item class="parent-list-item" (click)="expandMenu(menuItem.label)">
+
+              <div class="menu-item">
+                <div class="icon-background">
+                  <mat-icon class="menu-icon" [class.icon-color]="menuItem.label == currentLabel" color="undefined"
+                    [svgIcon]="menuItem.icon"></mat-icon>
+                </div>
+                <span class="menu-label" [class.label-color]="menuItem.label == currentLabel"
+                  *ngIf="isMenuOpen">{{'Menu.'+menuItem.label | translate}}</span>
+              </div>
+              <mat-icon class="expand-icon" *ngIf="showChildren != menuItem.label">expand_more</mat-icon>
+              <mat-icon class="expand-icon" *ngIf="showChildren == menuItem.label">expand_less</mat-icon>
+            </mat-list-item>
+            <div class="zero-h" [ngClass]="{'animate-expand': (showChildren == menuItem.label)}">
+              <div *ngFor="let option of menuItem.children">
+
+                <mat-list-item class="menu-list-items" [matTooltipDisabled]="isMenuOpen" #tooltip="matTooltip"
+                  [matTooltip]="'Menu.'+menuItem.label | translate" matTooltipPosition="right">
+
+                  <div  class="menu-item"
+                    (click)="routeToPage(option.route, option.userRoles)"
+                    [class.icon-background-color]="option.label == currentLabel && isMenuOpen">
+
+                    <div class="icon-background" [class.icon-background-color]="option.label == currentLabel">
+                      <mat-icon class="menu-icon" [class.icon-color]="option.label == currentLabel" color="undefined"
+                        [svgIcon]="option.icon"></mat-icon>
+                    </div>
+
+                    <span class="menu-label" [class.label-color]="option.label == currentLabel"
+                      *ngIf="isMenuOpen">{{'Menu.'+option.label | translate}}</span>
+                  </div>
+                </mat-list-item>
+
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!menuItem.children">
+            <mat-list-item class="menu-list-items" [matTooltipDisabled]="isMenuOpen" #tooltip="matTooltip"
+              [matTooltip]="'Menu.'+menuItem.label | translate" matTooltipPosition="right">
+
+              <div class="menu-item"
+                (click)="routeToPage(menuItem.route, menuItem.userRoles)"
+                [class.icon-background-color]="menuItem.label == currentLabel && isMenuOpen">
+                <div class="icon-background" [class.icon-background-color]="menuItem.label == currentLabel">
+                  <mat-icon class="menu-icon" [class.icon-color]="menuItem.label == currentLabel" color="undefined"
+                    [svgIcon]="menuItem.icon"></mat-icon>
+                </div>
+                <span class="menu-label" [class.label-color]="menuItem.label == currentLabel"
+                  *ngIf="isMenuOpen">{{'Menu.'+menuItem.label | translate}}</span>
+              </div>
+            </mat-list-item>
+          </div>
+        </div>
+      </div>
+
+      <div class="fixed-menu-items-set">
+        <mat-list-item [matTooltipDisabled]="isMenuOpen" #tooltip="matTooltip"
+          matTooltip="{{'Common.Logout' | translate}}" matTooltipPosition="right">
+          <div class="menu-item fixed-menu-item" (click)="logout()">
+            <div>
+              <mat-icon class="logout-icon" style="margin-top: 3px !important; color: red;"
+                color="warn">logout</mat-icon>
+            </div>
+            <span class="" *ngIf="isMenuOpen">{{'Common.Logout' | translate}}</span>
+          </div>
+        </mat-list-item>
+        <mat-list-item [matTooltipDisabled]="isMenuOpen" #tooltip="matTooltip"
+          matTooltip="{{'Common.Expand' | translate}}" matTooltipPosition="right">
+          <div class="menu-item fixed-menu-item" (click)="onToggleMenu()">
+            <div>
+              <mat-icon *ngIf="!isMenuOpen" class="overflow-visible" style="margin-top: -2px !important;"
+                color="undefined" svgIcon="expand"></mat-icon>
+              <mat-icon *ngIf="isMenuOpen" class="overflow-visible" style="margin-top: -1px !important;"
+                color="undefined" svgIcon="collapse"></mat-icon>
+            </div>
+            <span class="" *ngIf="isMenuOpen">{{'Common.Collapse' | translate}}</span>
+          </div>
+        </mat-list-item>
+      </div>
+    </mat-list>
+  </mat-sidenav>
+  <mat-sidenav-content
+    [class.content-menu-open]="isMenuOpen"
+    [class.content-menu-close]="!isMenuOpen"
+    [class.content-menu-collapse]="sidenavMode === 'over'">
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

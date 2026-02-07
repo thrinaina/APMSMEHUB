@@ -1,0 +1,64 @@
+.products-card {
+  .product-name {
+    font-size: var(--size-24);
+  }
+  .product-price {
+    font-size: var(--size-28);
+  }
+  .product-description {
+    font-size: var(--size-14);
+  }
+  .product-desc{
+    font-size: var(--size-16);
+  }
+  .product-quantity {
+    font-size: var(--size-16);
+  }
+
+  .w-fit {
+    width: fit-content;
+  }
+}
+
+.product-image{
+  height: 200px;
+  object-fit: cover;
+}
+
+.enterprise-img{
+  height: 120px;
+  object-fit: contain;
+}
+
+.ent-height{
+  height: 120px;
+}
+
+.bg-secondary-color {
+  height:45px
+}
+
+@media(max-width: 576px){
+  .dialog-body{
+      margin-bottom: 10px;
+  }
+}
+
+.product-list-height {
+  min-height: fit-content;
+  max-height: calc(100vh - 340px);
+  // overflow-y: auto;
+  margin-top: 14px;
+}
+
+.profile-card {
+  position: relative;
+}
+
+#ng-deep.carousel-control-next {
+  right: -10px !important
+}
+
+#ng-deep.carousel-control-prev {
+  left: -10px !important
+}

@@ -1,0 +1,17 @@
+@media (max-width: 576px) {
+  .table-content {
+    height: calc(100vh - 280px);
+  }
+  /* Hide everything except page size dropdown */
+
+  ::ng-deep .mat-mdc-paginator-range-label {
+    display: none !important;
+  }
+
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    .mat-mdc-paginator-navigation-last,
+    .mat-mdc-paginator-navigation-first {
+      display: none !important;
+    }
+  }
+}

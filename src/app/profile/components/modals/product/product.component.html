@@ -1,0 +1,227 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <span>{{'Profile.ProductDetails' | translate}}</span>
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </div>
+  <div class="dialog-body">
+    <form [formGroup]="productForm">
+      <!-- Category & GI Tags -->
+      <div class="row align-items-start flex-wrap">
+
+        <!-- Category Dropdown -->
+        <div class="col col-md-6 col-xl-6 col-lg-6">
+          <div class="float-select mt-2">
+            <ng-select formControlName="categoryId" [virtualScroll]="true" [searchable]="true"
+              [clearOnBackspace]="false" dropdownPosition="auto" (change)="changeCategory()"
+              notFoundText="{{ 'Common.NoResultsFound' | translate }}" [closeOnSelect]="true">
+              <ng-option value=""></ng-option>
+              <ng-option *ngFor="let productCategory of productCategories" [value]="productCategory.categoryId"
+              [disabled]="productCategory.inactive == 'Y'">
+                {{ productCategory.categoryName }}
+              </ng-option>
+            </ng-select>
+
+            <label>{{ 'Profile.Category' | translate }}*</label>
+          </div>
+            <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+            <div *ngIf="productForm.controls['categoryId'].errors?.['required']">
+              {{'Profile.Category' | translate}} {{'Common.RequiredError' | translate}}
+            </div>
+          </div>
+        </div>
+
+        <!-- + Button -->
+        <div class="col-auto mt-2" *ngIf="!productForm.value.categoryId">
+          <button type="button" (click)="requestCategory()"
+            class="btn btn-primary p-2 d-flex align-items-center justify-content-center">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
+        <!-- GI Tags (wraps on mobile) -->
+        <div class="col-12 col-md-6 col-xl-6 col-lg-6 mt-2 mt-sm-down-3" *ngIf="selectedCategory?.isGITag === 'Y'">
+          <mat-form-field appearance="outline" floatLabel="always" class="w-100">
+            <mat-label>{{ 'Profile.GITags' | translate }}</mat-label>
+            <input matInput formControlName="productGITag" readonly />
+          </mat-form-field>
+        </div>
+
+      </div>
+
+
+      <!-- Product Name -->
+      <div class="col-md-12">
+        <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+          <mat-label class="label-text">{{'Profile.Name' | translate}}</mat-label>
+          <input matInput type="text" name="productName" formControlName="productName" />
+        </mat-form-field>
+        <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+          <div *ngIf="productForm.controls['productName'].errors?.['required']">
+            {{'Profile.Name' | translate}} {{'Common.RequiredError' | translate}}
+          </div>
+          <div *ngIf="productForm.controls['productName'].errors?.['maxlength']">
+            {{'Profile.Name' | translate}} {{'Common.MaxLengthError' | translate}}
+            {{ productForm.controls['productName'].errors?.['maxlength']?.requiredLength }}
+          </div>
+          <div *ngIf="productForm.controls['productName'].errors?.['pattern']">
+            {{'Common.PatternError' | translate}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Description -->
+      <div class="col-md-12">
+        <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+          <mat-label class="label-text">{{'Profile.Description' | translate}}</mat-label>
+          <textarea matInput rows="3" name="productDescription" formControlName="productDescription"></textarea>
+        </mat-form-field>
+        <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+          <div *ngIf="productForm.controls['productDescription'].errors?.['required']">
+            {{'Profile.Description' | translate}} {{'Common.RequiredError' | translate}}
+          </div>
+          <div *ngIf="productForm.controls['productDescription'].errors?.['pattern']">
+            {{'Common.PatternError' | translate}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Price, Quantity, Unit -->
+      <div class="row row-gap-10">
+
+        <!-- Unit -->
+        <div class="col-md-4" style="margin-top: -8px;">
+          <div class="float-select mt-2">
+            <ng-select formControlName="productUnit" [virtualScroll]="true" [searchable]="true"
+              [clearOnBackspace]="false" dropdownPosition="auto" notFoundText="{{'Common.NoResultsFound' | translate}}"
+              [closeOnSelect]="true">
+              <ng-option *ngFor="let productUnit of productUnits" [value]="productUnit.value">
+                {{ productUnit.value }}
+              </ng-option>
+            </ng-select>
+            <label>{{'Profile.Unit' | translate}}*</label>
+          </div>
+          <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+            <div *ngIf="productForm.controls['productUnit'].errors?.['required']">
+              {{'Profile.Unit' | translate}} {{'Common.RequiredError' | translate}}
+            </div>
+          </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+            <mat-label class="label-text">{{'Profile.Quantity' | translate}}</mat-label>
+            <input matInput type="text" name="productQuantity" formControlName="productQuantity" />
+          </mat-form-field>
+          <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+            <div *ngIf="productForm.controls['productQuantity'].errors?.['required']">
+              {{'Profile.Quantity' | translate}} {{'Common.RequiredError' | translate}}
+            </div>
+            <div *ngIf="productForm.controls['productQuantity'].errors?.['maxlength']">
+              {{'Profile.Quantity' | translate}} {{'Common.MaxLengthError' | translate}}
+              {{ productForm.controls['productQuantity'].errors?.['maxlength']?.requiredLength }}
+            </div>
+            <div *ngIf="productForm.controls['productQuantity'].errors?.['pattern']">
+              {{'Common.PatternError' | translate}}
+            </div>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+            <mat-label class="label-text">{{'Profile.Price' | translate}}</mat-label>
+            <input matInput type="text" name="productPrice" formControlName="productPrice" />
+          </mat-form-field>
+          <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+            <div *ngIf="productForm.controls['productPrice'].errors?.['required']">
+              {{'Profile.Price' | translate}} {{'Common.RequiredError' | translate}}
+            </div>
+            <div *ngIf="productForm.controls['productPrice'].errors?.['maxlength']">
+              {{'Profile.Price' | translate}} {{'Common.MaxLengthError' | translate}}
+              {{ productForm.controls['productPrice'].errors?.['maxlength']?.requiredLength }}
+            </div>
+            <div *ngIf="productForm.controls['productPrice'].errors?.['pattern']">
+              {{'Common.PatternError' | translate}}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Product Images -->
+      <div class="col-md-12">
+        <div class="col-md-12">
+          <label class="mb-0 text-12">{{'Profile.Images' | translate}}*</label>
+        </div>
+        <div class="col-md-12 mb-10 mt-1">
+          <div (dragover)="handleDragOver($event)" (drop)="handleDrop($event)">
+            <!-- Display uploaded files -->
+            <div class="border rounded py-0 mb-0" style="height: 160px;" *ngIf="documents.length > 0">
+              <ul class="d-flex pl-0 mt-0 mb-0 " style="overflow: auto;">
+                <li *ngFor="let doc of documents; let i = index" class="d-block p-3 review-responsive">
+                  <div class="">
+                    <div class="position-relative">
+                      <div class="position-absolute cursor-pointer z-99 right--2 top--3 text-warning"
+                        (click)="removeFile(i)">
+                        <mat-icon class="pb-2 text-danger">close</mat-icon>
+                      </div>
+                      <img class="border rounded" style="height: 120px; width: 120px; object-fit: cover;"
+                        [src]="doc?.readerDocument" />
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <!-- Upload option when no files exists -->
+            <div *ngIf="documents == null || documents.length == 0">
+              <div class="border rounded py-0 mb-0" style="height: 160px;" (click)="fileInput.click()">
+                <ul class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-0">
+                  <mat-icon class="mt-2">add_a_photo</mat-icon>
+                  <div class="d-flex align-items-center justify-content-center">
+                    <mat-icon class="mr-2 pb-2">upload</mat-icon>
+                    <label class="mt-2 text-16">{{'Common.DropFilesToUpload' | translate}}</label>
+                  </div>
+                  <input #fileInput class="custom-file-input d-none" multiple="multiple" type="file"
+                    (change)="handleFileChange($event)" accept=".jpg, .jpeg, .png" />
+                </ul>
+              </div>
+            </div>
+            <!-- Upload option when total upload limit not yet reached -->
+            <div class="upload-option rounded d-flex justify-content-center my-4 py-8 pointer"
+              *ngIf="documents.length > 0 && documents.length < 5" (click)="fileInput1.click()">
+              <div class="d-flex align-items-center pointer text-13">
+                <input #fileInput1 class="custom-file-input d-none" multiple="multiple" type="file"
+                  (change)="handleFileChange($event)" accept=".jpg, .jpeg, .png" />
+                <mat-icon class="mr-2 add-variation-icon">add</mat-icon>
+                <span class="text-16">{{'Common.FilesToUpload' | translate}}</span>
+              </div>
+            </div>
+            <!-- Errors -->
+            <div *ngIf="isSavedProduct && productForm.invalid" class="error-div">
+              <div *ngIf="productForm.controls['productImages']?.errors?.['required']">
+                {{'Common.Image' | translate}} {{ 'Common.RequiredError' | translate }}
+              </div>
+            </div>
+            <div *ngIf="productForm.invalid" class="error-div">
+              <div *ngIf="productForm.controls['productImages']?.errors?.['fileLimit']">
+                {{ 'Common.FileSizeExceedsTheMaximumLimitOf5MB' | translate }}
+              </div>
+              <div *ngIf="productForm.controls['productImages']?.errors?.['limitReached']">
+                {{ 'Common.YouCannotUploadMoreFiles' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' |
+      translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="saveProductDetails()">{{'Common.Submit' |
+      translate}}</button>
+  </div>
+</div>

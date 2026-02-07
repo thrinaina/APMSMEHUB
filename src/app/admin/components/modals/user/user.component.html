@@ -1,0 +1,134 @@
+<!-- Loader -->
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <span>{{ ((userForm.value.appUserId > 0) ? 'Admin.EditUser' : 'Admin.AddUser') | translate}}</span>
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body">
+    <form [formGroup]="userForm">
+      <div class="row g-3">
+        <!-- User Image -->
+        <div class="col-md-4">
+          <div class="pl-3 col-md-12">
+            <label class="mb-0 text-12">{{'Admin.UserImage' | translate}}*</label>
+          </div>
+          <div class="col-md-12 mb-10">
+            <div (dragover)="handleDragOver($event)" (drop)="handleDrop('userImage', $event)">
+              <div class="border position-relative rounded py-0 mb-0" style="height: 160px;"
+                *ngIf="userForm.value.userImage">
+                <div class="d-flex justify-content-center column uploded-img pl-0 mb-0">
+                  <div>
+                    <img class="image-display w-100 rounded" style="height: 158px;" [src]="userForm.value.userImage" />
+                  </div>
+                </div>
+                <div class="border bg-white rounded position-absolute d-flex flex-row top-8 p-2 right-8 align-items-center">
+                  <mat-icon class="m-2 pointer svg-filter-primary" svgIcon="download-icon" (click)="downloadFile('userImage')"></mat-icon>
+                  <mat-icon class="m-2 pointer text-danger" (click)="removeFile('userImage')">close</mat-icon>
+                </div>
+              </div>
+
+              <div *ngIf="userForm.value.userImage == null">
+                <div class="border rounded py-0 mb-2" style="height: 160px;" (click)="fileInput.click()">
+                  <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                    <mat-icon class="mt-2">add_a_photo</mat-icon>
+                    <input #fileInput class="custom-file-input d-none" type="file"
+                      accept="image/jpeg,image/png,image/jpg" (change)="handleFileChange('userImage', $event)" />
+                    <div class="text-danger" *ngIf="fileUploadError['userImage']">
+                      <div *ngIf="fileUploadError['userImage']?.fileLimit">
+                        {{ 'Common.YouCannotUploadMoreFiles' | translate }}
+                      </div>
+                      <div *ngIf="fileUploadError['userImage']?.limitReached">
+                        {{ 'Common.FileSizeExceedsTheMaximumLimitOf5MB' | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div *ngIf="isSavedForm && userForm.invalid" class="error-div">
+              <div *ngIf="userForm.controls['userImage'].errors?.['required']">
+                {{'Admin.UserImage' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+            </div> -->
+        </div>
+        <div class="col-md-8 d-flex flex-column row-gap-10">
+          <!-- User Type -->
+          <div class="col-md-12">
+            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+              <mat-label>{{'Admin.UserType' | translate}}</mat-label>
+              <mat-select name="usertype" formControlName="userType">
+                <mat-option value="ADMIN">{{ "ADMIN" }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div *ngIf="isSavedForm && userForm.invalid" class="error-div">
+              <div *ngIf="userForm.controls['userType']?.errors?.['required']">
+                {{'Admin.UserType' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+            </div>
+          </div>
+
+          <!-- User Name -->
+          <div class="col-md-12 mt-10">
+            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+              <mat-label>{{'Admin.UserName' | translate}}</mat-label>
+              <input matInput type="text" name="userName" formControlName="userName">
+            </mat-form-field>
+            <div *ngIf="isSavedForm && userForm.invalid" class="error-div">
+              <div *ngIf="userForm.controls['userName'].errors?.['required']">
+                {{'Admin.UserName' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+              <div *ngIf="userForm.controls['userName'].errors?.['maxlength']">
+                {{'Admin.UserName' | translate}} {{'Common.MaxLengthError' | translate}}
+                {{userForm.controls['userName'].errors?.['maxlength'].requiredLength}}
+              </div>
+              <div *ngIf="userForm.controls['userName'].errors?.['pattern']">
+                {{'Common.PatternError' | translate}}
+              </div>
+            </div>
+          </div>
+
+          <!-- Login Name -->
+          <div class="col-md-12 mt-10">
+            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+              <mat-label>{{'Admin.LoginName' | translate}}</mat-label>
+              <input matInput type="text" name="loginName" formControlName="loginName">
+            </mat-form-field>
+            <div *ngIf="isSavedForm && userForm.invalid" class="error-div">
+              <div *ngIf="userForm.controls['loginName'].errors?.['required']">
+                {{'Admin.LoginName' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+              <div *ngIf="userForm.controls['loginName'].errors?.['maxlength']">
+                {{'Admin.LoginName' | translate}} {{'Common.MaxLengthError' | translate}}
+                {{userForm.controls['loginName'].errors?.['maxlength'].requiredLength}}
+              </div>
+              <div *ngIf="userForm.controls['loginName'].errors?.['pattern']">
+                {{'Common.Invalid' | translate}} {{'Admin.LoginName' | translate}}
+              </div>
+            </div>
+          </div>
+
+          <!-- Active/ Inactive -->
+          <div class="col-md-12">
+            <mat-slide-toggle name="inactive" formControlName="inactive">{{'Admin.Inactive' |
+              translate}}</mat-slide-toggle>
+          </div>
+
+          <!-- Set Default Password -->
+          <div *ngIf="(userForm.value.appUserId > 0)" class="col-md-12">
+            <mat-slide-toggle name="setDefaultPassword"
+              formControlName="setDefaultPassword">{{'Admin.SetDefaultPassword' | translate}}</mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' | translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="saveUser()">{{'Common.Submit' | translate}}</button>
+  </div>
+</div>

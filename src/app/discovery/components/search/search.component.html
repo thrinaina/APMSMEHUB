@@ -1,0 +1,452 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+
+<form [formGroup]="filterForm">
+  <div class="d-flex flex-row justify-content-md-end justify-content-around gap-2 my-md-3 mx-md-3 my-3 mx-1" *ngIf="selectedPage == 'SEARCH'">
+    <button type="button" class="bg-secondary-color border-secondary-color fw-500 mx-md-2 rounded text-16 py-2 px-md-3 px-2"
+      (click)="routeTo('DepartmentLogin')">{{'Discovery.DepartmentLogin' | translate}}</button>
+    <button type="button" class="back-white border-dark fw-500 text-dark mx-md-2 rounded text-16 py-2 px-md-3 px-2"
+      (click)="routeTo('MSMELogin')">{{'Discovery.MSMELogin' | translate}}</button>
+    <button type="button" class="border-primary bg-primary fw-500 mx-md-2 rounded text-16 py-2 px-md-3 px-2"
+      (click)="routeTo('Register')">{{'Discovery.Register' | translate}}</button>
+  </div>
+  <div [class.overlay]="showOverlay"
+    [ngClass]="(selectedPage == 'SEARCH') ? 'container-fluid-search' : 'container-fluid-result'"
+    class="border border-0 mb-0">
+    <!-- Discovery Search -->
+    <ng-container *ngIf="selectedPage == 'SEARCH'">
+      <div class="row m-0 g-3 d-flex justify-content-center text-center">
+        <h2 class="text-48 fw-bolder mb-8">{{ 'Discovery.Discovery' | translate }}</h2>
+
+        <div class="col-sm-12 d-flex flex-column justify-content-center align-items-center">
+          <h4 class="text-28 fw-semibold mb-20">{{ 'Discovery.SearchFor' | translate }}
+            {{'Discovery.'+filterForm.value.category | translate }}</h4>
+
+          <!-- Search Box -->
+          <div
+            class="col-md-8 col-lg-8 col-xl-8 col-xxl-10  custom-width col-sm-12 d-flex align-items-center mb-25 pr-8 overflow-hidden border rounded"
+            style="height: 60px;">
+            <input type="text" placeholder="{{ 'Common.SearchHere' | translate }}..." formControlName="searchText"
+              (keydown.enter)="$event.preventDefault();newSearch($event); isFilter = true"
+              class="w-100 border-0 p-10 back-white " [class.remove-classes]="showOverlay"
+              style="outline: none; box-shadow: none !important;" />
+            <div class="d-flex align-items-center border rounded pointer bg-primary p-10"
+              (click)="newSearch(); isFilter = true;">
+              <mat-icon>search</mat-icon>
+            </div>
+          </div>
+
+          <span class="text-20 text-muted my-20">{{ 'Discovery.EnterEnterpriseNameSectorSpecificName' | translate
+            }}</span>
+        </div>
+
+        <!-- Discovery Filters -->
+        <div class="row d-flex justify-content-center align-items-center gap-10">
+          <span class="text-16 text-muted">{{ 'Discovery.SearchCategory' | translate }}</span>
+          <div class="col-md-12">
+            <mat-button-toggle-group name="category" formControlName="category" aria-label="Category"
+              [hideSingleSelectionIndicator]="true">
+              <mat-button-toggle *ngFor="let category of categories" [value]="category.value">
+                <span class="text-20">{{ category.label | translate }}</span>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Discovery List (Enterprise & Product) -->
+    <ng-container *ngIf="selectedPage == 'LIST'">
+      <!-- Back & Title -->
+      <div class="row m-0 mb-3 d-flex align-items-center justify-content-between">
+        <!-- Back -->
+        <div class="col-3 ps-0 display-web">
+          <div
+            class="col-4 w-auto d-inline-flex align-items-center justify-content-center gap-4 py-12 px-3 pointer border rounded"
+            (click)="backToSearch()">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+            <h3 class="text-16 fw-medium mb-0">{{ 'Common.Back' | translate }}</h3>
+          </div>
+        </div>
+        <!-- Title Web view -->
+        <div class="display-web col-md-6 col-sm-6 ps-0">
+          <div class="d-flex align-items-center justify-content-center pointer">
+            <h3 class="text-24 fw-bold mb-0">{{ ('Discovery.' + filterForm.value.category) | translate }}</h3>
+          </div>
+        </div>
+
+        <!-- Title Mobile view -->
+        <div class="display-mobile p-0">
+          <div class="flex-row align-items-center justify-content-between gap-2 " (click)="backToSearch()">
+
+            <div class="d-flex gap-2 justify-content-between align-items-center mb-2">
+             <div class="d-flex flex-row align-items-center">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+              <h3 class="text-20 fw-bold mb-0">{{ ('Discovery.' + filterForm.value.category) | translate }}</h3>
+             </div>
+              <div>
+                <button  [class.remove-classes]="showOverlay" class="bg-secondary-color border-secondary-color fw-500 rounded text-16 py-2 px-2"
+                (click)="routeTo('DepartmentLogin')">{{'Discovery.DepartmentLogin' | translate}}</button>
+              </div>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <button  [class.remove-classes]="showOverlay" class="back-white border-dark fw-500 text-dark rounded me-2 text-16 py-2 px-2 col-6"
+                (click)="routeTo('MSMELogin')">{{'Discovery.MSMELogin' | translate}}</button>
+                <button [class.remove-classes]="showOverlay" class="border-primary bg-primary fw-500 rounded text-16 py-2 px-2 col-6"
+                  (click)="routeTo('Register')">{{'Discovery.Register' | translate}}</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Buttons in web view -->
+        <div class=" display-web col-md-3 col-sm-12 d-flex flex-row justify-content-end pe-0">
+            <button  [class.remove-classes]="showOverlay" class="bg-secondary-color border-secondary-color fw-500  mx-2 rounded text-16 py-2 px-3"
+            (click)="routeTo('DepartmentLogin')">{{'Discovery.DepartmentLogin' | translate}}</button>
+          <button  [class.remove-classes]="showOverlay" class="back-white border-dark fw-500 text-dark mx-2 rounded text-16 py-2 px-3"
+            (click)="routeTo('MSMELogin')">{{'Discovery.MSMELogin' | translate}}</button>
+          <button   [class.remove-classes]="showOverlay" class="border-primary bg-primary fw-500 mx-2 rounded text-16 py-2 px-3"
+            (click)="routeTo('Register')">{{'Discovery.Register' | translate}}</button>
+        </div>
+      </div>
+      <!-- Enterprise List -->
+      <ng-container *ngIf="filterForm.value.category === 'ENTERPRISE'">
+        <div class="row justify-content-between mx-0 my-3">
+
+          <!-- Filters -->
+          <div class="col-md-4 col-lg-3 col-xl-2 filter-height border rounded p-3" [class.overlay-panel]="showOverlay"
+            *ngIf="(showOverlay && isMobile) || (isFilter && !isMobile)">
+            <div class="d-flex flex-column mb-20">
+
+              <div class="d-flex align-items-center justify-content-between">
+                <h3 class="text-28">{{'Discovery.Filters' | translate}}</h3>
+                <mat-icon (click)="showOverlay = false"
+                  class="text-danger d-block d-md-none d-lg-none d-xl-none d-sm-block">close</mat-icon>
+              </div>
+
+              <div class="d-flex gap-3">
+                <button class="btn btn-outline-primary text-16" (click)="clearFilters()">{{ 'Discovery.Clear' |
+                  translate
+                  }}</button>
+                <button class="btn btn-outline-primary text-16" (click)="newSearch();">{{
+                  'Discovery.Apply' | translate
+                  }}</button>
+              </div>
+            </div>
+
+            <div class="d-flex flex-column gap-20 mt-30">
+
+              <div class="col-12 mt-10">
+                <span class="me-3 text-14">{{'Discovery.RegisteredUsers' | translate}}</span> <mat-slide-toggle
+                  name="registeredEnterprises" formControlName="registeredEnterprises"></mat-slide-toggle>
+              </div>
+
+              <div class="float-select mt-2">
+                <ng-select formControlName="organisationType" [virtualScroll]="true" [searchable]="true"
+                  [clearOnBackspace]="false" dropdownPosition="auto"
+                  notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true" [closeOnSelect]="true">
+                  <ng-option *ngFor="let market of organisationTypes" [value]="market">
+                    {{ market }}
+                  </ng-option>
+                </ng-select>
+                <label>{{'Common.EnterpriseCategory' | translate}}</label>
+              </div>
+
+              <div class="float-select mt-2">
+                <ng-select formControlName="district" [virtualScroll]="true" [searchable]="true"
+                  [clearOnBackspace]="false" dropdownPosition="auto"
+                  notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true" [closeOnSelect]="true">
+                  <ng-option *ngFor="let market of districts" [value]="market">
+                    {{ market }}
+                  </ng-option>
+                </ng-select>
+                <label>{{'Discovery.District' | translate}}</label>
+              </div>
+
+              <div class="float-select mt-2">
+                <ng-select formControlName="enterpriseType" [virtualScroll]="true" [searchable]="true"
+                  [clearOnBackspace]="false" dropdownPosition="auto"
+                  notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true" [closeOnSelect]="true">
+                  <ng-option *ngFor="let market of enterpriseTypes" [value]="market">
+                    {{ market }}
+                  </ng-option>
+                </ng-select>
+                <label>{{'Discovery.EnterpriseType' | translate}}</label>
+              </div>
+
+              <div class="float-select mt-2">
+                <ng-select formControlName="majorActivity" [virtualScroll]="true" [searchable]="true"
+                  [clearOnBackspace]="false" dropdownPosition="auto"
+                  notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true" [closeOnSelect]="true">
+                  <ng-option *ngFor="let market of majorActivities" [value]="market">
+                    {{ market }}
+                  </ng-option>
+                </ng-select>
+                <label>{{'Profile.BusinessCategory' | translate}}</label>
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            [ngClass]="isFilter ? 'col-md-8 col-lg-9 col-xl-10 pe-0 p-sm-down-0' : 'col-md-12 col-lg-12 col-xl-12 pe-0 p-sm-down-0'">
+            <!-- Filter Toggle & Search Box -->
+            <div class="row mx-0">
+              <!-- Filter button -->
+              <div (click)="isFilter = !isFilter; isMobile && (showOverlay = !showOverlay)"
+                [class.remove-classes]="showOverlay"
+                class="col-2 col-md-1 border rounded pointer d-flex justify-content-center align-items-center gap-2 back-white">
+                <span class="d-none d-xl-block text-16">
+                  {{ 'Discovery.Filters' | translate }}
+                </span>
+                <mat-icon>filter_list</mat-icon>
+              </div>
+
+              <!-- Search -->
+              <div class="col-10 col-md-11 pe-0">
+                <div [class.remove-classes]="showOverlay" [class.border-none]="showOverlay"
+                  class="d-flex align-items-center mb-25 pr-8 overflow-hidden full-border rounded back-white h-45">
+                  <input type="text" placeholder="Search Here…" formControlName="searchText"
+                    (keydown.enter)="$event.preventDefault();newSearch($event)" [class.remove-classes]="showOverlay"
+                    class="w-100 border-0 p-10 back-white" style="outline:none; box-shadow:none;" />
+
+                  <div [class.border-none]="showOverlay" [class.remove]="showOverlay"
+                    class="d-flex align-items-center full-border rounded pointer back-primary p-6"
+                    (click)="newSearch()">
+                    <mat-icon>search</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- List -->
+
+            <div class="enterprise-wrapper enterprise-list-height mt-10" *ngIf="dataSource.data.length > 0">
+              <ng-container *ngFor="let enterprise of dataSourceCards | async">
+                <ng-container *ngIf="!enterprise.enterpriseId; else detailedView">
+                  <div class="small-card ">
+                    <h5 class="text-16 mb-2">{{ enterprise.enterpriseName }}</h5>
+                    <div class="d-flex">
+                      <mat-icon svgIcon="map-pin"></mat-icon>
+                      <p class="ms-2 mb-2 text-14 h-2-line text-muted text-break text-break-anywhere text-responsive-2-line">
+                        {{enterprise?.flatNo}},{{enterprise?.buildingName}},{{enterprise?.roadStreetLane}},{{enterprise?.villageTown}},
+                        {{enterprise?.cityName}},{{enterprise?.district}}{{ enterprise?.pincode ? (' - '+enterprise?.pincode) : '' }}
+                        {{ enterprise?.state ? (','+enterprise?.state+'.') : ''}}
+                      </p>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-template #detailedView>
+                  <div class="big-card row mx-0 border">
+                    <div class="col-md-2 col-sm-12">
+                      <img class=" logo rounded"
+                        [src]="enterprise?.enterpriseLogo || 'assets/images/no-image-available.png'" alt="logo">
+                    </div>
+
+                    <div class="col-xl-8 col-md-7 col-sm-12 px-4">
+                      <h5 class="text-16 mb-2">{{ enterprise.enterpriseName }}</h5>
+                      <div class="d-flex">
+                        <mat-icon svgIcon="map-pin"></mat-icon>
+                        <p
+                          class="ms-2 mb-2 text-14 h-2-line text-muted text-break text-break-anywhere text-responsive-2-line">
+                          {{enterprise?.flatNo}},{{enterprise?.buildingName}},{{enterprise?.roadStreetLane}},{{enterprise?.villageTown}},
+                          {{enterprise?.cityName}},{{enterprise?.district}}{{ enterprise?.pincode ? (' - '+enterprise?.pincode) : '' }}
+                          {{ enterprise?.state ? (','+enterprise?.state+'.') : ''}}
+                        </p>
+                      </div>
+                      <div class="d-flex">
+                        <button [class.remove]="showOverlay" class=" btn bg-primary d-flex align-items-center border-primary me-2 share-btn gap-2 "
+                          (click)="showWebView(enterprise.webAddress)">
+                          <mat-icon matPrefix class="icon-size d-flex align-items-center me-2" svgIcon="globe-white" ></mat-icon>
+                          <span class="d-flex align-items-center text-white lh-1">{{ 'Discovery.VisitWebview' | translate }}</span>
+                        </button>
+                        <button [class.remove]="showOverlay" class=" btn d-flex align-items-center gap-2 share-btn"
+                          (click)="shareWebView(enterprise.webAddress)">
+                          <mat-icon matPrefix class="icon-size d-flex align-items-center me-2" svgIcon="share-new"></mat-icon>
+                          <span class="d-flex align-items-center text-dark lh-1">{{ 'Discovery.Share' | translate }}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="col-xl-2 col-md-3 col-sm-12">
+                      <div class="back-white full-border rounded p-10" [class.remove-classes]="showOverlay"
+                        [class.border-none]="showOverlay">
+                        <div class="fw-medium text-16 mb-8">{{'Discovery.Explore' | translate}}</div>
+                        <div [class.boder-none]="showOverlay"
+                          class="d-flex mb-2  border-btm flex-row align-items-baseline">
+                          <mat-icon svgIcon="link" class="icon-size"></mat-icon>
+                          <a [href]="enterprise.website" target="_blank"
+                            class="ms-2 mb-2 text-14 text-dark text-decoration-none"> {{'Website' | translate}} </a>
+                        </div>
+                        <div [class.boder-none]="showOverlay"
+                          class="d-flex my-2  align-items-baseline flex-row border-btm">
+                          <mat-icon svgIcon="facebook-new" class="icon-size"></mat-icon>
+                          <a [href]="enterprise.facebook" target="_blank"
+                            class="ms-2 mb-2 text-14 text-dark text-decoration-none"> {{'Facebook' | translate}} </a>
+                        </div>
+                        <div class="d-flex mt-2 align-items-baseline flex-row">
+                          <mat-icon svgIcon="instagram-new" class="icon-size"></mat-icon>
+                          <a [href]="enterprise.instagram" target="_blank"
+                            class="ms-2 mb-2 text-14 text-dark text-decoration-none"> {{'Instagram' | translate}} </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </div>
+
+            <!-- No Results Found -->
+            <div *ngIf="dataSource.data.length == 0 && !isLoading"
+              class="d-flex w-100 h-25 justify-content-center align-items-center">
+              <h2 class="mt-auto">{{'Discovery.NoResultFound' | translate}}</h2>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Product Filters & List -->
+      <ng-container *ngIf="filterForm.value.category == 'PRODUCT'">
+        <div class="row justify-content-between mx-0 my-3">
+          <!-- Filters -->
+          <div class="col-md-4 col-lg-3 col-xl-2 filter-height border rounded p-3" [class.overlay-panel]="showOverlay"
+            *ngIf="(showOverlay && isMobile) || (isFilter && !isMobile)">
+            <div class="d-flex flex-column mb-20">
+              <div class="d-flex align-items-center justify-content-between">
+                <h3 class="text-28">{{'Discovery.Filters' | translate}}</h3>
+                <mat-icon (click)="showOverlay = false"
+                  class="text-danger d-block d-md-none d-lg-none d-xl-none d-sm-block">close</mat-icon>
+              </div>
+              <div class="d-flex gap-3">
+                <button class="btn btn-outline-primary text-16" (click)="clearFilters()">{{ 'Discovery.Clear' |
+                  translate
+                  }}</button>
+                <button class="btn btn-outline-primary text-16" (click)="newSearch()">{{ 'Discovery.Apply' | translate
+                  }}</button>
+              </div>
+            </div>
+            <div class="d-flex flex-column gap-20 mt-30">
+              <div class="float-select mt-2">
+                <ng-select formControlName="productCategory" [virtualScroll]="true" [searchable]="true"
+                  [clearOnBackspace]="false" dropdownPosition="auto"
+                  notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true" [closeOnSelect]="true">
+                  <ng-option *ngFor="let category of productCategories" [value]="category.categoryId">
+                    {{ category.categoryName }}
+                  </ng-option>
+                </ng-select>
+                <label>{{'Discovery.ProductCategories' | translate}}</label>
+              </div>
+
+              <div class="col-12">
+                <span class="me-3 text-14">{{'Discovery.GITags' | translate}}</span> <mat-slide-toggle name="gitags"
+                  formControlName="gitags"></mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+
+          <div
+            [ngClass]="isFilter ? 'col-md-8 col-lg-9 col-xl-10 pe-0 p-sm-down-0' : 'col-md-12 col-lg-12 col-xl-12 pe-0 p-sm-down-0'">
+            <!-- Filter Toggle & Search Box -->
+            <div class="row mx-0">
+
+              <!-- Filter button -->
+              <div (click)="isFilter = !isFilter; isMobile && (showOverlay = !showOverlay)"
+                class="col-2 col-md-1 border rounded pointer d-flex justify-content-center align-items-center gap-2 back-white">
+
+                <span class="d-none d-xl-block text-16">
+                  {{ 'Discovery.Filters' | translate }}
+                </span>
+                <mat-icon>filter_list</mat-icon>
+              </div>
+
+
+              <!-- Search -->
+              <div class="col-10 col-md-11 pe-0">
+                <div [class.remove-classes]="showOverlay" [class.border-none]="showOverlay"
+                  class="d-flex align-items-center mb-25 pr-8 overflow-hidden full-border rounded back-white h-45">
+                  <input type="text" placeholder="Search Here…" formControlName="searchText"
+                    (keydown.enter)="$event.preventDefault();newSearch($event)" [class.remove-classes]="showOverlay"
+                    class="w-100 border-0 p-10 back-white" style="outline:none; box-shadow:none;" />
+
+                  <div [class.border-none]="showOverlay" [class.remove]="showOverlay"
+                    class="d-flex align-items-center full-border rounded pointer back-primary p-6"
+                    (click)="newSearch()">
+                    <mat-icon>search</mat-icon>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- List -->
+            <div class="row product-list-height" *ngIf="dataSource.data.length > 0">
+              <div class="col-lg-3 col-xxl-2 col-md-6 col-sm-12 my-10" *ngFor="let product of dataSourceCards | async"
+                (click)="showProductDetails(product.productId)">
+                <div [class.remove-classes]="showOverlay" [class.border-none]="showOverlay"
+                  class="profile-card back-white full-border rounded">
+                  <img [src]="product.productImage || 'assets/images/no-image-available.png'"
+                    class="img-fluid w-100 mb-2" />
+                  <h6 class="fw-normal mb-2 text-16 mt-6 text-responsive px-2">{{ product.productName }}</h6>
+                  <h6 class="fw-normal mb-2 text-12 mt-6 text-responsive px-2">{{ product.categoryName }}</h6>
+                  <p class="fw-light mb-2 text-12 h-3-line text-responsive-3-line px-2">{{ product.productDescription }}
+                  </p>
+                  <div class="d-flex justify-content-end px-2">
+                    <p class="text-12 fw-semibold">{{product.productQuantity}} {{product.productUnit}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- No Results Found -->
+            <div *ngIf="dataSource.data.length == 0 && !isLoading"
+              class="d-flex w-100 h-25 justify-content-center align-items-center">
+              <h2 class="mt-auto">{{'Discovery.NoResultFound' | translate}}</h2>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Pagination -->
+    <div [hidden]="selectedPage != 'LIST' || dataSource.data.length == 0" class="custom-pagination-container position-absolute bottom-10 paginator-right">
+      <mat-paginator class="d-none d-md-flex" [length]="totalLength" [pageIndex]="defaultPageIndex" [pageSize]="defaultPageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+      <button mat-flat-button [disabled]="defaultPageIndex === 0" (click)="jumpToPage((defaultPageIndex).toString())"
+        class="bg-primary text-14 rounded border-0 d-flex align-items-center p-2">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button mat-flat-button *ngIf="defaultPageIndex > 0" (click)="jumpToPage((defaultPageIndex).toString())"
+        class="border page-number bg-secondary-color text-white rounded text-16 d-flex justify-content-center align-items-center">
+        {{ defaultPageIndex }}
+      </button>
+
+      <div class="custom-pagination-input rounded">
+        <input type="number" [formControl]="pageControl" class="bg-white text-center border-0" [value]="defaultPageIndex + 1" #pageInput
+          (keydown.enter)="jumpToPage(pageInput.value);$event.preventDefault();$event.stopPropagation();" />
+      </div>
+
+      <button mat-flat-button *ngIf="defaultPageIndex + 2 <= totalPages"
+        (click)="jumpToPage((defaultPageIndex + 2).toString())"
+        class="border page-number bg-secondary-color text-white rounded text-16 d-flex justify-content-center align-items-center">
+        {{ defaultPageIndex + 2 }}
+      </button>
+
+      <span class="mx-1 font-bold">...</span>
+
+      <button mat-flat-button (click)="jumpToPage(totalPages.toString())"
+        class="border page-number bg-secondary-color text-white rounded text-16 d-flex justify-content-center align-items-center">
+        {{ totalPages }}
+      </button>
+
+      <button mat-flat-button [disabled]="defaultPageIndex >= totalPages - 1"
+        (click)="jumpToPage((defaultPageIndex + 2).toString())"
+        class="bg-primary text-14 rounded border-0 d-flex align-items-center p-2">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</form>

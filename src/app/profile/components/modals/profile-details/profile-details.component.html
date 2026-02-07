@@ -1,0 +1,202 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+    <div class="dialog-header">
+        <span>{{'Profile.ProfileDetails' | translate}}</span>
+        <mat-icon (click)="onNoClick()">close</mat-icon>
+    </div>
+    <div class="dialog-body">
+        <form [formGroup]="profileForm">
+            <!-- Web Address -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Profile.WebAddress' | translate}}</mat-label>
+                    <input matInput type="text" name="webAddress" formControlName="webAddress" />
+                </mat-form-field>
+                <div *ngIf="isSavedProfile && profileForm.invalid" class="error-div">
+                    <div *ngIf="profileForm.controls['webAddress'].errors?.['required']">
+                        {{'Profile.WebAddress' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                    <div *ngIf="profileForm.controls['webAddress'].errors?.['maxlength']">
+                        {{'Profile.WebAddress' | translate}} {{'Common.MaxLengthError' | translate}}
+                        {{ profileForm.controls['webAddress'].errors?.['maxlength']?.requiredLength }}
+                    </div>
+                    <div *ngIf="profileForm.controls['webAddress'].errors?.['pattern']">
+                        {{'Common.LowercaseLettersNumbersError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cover Image -->
+            <div class="col-md-12">
+                <div class="col-md-12">
+                    <label class="mb-0 text-12">{{'Profile.CoverImage' | translate}}*</label>
+                </div>
+                <div class="col-md-12 mb-10">
+                    <div (dragover)="handleDragOver($event)" (drop)="handleDrop('coverImage', $event)">
+                        <div class="border rounded py-0 mb-0" style="height: 135px;" *ngIf="profileForm.value.coverImage">
+                            <div class="position-relative">
+                                <span
+                                    class="position-absolute pointer top-10 right-10 mr-2 text-lg text-warning"
+                                    (click)="removeFile('coverImage')">
+                                    <mat-icon class="pb-2 text-danger">close</mat-icon>
+                                </span>
+                                <img class="image-display rounded" style="height: 130px;" [src]="profileForm.value.coverImage" />
+                            </div>
+                        </div>
+
+                        <div *ngIf="profileForm.value.coverImage == null">
+                            <div class="border rounded py-0 mb-2" style="height: 135px;" (click)="fileInput.click()">
+                                <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                                    <mat-icon class="mt-2">add_a_photo</mat-icon>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <mat-icon class="mr-2">upload</mat-icon>
+                                        <label class="text-16">{{ 'Common.DropFilesToUpload' | translate }}</label>
+                                    </div>
+                                    <input #fileInput class="custom-file-input d-none" type="file"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        (change)="handleFileChange('coverImage', $event)" />
+                                        <div class="text-danger" *ngIf="fileUploadError['coverImage']">
+                                            <div *ngIf="fileUploadError['coverImage']?.fileLimit">
+                                                {{ 'Common.YouCannotUploadMoreFiles' | translate }}
+                                            </div>
+                                            <div *ngIf="fileUploadError['coverImage']?.limitReached">
+                                                {{ 'Common.FileSizeExceedsTheMaximumLimitOf5MB' | translate }}
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="isSavedProfile && profileForm.invalid" class="error-div">
+                    <div *ngIf="profileForm.controls['coverImage'].errors?.['required']">
+                        {{'Profile.CoverImage' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enterprise Logo -->
+            <div class="col-md-12 mt-10">
+                <div class="col-md-12">
+                    <label class="mb-0 text-12">{{'Profile.EnterpriseLogo' | translate}}*</label>
+                </div>
+                <div class="col-md-12 mb-10">
+                    <div (dragover)="handleDragOver($event)" (drop)="handleDrop('enterpriseLogo', $event)">
+                        <div class="border rounded py-0 mb-0" style="height: 135px;" *ngIf="profileForm.value.enterpriseLogo">
+                            <div class="d-flex justify-content-center column uploded-img pl-0 mb-0">
+                                <div class="position-relative">
+                                    <span
+                                        class="position-absolute pointer top-10 right-10 mr-2 text-lg text-warning"
+                                        (click)="removeFile('enterpriseLogo')">
+                                        <mat-icon class="pb-2 text-danger">close</mat-icon>
+                                    </span>
+                                    <img class="image-display rounded" style="height: 130px;" [src]="profileForm.value.enterpriseLogo" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="profileForm.value.enterpriseLogo == null">
+                            <div class="border rounded py-0 mb-2" style="height: 135px;" (click)="fileInput.click()">
+                                <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                                    <mat-icon class="mt-2">add_a_photo</mat-icon>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <mat-icon class="mr-2">upload</mat-icon>
+                                        <label class="text-16">{{ 'Common.DropFilesToUpload' | translate }}</label>
+                                    </div>
+                                    <input #fileInput class="custom-file-input d-none" type="file"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        (change)="handleFileChange('enterpriseLogo', $event)" />
+                                    <div class="text-danger" *ngIf="fileUploadError['enterpriseLogo']">
+                                        <div *ngIf="fileUploadError['enterpriseLogo']?.fileLimit">
+                                            {{ 'Common.YouCannotUploadMoreFiles' | translate }}
+                                        </div>
+                                        <div *ngIf="fileUploadError['enterpriseLogo']?.limitReached">
+                                            {{ 'Common.FileSizeExceedsTheMaximumLimitOf5MB' | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="isSavedProfile && profileForm.invalid" class="error-div">
+                    <div *ngIf="profileForm.controls['enterpriseLogo'].errors?.['required']">
+                        {{'Profile.EnterpriseLogo' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="col-md-12">
+                <div class="mb-2 col-md-12 d-flex align-items-center justify-content-between">
+                    <label class="mb-0 text-12">{{'Profile.SocialLinks' | translate}}</label>
+                    <button type="button" class="btn btn-outline-primary d-flex align-items-center py-2" (click)="addNewSocial()"
+                       *ngIf="getSocialRowArray(profileForm).length < socialTypes.length">
+                        <mat-icon>add</mat-icon>
+                        <span class="pl-2 pt-1">{{'Common.Add' | translate}}</span>
+                    </button>
+                </div>
+                <div formArrayName="socials" class="d-flex flex-column row-gap-16 border rounded p-20 mb-10">
+                    <div class="row justify-content-center row-gap-10" [formGroupName]="i"
+                        *ngFor="let row of getSocialRowArray(profileForm); let i = index">
+
+                        <div class="col-md-4">
+                            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                                <mat-label class="label-text">{{'Profile.SocialUrlType' | translate}}</mat-label>
+                                <mat-select name="urlType" formControlName="urlType" (click)="socialMessage = ''">
+                                    <mat-option *ngFor="let social of socialTypes" [value]="social.siteName">
+                                        <img [src]="social.siteImagePath" alt="">{{ social.siteName }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-md-7 mt-sm-down-2">
+                            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                                <mat-label class="label-text">{{'Profile.SocialUrl' | translate}}</mat-label>
+                                <input matInput type="text" name="url" formControlName="url" />
+                            </mat-form-field>
+                            <div class="error-div">
+                                <div *ngIf="row.get('url')?.hasError('pattern') && row.get('url')?.invalid">
+                                    {{'Profile.InvalidURL' | translate}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" *ngIf="getSocialRowArray(profileForm)?.length > 1"  (click)="deleteSocialRow(i)" class="d-block d-sm-block d-md-none d-lg-none d-xl-none d-xxl-none bg-danger border-danger proceed w-fit  h-fit py-2 px-3">{{'Common.Delete' | translate}}</button>
+
+
+                        <div *ngIf="getSocialRowArray(profileForm)?.length > 1"
+                            class="col-md-1 d-flex d-none d-sm-none d-md-block d-lg-block d-xl-block d-xxl-block align-items-center pointer text-warning mt-1"
+                            (click)="deleteSocialRow(i)">
+                            <mat-icon class="text-danger">delete</mat-icon>
+                        </div>
+                    </div>
+
+                    <div *ngIf="socialMessage != '' " class="error-div">{{socialMessage | translate}}</div>
+                </div>
+            </div>
+
+           <div class="row pb-20 row-gap-16">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Admin.EmailId' | translate}}</mat-label>
+                    <input matInput type="text" name="webAddress" formControlName="emailId" readonly />
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label class="label-text">{{'Admin.MobileNumber' | translate}}</mat-label>
+                    <input matInput type="text" name="webAddress" formControlName="mobileNumber" readonly />
+                </mat-form-field>
+            </div>
+           </div>
+        </form>
+    </div>
+    <div class="dialog-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="saveProfileDetails()">{{'Common.Submit' | translate}}</button>
+    </div>
+</div>

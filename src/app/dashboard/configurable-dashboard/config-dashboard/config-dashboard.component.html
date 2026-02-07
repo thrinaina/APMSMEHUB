@@ -1,0 +1,72 @@
+<div cdkDropListGroup class="dashboard-container" [ngClass]="{ 'all-scroll': isEditMode }">
+
+  <!-- Dashboard Header -->
+  <div class="d-flex align-items-center justify-content-end w-100 position-relative">
+    <div class="flex-1"></div>
+
+    <div class="gap-3 d-flex align-items-center justify-content-between w-100">
+      <div class="mr-auto flex-row align-items-center justify-content-end w-100" *ngIf="tokenStorageService.getUser().userType == 'ADMIN'">
+        <!-- <h3 class="mb-0">{{ 'Dashboard' | translate }}</h3> -->
+
+        <div class="d-flex align-items-center justify-content-end">
+          <div class="arrow-animation d-flex align-items-center" *ngIf="!isEditMode">
+            <span class="text-16">{{'Dashboard.ClickHere' | translate}}</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+
+          <mat-icon (click)="toggleMode()"
+            class="settings-button pointer mx-1 rounded d-flex align-items-center p-3 w-auto"
+            [ngClass]="isEditMode ? 'bg-danger text-white' : ''" [matTooltip]="(isEditMode ? 'Dashboard.close' : 'Dashboard.settings') | translate"
+            matTooltipPosition="left">
+            {{ isEditMode ? 'close' : 'settings' | translate}}
+          </mat-icon>
+
+        </div>
+      </div>
+
+      <button mat-stroked-button class="apply-button mx-2 text-14" *ngIf="hasUnsavedChanges" (click)="applyChanges()">
+        {{ 'Apply' | translate }}
+      </button>
+
+      <ng-container *ngIf="isEditMode && store.settings.state()">
+        <app-widget-panel cdkDropList cdkDropListOrientation="vertical"
+          (cdkDropListDropped)="widgetDroppedInPanel($event)" class="mat-elevation-z8 z-999" cdkDrag>
+        </app-widget-panel>
+      </ng-container>
+
+      <div *ngIf="store.settings.mode() === 'edit'" class="btn-widget pointer d-flex align-items-center gap-2 text-16"
+        mat-flat-button (click)="store.setState(!store.settings.state())">
+        <mat-icon *ngIf="store.settings.state()">arrow_drop_down</mat-icon>
+        <mat-icon *ngIf="!store.settings.state()">add_circle</mat-icon>
+        {{'Dashboard.Widgets' | translate}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div #dashboard class="dashboard-grid">
+    <ng-content *ngIf="store.addedWidgets().length > 0">
+      <ng-content *ngFor="let widget of store.addedWidgets(); trackBy: trackByWidgetId">
+        <app-widget [data]="widget" cdkDropList (cdkDropListDropped)="drop($event)" [cdkDropListData]="widget.id"
+          [cdkDropListDisabled]="!isEditMode" [style.view-transition-name]="'widget-' + widget.id"
+          class="[view-transition-class:widget]">
+        </app-widget>
+      </ng-content>
+    </ng-content>
+
+    <div cdkDropList (cdkDropListDropped)="drop($event)" [cdkDropListDisabled]="!isEditMode">
+      <div></div>
+    </div>
+  </div>
+
+  <ng-content *ngIf="store.addedWidgets().length == 0">
+    <div class="w-75 h-100 px-3 py-6 bg-white d-flex align-items-center m-auto justify-content-center flex-column">
+      <div class="text-dark text-24 text-center">{{'Dashboard.DashboardContent1' | translate}}</div>
+      <div class="text-dark text-24 text-center">{{'Dashboard.ClickOn' | translate}}<mat-icon>settings</mat-icon>
+        {{'Dashboard.DashboardContent2' | translate}}</div>
+    </div>
+  </ng-content>
+</div>
+
+<!-- Loader -->
+<app-loader *ngIf="isLoading"></app-loader>

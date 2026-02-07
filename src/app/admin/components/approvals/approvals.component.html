@@ -1,0 +1,341 @@
+<!-- Loader -->
+<app-loader *ngIf="isLoading"></app-loader>
+
+<span class="text-26 fw-semibold d-flex px-3 pt-3 bg-white">{{'Admin.Approvals' | translate}}</span>
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" class="px-3 py-2"
+  (selectedTabChange)="onTabChange($event.index)">
+
+
+  <!--Category Approvals Tab -->
+  <mat-tab label="{{'Admin.Profile' | translate}}">
+
+    <div class="listing-container p-0">
+      <!-- Title & Buttons -->
+      <div class="d-flex justify-content-between align-items-center my-3">
+
+        <div class="d-flex align-items-center input-group-alternative search-box">
+          <mat-icon class="search-icon" svgIcon="search"></mat-icon>
+          <input class="form-control search-res ml-auto" placeholder="{{ 'Common.SearchHere' | translate }}" type="text"
+            (keyup)="searchFilter($event)" />
+        </div>
+
+        <button mat-stroked-button class="border-primary text-primary rounded text-14 px-3"
+          (click)="exportSelected('Profile')">
+          <mat-icon class="export lh-0" svgIcon="download-icon"></mat-icon>
+          {{'Common.Export' | translate}}
+        </button>
+      </div>
+
+
+
+      <!-- Table -->
+      <div class="table-content">
+        <div class="table-container d-none d-sm-block">
+          <table id="dataTable" matSort mat-table [dataSource]="dataSource">
+            <tr mat-header-row *matHeaderRowDef="profileDisplayedColumns"></tr>
+            <tr class="pointer" mat-row *matRowDef="let row; columns: profileDisplayedColumns;"
+              (click)="profileRequestDetails(row)" [class.selected-row]="selectedRow === row">
+            </tr>
+
+            <ng-container matColumnDef="udyamRegistrationNo">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-auto">{{'Admin.UdyamRegistrationNumber' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="col-auto"> {{ Request.udyamRegistrationNo }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="enterpriseName">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>{{'Admin.EnterpriseName' | translate}} </th>
+              <td mat-cell *matCellDef="let Request"> {{ Request.enterpriseName }} </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="mobileNumber">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="text-nowrap">{{'Admin.MobileNumber' |
+                translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request"> {{ Request.mobileNumber }} </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="emailId">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef> {{'Admin.EmailId' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request"> {{ Request.emailId }}
+              </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="enterpriseStatusDate">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="text-nowrap"> {{'Admin.StatusDate'
+                |
+                translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="text-nowrap"> {{ Request.enterpriseStatusDate | date:
+                'mediumDate'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="enterpriseStatus">
+              <th mat-header-cell *matHeaderCellDef> {{'Admin.Status' | translate}} </th>
+              <td mat-cell *matCellDef="let Request">
+                <div *ngIf="Request.enterpriseStatus == 'PENDING'" class="pending-chip">
+                  {{ Request.enterpriseStatus }}
+                </div>
+                <div *ngIf="Request.enterpriseStatus == 'REJECTED'" class="rejected-chip">
+                  {{ Request.enterpriseStatus }}
+                </div>
+                <div *ngIf="Request.enterpriseStatus == 'ACCEPTED'" class="accepet-chip">
+                  {{ Request.enterpriseStatus }}
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="enterpriseStatusRemarks">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-3"> {{'Admin.StatusRemarks' | translate}} </th>
+              <td mat-cell *matCellDef="let Request" class="col-3"> {{ Request.enterpriseStatusRemarks }} </td>
+            </ng-container>
+          </table>
+          <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+            class="d-flex w-100 h-50 justify-content-center align-items-center">
+            <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+          </div>
+        </div>
+
+        <div class="d-block d-sm-none table-container border-0" style="overflow-x: hidden;">
+          <div class="row g-2">
+            <div class="col-12" *ngFor="let Request of dataSourceCards | async">
+              <div class="card shadow-none border rounded-sm">
+                <div class="card-body flex-column">
+                  <div class="mb-1 d-flex  flex-column">
+                    <div class="d-flex align-items-start justify-content-between">
+                      <span class="text-12 fw-semibold">{{ 'Admin.UdyamRegistrationNumber' | translate }}</span>
+
+                      <div class="d-flex align-items-center">
+
+                        <div *ngIf="Request.enterpriseStatus == 'PENDING'" class="pending-chip">
+                          {{ Request.enterpriseStatus }}
+                        </div>
+                        <div *ngIf="Request.enterpriseStatus == 'REJECTED'" class="rejected-chip">
+                          {{ Request.enterpriseStatus }}
+                        </div>
+                        <div *ngIf="Request.enterpriseStatus == 'ACCEPTED'" class="accepet-chip">
+                          {{ Request.enterpriseStatus }}
+                        </div>
+
+                        <div class="actions ml-3" (click)="profileRequestDetails(Request)">
+                          <mat-icon>edit</mat-icon>
+                        </div>
+
+                      </div>
+                    </div>
+                    <span class="text-12 fw-medium mx-2" style="margin-top: -5px;">{{ Request.udyamRegistrationNo }}</span>
+                  </div>
+                  <p class="mb-1 d-flex  flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.EnterpriseName' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.enterpriseName }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.MobileNumber' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.mobileNumber }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.EmailId' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.emailId }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.StatusDate' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.enterpriseStatusDate | date: 'mediumDate'}}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.StatusRemarks' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.enterpriseStatusRemarks}}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+            class="d-flex w-100 h-50 justify-content-center align-items-center">
+            <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+          </div>
+        </div>
+        <div [hidden]="!dataSource || dataSource.filteredData.length == 0">
+          <mat-paginator [pageSize]="defaultPageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+
+  </mat-tab>
+  <!--Profile Tab -->
+  <mat-tab label="{{'Admin.RequestCategory' | translate}}">
+    <div class="listing-container p-0">
+      <!-- Title & Buttons -->
+      <div class="d-flex justify-content-between align-items-center my-3">
+        <div class="d-flex align-items-center input-group-alternative search-box">
+          <mat-icon class="search-icon" svgIcon="search"></mat-icon>
+          <input class="form-control search-res ml-auto" placeholder="{{ 'Common.SearchHere' | translate }}" type="text"
+            (keyup)="searchFilter($event)" [(ngModel)]="searchInput" />
+        </div>
+        <button mat-stroked-button class="border-primary rounded text-primary text-14 px-3"
+          (click)="exportSelected('Request Category')">
+          <mat-icon class="export lh-0" svgIcon="download-icon"></mat-icon>
+          {{'Common.Export' | translate}}
+        </button>
+      </div>
+
+
+
+      <!-- Table -->
+      <div class="table-content">
+        <div class="table-container d-none d-sm-block">
+          <table id="dataTable" matSort mat-table [dataSource]="dataSource">
+            <tr mat-header-row *matHeaderRowDef="approveDisplayedColumns"></tr>
+            <tr class="pointer" mat-row *matRowDef="let row; columns: approveDisplayedColumns;"
+              (click)="openRequestDetails(row)" [class.selected-row]="selectedRow === row">
+            </tr>
+
+            <ng-container matColumnDef="sno">
+              <th mat-header-cell *matHeaderCellDef> {{'Common.SNo' | translate}} </th>
+              <td mat-cell *matCellDef="let row; let i = index">
+                {{ i + 1 }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestDate">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="text-nowrap">{{'Admin.RequestedDate' |
+                translate}} </th>
+              <td mat-cell *matCellDef="let Request"> {{ Request.requestDate | date: 'mediumDate' }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="userName">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>{{'Admin.RequestedBy' | translate}} </th>
+              <td mat-cell *matCellDef="let Request"> {{ Request.userName }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestedName">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-2">{{'Admin.CategoryName' |
+                translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="col-2"> {{ Request.requestedName }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestDescription">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-3"> {{'Admin.Purposeofuse' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="col-3">
+                <div class="text-responsive-3-line">
+                  {{ Request.requestDescription }}
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestStatusDate">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="text-nowrap"> {{'Admin.StatusDate' |
+                translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="text-nowrap"> {{ Request.requestStatusDate | date:
+                'mediumDate'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestStatus">
+              <th mat-header-cell *matHeaderCellDef> {{'Admin.Status' | translate}} </th>
+              <td mat-cell *matCellDef="let Request">
+                <div *ngIf="Request.requestStatus == 'PENDING'" class="pending-chip">
+                  {{ Request.requestStatus }}
+                </div>
+                <div *ngIf="Request.requestStatus == 'REJECTED'" class="rejected-chip">
+                  {{ Request.requestStatus }}
+                </div>
+                <div *ngIf="Request.requestStatus == 'ACCEPTED'" class="accepet-chip">
+                  {{ Request.requestStatus }}
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="requestStatusRemarks">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-4"> {{'Admin.StatusRemarks' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let Request" class="col-4">
+                <div class="text-responsive-3-line">
+                  {{ Request.requestStatusRemarks }}
+                </div>
+              </td>
+            </ng-container>
+
+          </table>
+          <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+            class="d-flex w-100 h-50 justify-content-center align-items-center">
+            <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+          </div>
+        </div>
+
+        <div class="d-block d-sm-none table-container border-0" style="overflow-x: hidden;">
+          <div class="row g-2">
+            <div class="col-12" *ngFor="let Request of dataSourceCards | async">
+              <div class="card shadow-none border rounded-sm">
+                <div class="card-body flex-column">
+                  <div class="mb-1 d-flex  flex-column">
+                    <div class="d-flex align-items-start justify-content-between">
+                      <span class="text-12 fw-semibold">{{ 'Admin.RequestedDate' | translate }}</span>
+
+                      <div class="d-flex align-items-center">
+
+                        <div *ngIf="Request.requestStatus == 'PENDING'" class="pending-chip">
+                          {{ Request.requestStatus }}
+                        </div>
+                        <div *ngIf="Request.requestStatus == 'REJECTED'" class="rejected-chip">
+                          {{ Request.requestStatus }}
+                        </div>
+                        <div *ngIf="Request.requestStatus == 'ACCEPTED'" class="accepet-chip">
+                          {{ Request.requestStatus }}
+                        </div>
+
+                        <div class="actions ml-3" (click)="openRequestDetails(Request)">
+                          <mat-icon>edit</mat-icon>
+                        </div>
+
+                      </div>
+                    </div>
+                    <span class="text-12 fw-medium mx-2" style="margin-top: -5px;">{{ Request.requestDate | date:
+                      'mediumDate' }}</span>
+                  </div>
+                  <p class="mb-1 d-flex  flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.RequestedBy' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.userName }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.CategoryName' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.requestedName }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.Purposeofuse' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.requestDescription }}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.StatusDate' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.requestStatusDate | date: 'mediumDate'}}</span>
+                  </p>
+                  <p class="mb-1 d-flex flex-column">
+                    <span class="text-12 fw-semibold">{{ 'Admin.StatusRemarks' | translate }}</span>
+                    <span class="text-12 fw-medium mx-2">{{ Request.requestStatusRemarks}}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+            class="d-flex w-100 h-50 justify-content-center align-items-center">
+            <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+          </div>
+        </div>
+        <div [hidden]="!dataSource || dataSource.filteredData.length == 0">
+          <mat-paginator [pageSize]="defaultPageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+
+
+</mat-tab-group>

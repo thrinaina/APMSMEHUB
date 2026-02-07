@@ -1,0 +1,89 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+
+    <div class="dialog-header">
+        <span>{{ data.title }}</span>
+        <mat-icon class="pointer" (click)="onNoClick()">close</mat-icon>
+    </div>
+
+    <div class="dialog-body py-20 justify-content-center">
+        <div class="row row-gap-20 align-items-center w-100">
+
+            <div class="col-12 col-md-5">
+                <div class="carousel-container">
+                    <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true"
+                        [noPause]="true" [(activeSlide)]="activeIndex"
+                        (activeSlideChange)="onActiveSlideChange($event)">
+                        <slide *ngFor="let img of safeImages">
+                            <div class="object-slide">
+                                <img [src]="img" class="w-100 rounded border product-image object-fit-contain">
+                            </div>
+                        </slide>
+                    </carousel>
+                </div>
+                <div class="d-flex justify-content-center gap-4 mt-3">
+                    <img *ngFor="let img of safeImages | slice:thumbStartIndex:(thumbStartIndex + thumbWindowSize); let i = index"
+                        [src]="img" class="img-thumbnails border rounded-2 flex-shrink-0 pointer" alt="Thumbnail"
+                        [class.opacity-50]="activeIndex !== (thumbStartIndex + i)"
+                        [class.opacity-100]="activeIndex === (thumbStartIndex + i)"
+                        (click)="onActiveSlideChange(thumbStartIndex + i)">
+                </div>
+            </div>
+
+            <div class="col-12 col-md-7 d-flex flex-column justify-content-center products-card">
+                <span class="fw-semibold mb-10 product-name">
+                    {{ productData.productName }}
+                </span>
+
+                <span class="fw-semibold mb-10 product-price text-secondary-color">
+                    {{ productData.productPrice | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </span>
+
+
+                <div class="d-flex flex-column mb-10">
+                    <div class="fw-semibold product-desc">
+                        {{ 'Common.ProductCategory' | translate }}
+                    </div>
+                    <p class="my-auto mb-0 text-responsive-3-line fw-medium">
+                        {{ productData.categoryName }}
+                    </p>
+                </div>
+
+                <div class="mb-2">
+                    <div class="fw-semibold product-desc">
+                        {{ 'Common.Description' | translate }}
+                    </div>
+                    <p #description class="fw-medium" [ngClass]="{ 'text-responsive-3-line': !contentExpanded }">
+                        {{ productData.productDescription }}
+                    </p>
+                    <p
+                        *ngIf="contentExpanded  || (description && description.scrollHeight > description.clientHeight)"
+                        class="text-16 text-primary cursor-pointer m-0" style="text-decoration: underline;" (click)="contentExpanded = !contentExpanded">
+                        {{contentExpanded ? ('Common.ViewLess' | translate) : ('Common.ViewMore' | translate)}}
+                    </p>
+                </div>
+
+                <div class="d-flex align-items-center col-gap-16">
+                    <div class="mb-3 flex-column d-flex">
+                        <span class="fw-semibold product-desc">
+                            {{ 'Common.AvailableQuantity' | translate }}
+                        </span>
+                        <div class="rounded-2 d-inline-flex align-items-center w-fit gap-3 text-secondary-color">
+                            <span class="fw-semibold text-18">
+                                {{ productData.productQuantity }} {{ productData.productUnit }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <button class="btn bg-secondary-color text-16 text-white w-fit fw-semibold d-flex justify-content-center align-items-center gap-2"
+                        (click)="openEnquiry()" *ngIf="data?.type !== 'profile-entry'">
+                        {{ 'Common.EnquiryNow' | translate }}
+                        <mat-icon>shopping_cart</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

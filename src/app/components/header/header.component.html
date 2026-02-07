@@ -1,0 +1,107 @@
+<div class="display-web row m-0 py-10 align-items-center justify-content-between sticky-top header-bg">
+  <div class=" col-sm-4 col-xl-4 col-md-4 d-flex align-items-center justify-content-start gap-2">
+    <img src="assets/images/apmsme-logo.png" class="icon-sm" />
+    <span class="fw-semibold fs-5 me-2">{{'Common.Hub' | translate}}</span>
+    <div class="d-flex align-items-center">
+      <img src="assets/images/main-1.png" class="icon-sm border rounded" />
+      <div class="ms-2 flex-column header-title-set d-lg-block d-none">
+        <div class="fw-bold main-name">{{'Auth.Main1Name' | translate}}</div>
+        <span class="text-nowrap">{{'Auth.Main1About' | translate}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-4 col-xl-4 col-md-4 d-flex flex-wrap align-items-center justify-content-center gap-3">
+    <div class="d-flex color-set cursor-pointer">
+      <button type="button" class="color-box color-white cursor-pointer" (click)="setDefaultColors()"></button>
+      <button type="button" class="color-box color-yellow cursor-pointer"
+        (click)="changeBackground('lightyellow')"></button>
+      <button type="button" class="color-box color-blue cursor-pointer"
+        (click)="changeBackground('lightblue')"></button>
+      <button type="button" class="color-box color-orange cursor-pointer"
+        (click)="changeBackground('lightcoral')"></button>
+    </div>
+
+    <div class="d-flex gap-3 fw-bold">
+      <span class="cursor-pointer fs-6" (click)="increaseFontSize()">A+</span>
+      <span class="cursor-pointer fs-6" (click)="resetFontSize()">A</span>
+      <span class="cursor-pointer fs-6" (click)="decreaseFontSize()">A-</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+      <mat-icon svgIcon="dark-theme" (click)="toggleMode()" class="cursor-pointer h-auto"></mat-icon>
+      <mat-icon svgIcon="saturation" (click)="toggleSaturation()" class="cursor-pointer h-auto"></mat-icon>
+    </div>
+  </div>
+
+  <div class=" col-sm-4 col-xl-4 col-md-4 d-flex align-items-center justify-content-end gap-2">
+    <div class="d-flex align-items-center justify-content-end">
+      <div class="me-2 flex-column header-title-set text-end col-md-9 col-xl-11 d-lg-block d-none">
+        <div class="fw-bold main-name">{{'Auth.Main2Name' | translate}}</div>
+        <span class="text-responsive-2-line">{{'Auth.Main2About' | translate}}</span>
+      </div>
+      <img src="assets/images/main-2.png" class="icon-sm border rounded" />
+    </div>
+    <mat-button-toggle-group class="rounded col-md-auto col-sm-auto col-xl-auto lh-sm ms-2 cursor-pointer" [value]="tokenStorageService.getAppLanguage()"
+      (change)="onLanguageChange($event.value)" hideSingleSelectionIndicator="true">
+      <mat-button-toggle value="en">{{'Common.English' | translate}}</mat-button-toggle>
+      <mat-button-toggle value="te">{{'Common.Telugu' | translate}}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</div>
+
+<div class="display-mobile sticky-top header-bg">
+
+  <div class="d-flex flex-row align-items-center justify-content-center gap-2">
+    <div class="d-flex align-items-center my-auto ms-2">
+      <img src="assets/images/apmsme-logo.png" class="icon-sm" />
+      <span class="fw-semibold fs-5 me-2">{{'Common.Hub' | translate}}</span>
+    </div>
+
+     <div class="d-flex align-items-center gap-1 mt-2">
+      <img src="assets/images/main-1.png" class="icon-sm  border rounded" />
+      <img src="assets/images/main-2.png" class="icon-sm  border rounded" />
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center ms-auto me-2 gap-2">
+      <mat-button-toggle-group class="rounded lh-sm ms-2 cursor-pointer" [value]="tokenStorageService.getAppLanguage()"
+        (change)="onLanguageChange($event.value)">
+        <mat-button-toggle value="en">{{'Common.English' | translate}}</mat-button-toggle>
+        <mat-button-toggle value="te">{{'Common.Telugu' | translate}}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  <div class="d-flex  flex-row m-0 py-3 px-3 align-items-center justify-content-center">
+
+    <button *ngIf="tokenStorageService.isLoggedIn()"
+      class="mr-auto bg-primary border-primary rounded p-2 d-flex align-items-center justify-content-center">
+      <mat-icon (click)="menuToggle()">menu</mat-icon>
+    </button>
+
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
+      <div class="d-flex color-set cursor-pointer">
+        <button type="button" class="color-box color-white cursor-pointer" (click)="setDefaultColors()"></button>
+        <button type="button" class="color-box color-yellow cursor-pointer"
+          (click)="changeBackground('lightyellow')"></button>
+        <button type="button" class="color-box color-blue cursor-pointer"
+          (click)="changeBackground('lightblue')"></button>
+        <button type="button" class="color-box color-orange cursor-pointer"
+          (click)="changeBackground('lightcoral')"></button>
+      </div>
+
+      <div class="d-flex gap-3 fw-bold">
+        <span class="cursor-pointer fs-6" (click)="increaseFontSize()">A+</span>
+        <span class="cursor-pointer fs-6" (click)="resetFontSize()">A</span>
+        <span class="cursor-pointer fs-6" (click)="decreaseFontSize()">A-</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-1">
+        <mat-icon svgIcon="dark-theme" (click)="toggleMode()" class="cursor-pointer h-auto"></mat-icon>
+        <mat-icon svgIcon="saturation" (click)="toggleSaturation()" class="cursor-pointer h-auto"></mat-icon>
+      </div>
+    </div>
+
+
+  </div>
+</div>

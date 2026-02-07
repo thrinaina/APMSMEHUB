@@ -1,0 +1,212 @@
+@each $key, $value in $sizes {
+  /* Margin */
+  .m-#{$key}   { margin: $value !important; }
+  .mt-#{$key}  { margin-top: $value !important; }
+  .mr-#{$key}  { margin-right: $value !important; }
+  .mb-#{$key}  { margin-bottom: $value !important; }
+  .ml-#{$key}  { margin-left: $value !important; }
+  .mx-#{$key}  {
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  .my-#{$key}  {
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
+
+  /* Padding */
+  .p-#{$key}   { padding: $value !important; }
+  .pt-#{$key}  { padding-top: $value !important; }
+  .pr-#{$key}  { padding-right: $value !important; }
+  .pb-#{$key}  { padding-bottom: $value !important; }
+  .pl-#{$key}  { padding-left: $value !important; }
+  .px-#{$key}  {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .py-#{$key}  {
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
+
+  /* Text Sizes */
+  .text-#{$key} {
+    font-size: var(--size-#{$key}) !important;
+  }
+
+  /* Grid / Flex gap */
+  .gap-#{$key} {
+    gap: $value !important;
+  }
+
+  /* Column gap */
+  .col-gap-#{$key} {
+    column-gap: $value !important;
+  }
+
+  /* Row gap */
+  .row-gap-#{$key} {
+    row-gap: $value !important;
+  }
+
+  /* Text Responsive */
+  .text-responsive {
+    display: -webkit-box;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .text-responsive-#{$key}-line {
+    display: -webkit-box;
+    line-clamp: $key;
+    -webkit-line-clamp: $key;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Line Height */
+  .lh-#{$key} {
+    line-height: $value !important;
+  }
+
+  /* Top, Bottom, Right, Left */
+  .top-#{$key}    { top: $value !important; };
+  .top--#{$key}    { top: -$value !important; };
+  .bottom-#{$key} { bottom: $value !important; };
+  .bottom--#{$key} { bottom: -$value !important; };
+  .right-#{$key}  { right: $value !important; };
+  .right--#{$key}  { right: -$value !important; };
+  .left-#{$key}   { left: $value !important; };
+  .left--#{$key}   { left: -$value !important; };
+
+  /* Width & Height */
+  .w-#{$key} { width: #{$key+'%'} !important; };
+  .h-#{$key} { height: #{$key+'%'} !important; };
+
+}
+
+@for $i from 0 through 10000 {
+  /* z-index */
+  .z-#{$i} {
+    z-index: #{$i} !important;
+  }
+}
+
+@mixin register-utilities($breakpoint, $mode: up) {
+  $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+  $suffix: if($mode == down, "-down", "");
+
+  // -------------------
+  // Position utilities
+  // -------------------
+  @each $pos in (static, relative, absolute, fixed, sticky) {
+    .position#{$infix}#{$suffix}-#{$pos} {
+      position: $pos !important;
+    }
+  }
+
+  // -------------------
+  // Margin & Padding
+  // -------------------
+  @each $prop, $abbr in (margin: m, padding: p) {
+    @each $size, $value in $spacers {
+      .#{$abbr}#{$infix}#{$suffix}-#{$size} {
+        #{$prop}: $value !important;
+      }
+
+      .#{$abbr}t#{$infix}#{$suffix}-#{$size},
+      .#{$abbr}y#{$infix}#{$suffix}-#{$size} {
+        #{$prop}-top: $value !important;
+      }
+
+      .#{$abbr}r#{$infix}#{$suffix}-#{$size},
+      .#{$abbr}x#{$infix}#{$suffix}-#{$size} {
+        #{$prop}-right: $value !important;
+      }
+
+      .#{$abbr}b#{$infix}#{$suffix}-#{$size},
+      .#{$abbr}y#{$infix}#{$suffix}-#{$size} {
+        #{$prop}-bottom: $value !important;
+      }
+
+      .#{$abbr}l#{$infix}#{$suffix}-#{$size},
+      .#{$abbr}x#{$infix}#{$suffix}-#{$size} {
+        #{$prop}-left: $value !important;
+      }
+    }
+  }
+
+  // -------------------
+  // Negative margins
+  // -------------------
+  @each $size, $value in $spacers {
+    @if $size != 0 {
+      .m#{$infix}#{$suffix}-n#{$size} {
+        margin: -$value !important;
+      }
+
+      .mt#{$infix}#{$suffix}-n#{$size},
+      .my#{$infix}#{$suffix}-n#{$size} {
+        margin-top: -$value !important;
+      }
+
+      .mr#{$infix}#{$suffix}-n#{$size},
+      .mx#{$infix}#{$suffix}-n#{$size} {
+        margin-right: -$value !important;
+      }
+
+      .mb#{$infix}#{$suffix}-n#{$size},
+      .my#{$infix}#{$suffix}-n#{$size} {
+        margin-bottom: -$value !important;
+      }
+
+      .ml#{$infix}#{$suffix}-n#{$size},
+      .mx#{$infix}#{$suffix}-n#{$size} {
+        margin-left: -$value !important;
+      }
+    }
+  }
+
+  // -------------------
+  // Auto margins
+  // -------------------
+  .m#{$infix}#{$suffix}-auto {
+    margin: auto !important;
+  }
+
+  .mt#{$infix}#{$suffix}-auto,
+  .my#{$infix}#{$suffix}-auto {
+    margin-top: auto !important;
+  }
+
+  .mr#{$infix}#{$suffix}-auto,
+  .mx#{$infix}#{$suffix}-auto {
+    margin-right: auto !important;
+  }
+
+  .mb#{$infix}#{$suffix}-auto,
+  .my#{$infix}#{$suffix}-auto {
+    margin-bottom: auto !important;
+  }
+
+  .ml#{$infix}#{$suffix}-auto,
+  .mx#{$infix}#{$suffix}-auto {
+    margin-left: auto !important;
+  }
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+
+  // UP utilities (min-width)
+  @include media-breakpoint-up($breakpoint) {
+    @include register-utilities($breakpoint, up);
+  }
+
+  // DOWN utilities (max-width)
+  @include media-breakpoint-down($breakpoint) {
+    @include register-utilities($breakpoint, down);
+  }
+}

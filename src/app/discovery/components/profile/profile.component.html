@@ -1,0 +1,804 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="w-100 bg-white wrapper">
+  <div class="container">
+    <div class="row row-gap-20 pb-20">
+      <!-- Profile Information -->
+      <div class="profile-wrapper" [ngStyle]="{ 'background-image': 'url('+ profileData?.coverImage +')' }">
+        <div class="overlay"></div>
+        <div class="position-absolute top-10 right-10 px-10 w-fix py-6 text-15 fw-semibold d-flex align-items-center"
+            style="z-index: 9" >
+            <button (click)="openEnquiry()" mat-flat-button
+            class="bg-secondary-color border-secondary-color rounded-2 p-10 text-15 fw-bold d-flex align-items-center gap-10">
+            {{ 'Common.EnquiryNow' | translate }}
+            <mat-icon>shopping_cart</mat-icon>
+          </button>
+        </div>
+       
+        <div class="profile-box shadow">
+          <div class="image-fix">
+            <img [src]="profileData?.enterpriseLogo || 'assets/images/no-image-available.png'" class="mt-2" alt="Profile Image" />
+          </div>
+
+          <div class="socials mt-10">
+            <a [href]="social.linkURL" target="_blank" *ngFor="let social of profileData?.socials">
+              <mat-icon [svgIcon]="social.icon" style="height: 35px; width: 35px;"></mat-icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Selection -->
+      <div class="row ml-0 row-gap-10 mt-30">
+        <div class="row justify-content-between border rounded mx-0 p-8">
+          <div class="category-wrapper col-xl-10 col-md-10 col-sm-12">
+            <div class="category" (click)="changeCategory('About')" [class.selected]="selectedCategory == 'About'">
+              <mat-icon>info</mat-icon>{{'Profile.About' | translate}}
+            </div>
+            <div class="category" (click)="changeCategory('Products')"
+              [class.selected]="selectedCategory == 'Products'">
+              <mat-icon>inbox</mat-icon>{{'Profile.Products' | translate}}
+            </div>
+            <div class="category" (click)="changeCategory('Assets')" [class.selected]="selectedCategory == 'Assets'">
+              <mat-icon>dock</mat-icon>{{'Profile.Assets' | translate}}
+            </div>
+            <div class="category" (click)="changeCategory('UdyamDetails')"
+              [class.selected]="selectedCategory == 'UdyamDetails'">
+              <mat-icon>developer_board</mat-icon>{{'Profile.UdyamDetails' | translate}}
+            </div>
+          </div>
+          <div class="col-xl-2 col-md-2 col-sm-12 d-flex align-items-center justify-content-end">
+            <button class="bg-secondary-color border-secondary-color rounded-2 p-10 text-15 fw-bold"
+              (click)="previewAsWebsite()">
+              {{'Profile.PreviewAsWebsite' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="selectedCategory == 'About'">
+        <!-- Contact Information & About Enterprise -->
+        <div class="row ml-0 p-0 row-gap-10">
+          <!-- Contact Information -->
+          <div class="col-xl-4 col-md-12 col-sm-12">
+            <div class="h-100 d-flex flex-column border rounded p-20">
+              <!-- Title -->
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <span class="text-18 fw-bold">{{'Profile.ContactInformation' | translate}}</span>
+                <!-- COMMENTED BY ASHWIN (Automatically fetched from Udyam Information) -->
+              </div>
+              <!-- Information -->
+              <div class="d-flex flex-column gap-20 p-10">
+                <!-- Registered Address -->
+                <div class="d-flex align-items-center gap-20">
+                  <mat-icon class="overflow-visible"
+                    [ngClass]="{ 'cursor-pointer': profileData?.latitude && profileData?.longitude }"
+                    (click)="commonService.openMap(profileData.latitude, profileData.longitude)">
+                    {{profileData?.latitude && profileData?.longitude ? 'location_on' : 'location_off'}}
+                  </mat-icon>
+                  <div class="d-flex flex-column">
+                    <span class="text-14 fw-bold">{{'Profile.RegisteredAddress' | translate}}</span>
+                    <span class="text-14 text-break text-break-anywhere">
+                      {{profileData?.flatNo}},{{profileData?.buildingName}},{{profileData?.roadStreetLane}},{{profileData?.villageTown}},
+                      {{profileData?.cityName}},{{profileData?.district}} {{ profileData?.pincode ?
+                      ('-'+profileData?.pincode) : '' }}
+                      {{ profileData?.state ? (','+profileData?.state+'.') : ''}}
+                    </span>
+                  </div>
+                </div>
+                <!-- Website -->
+                <div class="d-flex align-items-center gap-20" *ngIf="profileData?.website">
+                  <mat-icon>language</mat-icon>
+                  <div class="d-flex flex-column">
+                    <span class="text-14 fw-bold">{{'Profile.Website' | translate}}</span>
+                    <span class="text-14 text-break text-break-anywhere">{{profileData?.website}}</span>
+                  </div>
+                </div>
+                <!-- Website -->
+                <div class="d-flex align-items-center gap-20" *ngIf="profileData?.webAddress">
+                  <mat-icon>language</mat-icon>
+                  <div class="d-flex flex-column">
+                    <span class="text-14 fw-bold">{{'Profile.WebAddress' | translate}}</span>
+                    <span
+                      class="text-14 text-break text-break-anywhere">{{webAddressPrefix}}{{profileData?.webAddress}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-----contact Information--------->
+              <div class="border rounded-2 px-3 py-3">
+                <div class="w-100 d-flex align-items-center justify-content-between mb-2">
+                  <span class="text-18 fw-bold">{{'Profile.ContactPersonDetails' | translate}}</span>
+                </div>
+                <div class="flex-column">
+                  <div class="d-flex align-items-center gap-20 mb-2" *ngIf="profileData?.contactPersonName">
+                    <mat-icon>perm_identity</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.ContactPersonName' | translate}}</span>
+                      <span class="text-14 text-break text-break-anywhere">{{profileData?.contactPersonName}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-20 mb-2" *ngIf="profileData?.contactPersonEmailId">
+                    <mat-icon>mail_outline</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.ContactPersonEmailId' | translate}}</span>
+                      <span class="text-14 text-break text-break-anywhere">{{profileData?.contactPersonEmailId}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-20 mb-2" *ngIf="profileData?.contactPersonMobileNo">
+                    <mat-icon>phone</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.ContactPersonMobileNo' | translate}}</span>
+                      <span class="text-14 text-break text-break-anywhere" *ngIf="profileData.contactPersonMobileNo">+{{profileData?.countryCode}}
+                        {{profileData?.contactPersonMobileNo}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- About Enterprise -->
+          <div class="col-xl-8 col-md-12 col-sm-12">
+            <div class="h-100 d-flex flex-column border rounded gap-10 p-20">
+              <!-- Enterprise name -->
+              <div class="w-100 d-flex align-items-start justify-content-between">
+                <div class="flex-column">
+                  <span class="text-18 fw-bold">{{profileData?.enterpriseName}}</span>
+                </div>
+              </div>
+              <!-- Title -->
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <span class="text-18 fw-bold" *ngIf="profileData?.aboutEnterprise">{{'Profile.AboutEnterprise' |
+                  translate}}</span>
+              </div>
+              <!-- Information -->
+              <div class="d-flex flex-column px-2">
+                <!-- About -->
+                <p #about class="text-14 text-gray text-wrap text-justify"
+                  [ngClass]="{ 'text-responsive-10-line': !contentExpanded['about'] }">
+                  {{profileData?.aboutEnterprise}}
+                </p>
+                <p *ngIf="contentExpanded['about']  || (about && about.scrollHeight > about.clientHeight)"
+                  class="text-14 text-primary mb-1" style="text-decoration: underline;"
+                  (click)="toggleExpandContent('about')">
+                  {{contentExpanded['about'] ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' | translate)}}
+                </p>
+                <!-- Divider -->
+                <mat-divider style="opacity: 30%;"></mat-divider>
+                <!-- Vision, Mission & Values -->
+                <div class="d-flex flex-column gap-20 mt-10">
+                  <span class="text-16 fw-bold"
+                    *ngIf="profileData?.vision || profileData?.mission || profileData?.coreValue">{{'Profile.VisionMissionValues'
+                    | translate}}</span>
+                  <!-- Vision -->
+                  <div class="d-flex flex-column gap-6" *ngIf="profileData?.vision">
+                    <span class="text-14 fw-bold">{{'Profile.Vision' | translate}}</span>
+                    <span #vision class="text-14"
+                      [ngClass]="{ 'text-responsive-4-line': !contentExpanded['vision'] }">{{profileData?.vision}}</span>
+                    <span *ngIf="contentExpanded['vision']  || (vision && vision.scrollHeight > vision.clientHeight)"
+                      class="text-14 text-primary" style="text-decoration: underline;"
+                      (click)="toggleExpandContent('vision')">
+                      {{contentExpanded['vision'] ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' |
+                      translate)}}
+                    </span>
+                  </div>
+                  <!-- Mission -->
+                  <div class="d-flex flex-column gap-6" *ngIf="profileData?.mission">
+                    <span class="text-14 fw-bold">{{'Profile.Mission' | translate}}</span>
+                    <span #mission class="text-14"
+                      [ngClass]="{ 'text-responsive-4-line': !contentExpanded['mission'] }">{{profileData?.mission}}</span>
+                    <span
+                      *ngIf="contentExpanded['mission']  || (mission && mission.scrollHeight > mission.clientHeight)"
+                      class="text-14 text-primary" style="text-decoration: underline;"
+                      (click)="toggleExpandContent('mission')">
+                      {{contentExpanded['mission'] ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' |
+                      translate)}}
+                    </span>
+                  </div>
+                  <!-- Core Values -->
+                  <div class="d-flex flex-column gap-6" *ngIf="profileData?.coreValue">
+                    <span class="text-14 fw-bold">{{'Profile.CoreValues' | translate}}</span>
+                    <span #corevalues class="text-14"
+                      [ngClass]="{ 'text-responsive-4-line': !contentExpanded['corevalues'] }">{{profileData?.coreValue}}</span>
+                    <span
+                      *ngIf="contentExpanded['corevalues']  || (corevalues && corevalues.scrollHeight > corevalues.clientHeight)"
+                      class="text-14 text-primary" style="text-decoration: underline;"
+                      (click)="toggleExpandContent('corevalues')">
+                      {{contentExpanded['corevalues'] ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' |
+                      translate)}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clients -->
+        <div class="row ml-0 p-0 row-gap-10" *ngIf="profileData?.clients && profileData?.clients?.length > 0">
+          <div class="col-xl-12 col-md-12 col-sm-12">
+            <div class="d-flex flex-column border rounded gap-10 p-20">
+              <!-- Title -->
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <span class="text-18 fw-bold">{{'Profile.Clients' | translate}}</span>
+              </div>
+              <!-- Clients Caurosel -->
+              <div class="col-xl-12 col-md-12 col-sm-12">
+                <owl-carousel-o [options]="carouselOptions">
+                  <ng-template carouselSlide [id]="'client'+i"
+                    *ngFor="let client of profileData?.clients; let i = index">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                      <img [src]="client.clientLogo" [alt]="'client-' + i" class="img-fluid"
+                        style="max-width: 120px;" />
+                    </div>
+                  </ng-template>
+                </owl-carousel-o>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Market Presence, Complaince & Registrations -->
+        <div class="row ml-0 p-0 row-gap-10">
+          <!-- Market Presence -->
+          <div class="col-xl-5 col-md-12 col-sm-12"
+            *ngIf="profileData?.domesticMarkets || profileData?.internationalMarkets || profileData?.sectorsServed">
+            <div class="h-100 d-flex flex-column border rounded p-20">
+              <!-- Title -->
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <span class="text-18 fw-bold">{{'Profile.MarketPresence' | translate}}</span>
+              </div>
+              <!-- Markets Served -->
+              <div class="row mx-0 row-gap-20 px-0 py-20">
+                <div class="col-xl-12 col-md-12 col-sm-12 d-flex justify-content-between">
+                  <!-- Domestice Markets Served -->
+                  <div class="d-flex flex-column gap-10" *ngIf="profileData?.domesticMarkets">
+                    <span class="text-14 fw-bold">{{'Profile.DomesticMarketsServed' |
+                      translate}}</span>
+                    <ul class="ps-3 mb-0 ml-10">
+                      <li
+                        *ngFor="let value of profileData?.domesticMarkets| slice:0:(contentExpanded['domesticMarkets'] ? (profileData?.domesticMarkets?.length || 0) : 10)"
+                        class="mb-1">
+                        {{ value }}
+                      </li>
+                      <span *ngIf="profileData?.domesticMarkets && profileData?.domesticMarkets.length > 10"
+                        class="text-16 text-primary m-0 cursor-pointer" style="text-decoration: underline;"
+                        (click)="toggleExpandContent('domesticMarkets')">
+                        {{contentExpanded['domesticMarkets'] ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' |
+                        translate)}}
+                      </span>
+                    </ul>
+                  </div>
+                  <!-- International Markets Served -->
+                  <div class="d-flex flex-column gap-10" *ngIf="profileData?.internationalMarkets">
+                    <span class="text-14 fw-bold">{{'Profile.InternationalMarketsServed' |
+                      translate}}</span>
+                    <ul class="ps-3 mb-0 ml-10">
+                      <li
+                        *ngFor="let value of profileData?.internationalMarkets | slice:0:(contentExpanded['internationalMarkets'] ? (profileData?.internationalMarkets?.length || 0) : 10)"
+                        class="mb-1">
+                        {{ value }}
+                      </li>
+                      <span *ngIf="profileData?.internationalMarkets && profileData?.internationalMarkets.length > 10"
+                        class="text-16 text-primary m-0 cursor-pointer" style="text-decoration: underline;"
+                        (click)="toggleExpandContent('internationalMarkets')">
+                        {{contentExpanded['internationalMarkets'] ? ('Profile.ViewLess' | translate) :
+                        ('Profile.ViewMore' | translate)}}
+                      </span>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-xl-12 col-md-12 col-sm-12" *ngIf="profileData?.sectorsServed">
+                  <!-- Sectors Served -->
+                  <div class="d-flex flex-column gap-10">
+                    <span class="text-14 fw-bold">{{'Profile.SectorsServed' | translate}}</span>
+                    <ul class="ps-3 mb-0 ml-10">
+                      <li
+                        *ngFor="let value of profileData?.sectorsServed | slice:0:(contentExpanded['sectorsServed'] ? (profileData?.sectorsServed?.length || 0) : 10)"
+                        class="mb-1">
+                        {{ value }}
+                      </li>
+                      <span *ngIf="profileData?.sectorsServed && profileData?.sectorsServed.length > 10"
+                        class="text-16 text-primary m-0 cursor-pointer" style="text-decoration: underline;"
+                        (click)="toggleExpandContent('sectorsServed')">
+                        {{contentExpanded['sectorsServed'] ? ('Web.ViewLess' | translate) : ('Web.ViewMore' |
+                        translate)}}
+                      </span>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Complaince & Registrations -->
+          <div class="col-xl-7 col-md-12 col-sm-12">
+            <div class="h-100 d-flex flex-column border rounded gap-20 p-20">
+              <!-- Title -->
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <span class="text-18 fw-bold">{{'Profile.ComplainceRegistrations' | translate}}</span>
+              </div>
+              <!-- Information -->
+              <div class="row mx-0 row-gap-20 px-10 py-10">
+                <div class="col-xl-6 col-md-6 col-sm-12 d-flex flex-column gap-10 px-10">
+                  <!-- Pan -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.pan">
+                    <mat-icon>card_membership</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.PAN' | translate}}</span>
+                      <span class="text-14">{{profileData?.pan}}</span>
+                    </div>
+                  </div>
+                  <!-- GST IN -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.gstin">
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.GSTIN' | translate}}</span>
+                      <span class="text-14">{{profileData?.gstin}}</span>
+                    </div>
+                  </div>
+                  <!-- Business Category -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.businessCategory">
+                    <mat-icon>business_center</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.BusinessCategory' |
+                        translate}}</span>
+                      <span class="text-14 text-wrap">{{profileData?.businessCategory}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-6 col-md-6 col-sm-12 d-flex flex-column gap-10 px-10">
+                  <!-- Import-Export (IEC) -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.iecCode">
+                    <mat-icon>import_export</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.ImportExportCodeIEC' |
+                        translate}}</span>
+                      <span class="text-14">{{profileData?.iecCode}}</span>
+                    </div>
+                  </div>
+                  <!-- Year of Establishment -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.establishmentYear">
+                    <mat-icon>calendar_today</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.YearOfEstablishment' |
+                        translate}}</span>
+                      <span class="text-14 text-wrap">{{profileData?.establishmentYear}}</span>
+                    </div>
+                  </div>
+
+                  <!-- Ownership/Promoter Name(s) -->
+                  <div class="d-flex align-items-center gap-20" *ngIf="profileData?.ownershipPromoterName">
+                    <mat-icon>person_outline</mat-icon>
+                    <div class="d-flex flex-column">
+                      <span class="text-14 fw-bold">{{'Profile.OwnershipPromoterName' |
+                        translate}}</span>
+                      <span class="text-14">{{profileData?.ownershipPromoterName}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Industry Licenses -->
+              <div class="text-center mb-2" *ngIf="profileData?.industryLicenses">
+                <span class="text-14 fw-bold">{{'Profile.IndustryLicenses' | translate}}</span>
+              </div>
+              <div class="row align-items-center row-gap-10" *ngIf="profileData?.industryLicenses">
+                <div class="col-12 col-md-6" *ngFor="let data of profileData?.industryLicenses">
+                  <div class="border h-100 rounded-2 p-10 d-flex flex-column g-2 ">
+                    <div class="mb-2 d-flex flex-column">
+                      <span class="text-12 fw-bold">{{'Profile.LicenseNo' | translate}}</span>
+                      <span class="text-14 mx-2 text-break">{{data?.licenseNo}}</span>
+                    </div>
+                    <div class="mb-2 d-flex flex-column">
+                      <span class="text-12 fw-bold">{{'Profile.Name' | translate}}</span>
+                      <span class="text-14 mx-2 text-break">{{data?.licenseName}}</span>
+                    </div>
+                    <div class="mb-2 d-flex flex-column">
+                      <span class="text-12 fw-bold">{{'Profile.Type' | translate}}</span>
+                      <span class="text-14 mx-2 text-break">{{data?.licenseType}}</span>
+                    </div>
+                    <div class="mb-2 d-flex flex-column">
+                      <span class="text-12 fw-bold">{{'Profile.Validity' | translate}}</span>
+                      <span class="text-14 mx-2">{{data?.validFromDate | date: 'mediumDate'}} - {{data?.validToDate |
+                        date: 'mediumDate'}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedCategory == 'Products'">
+        <!-- Products List -->
+        <div class="row ml-0 row-gap-10">
+          <div class="col-xl-12 col-md-12 col-sm-12 border rounded gap-10 p-10">
+            <div class="d-flex flex-column gap-10 p-10">
+              <div class="text-center text-24 fw-semibold" *ngIf="productsData.length == 0">
+                {{'Common.NoProductsAdded' | translate}}
+              </div>
+              <!-- Products -->
+              <div class="row g-4" *ngIf="productsData.length > 0">
+                <div class="col-12 col-md-6 col-xl-3" *ngFor="let product of dataSourceCards | async"
+                  (click)="openProductView(product)">
+                  <div class="profile-card position-relative h-100 bg-white rounded-2 border shadow p-3 pb-5"
+                    *ngIf="product?.productName">
+                    <img [src]="product?.documents[0]?.productImage" class="img-fluid w-100 rounded mb-2"
+                      style="height: 150px;" />
+                    <h6 class="fw-semibold mb-1 mt-6 text-responsive">
+                      {{ product?.productName }} - {{ product?.productUnit }}
+                    </h6>
+                    <p class="text-muted small mb-2 mh-50 text-responsive-2-line text-16">
+                      {{ product?.productDescription }}
+                    </p>
+                    <div class="price-row d-flex justify-content-between align-items-center">
+                      <span class="fw-semibold text-primary text-14">
+                        {{ product?.productPrice | currency: 'INR':'symbol':'1.2-2':'en-IN' }}
+                      </span>
+                      <span class="text-muted small text-14">
+                        {{'Common.Qty' | translate}}: {{ product?.productQuantity | number: '0.3-3' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedCategory == 'Assets'">
+        <!-- Assets Category -->
+        <div class="row ml-0 row-gap-10">
+
+          <div class="p-10 row justify-content-center border rounded mx-0" *ngIf="assetsData.length == 0">
+            <div class="text-center text-24 fw-semibold p-10">
+              {{'Common.NoAssetsAdded' | translate}}
+            </div>
+          </div>
+
+          <div class="row justify-content-between border rounded mx-0 p-10" *ngIf="assetsData.length > 0">
+            <div class="category-wrapper col-xl-12 col-md-12 col-sm-12" *ngIf="selectedAsset != null">
+              <div class="category p-10 fw-bold" (click)="selectAsset(null)">
+                <mat-icon>arrow_back_ios</mat-icon>{{ 'Profile.Assets' | translate }} / {{ 'Profile.'+selectedAsset |
+                translate }}
+              </div>
+            </div>
+
+            <div class="category-wrapper col-xl-6 col-md-6 col-sm-12" *ngIf="selectedAsset == null">
+              <div class="category p-10" (click)="changeAssetsCategory('Assets')"
+                [class.selected2]="selectedAssetCategory == 'Assets'">
+                {{'Profile.Assets' | translate}}
+              </div>
+              <div class="category p-10" (click)="changeAssetsCategory('Photos')"
+                [class.selected2]="selectedAssetCategory == 'Photos'">
+                {{'Profile.Gallery' | translate}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assets List -->
+        <div class="row ml-0 row-gap-10">
+          <div class="col-xl-12 col-md-12 col-sm-12 px-0 border rounded gap-10 p-20" *ngIf="assetsData.length > 0">
+            <!-- Assets & Not Selected Asset -->
+            <div class="d-flex flex-column gap-10 p-10"
+              *ngIf="selectedAssetCategory == 'Assets' && selectedAsset == null">
+              <!-- Assets 1 -->
+              <div class="row mx-0 g-4 mb-20">
+                <!-- Awards -->
+                <div class="col-12 col-md-4" (click)="selectAsset('Awards')" *ngIf="getAssetName('Awards')">
+                  <div class=" rounded-3 border p-4 text-center h-100">
+                    <img src="assets/images/asset-award.png" class="img-fluid mb-3">
+                    <h6 class="fw-semibold">{{'Profile.Awards' | translate}}</h6>
+                  </div>
+                </div>
+                <!-- Certifications -->
+                <div class="col-12 col-md-4" (click)="selectAsset('Certifications')"
+                  *ngIf="getAssetName('Certifications')">
+                  <div class="rounded-3 border p-4 text-center h-100">
+                    <img src="assets/images/asset-certification.png" class="img-fluid mb-3">
+                    <h6 class="fw-semibold">{{'Profile.Certifications' | translate}}</h6>
+                  </div>
+                </div>
+                <!-- Brochures -->
+                <div class="col-12 col-md-4" (click)="selectAsset('Brochures')" *ngIf="getAssetName('Brochures')">
+                  <div class="rounded-3 border p-4 text-center h-100">
+                    <img src="assets/images/asset-brochure.png" class="img-fluid mb-3">
+                    <h6 class="fw-semibold">{{'Profile.Brochures' | translate}}</h6>
+                  </div>
+                </div>
+              </div>
+              <!-- Assets 2 -->
+              <div class="row mx-0">
+                <!-- Images -->
+                <div class="col-12" (click)="selectAsset('Images')" *ngIf="getAssetName('Images')">
+                  <div class="rounded-3 border p-4 text-center h-100">
+                    <img src="assets/images/asset-image.png" class="img-fluid mb-3">
+                    <h6 class="fw-semibold">{{'Profile.Images' | translate}}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Assets & Selected Asset -->
+            <div class="d-flex flex-column gap-10 p-10"
+              *ngIf="selectedAssetCategory == 'Assets' && selectedAsset != null">
+              <div class="row mx-0 g-4" *ngIf="assetsData.length > 0">
+                <div class="col-12 col-md-6 col-xl-3" *ngFor="let asset of dataSourceCards | async"
+                  (click)="openAssetView(asset)">
+                  <div class="profile-card position-relative h-100 bg-white rounded-2 border shadow p-3"
+                    *ngIf="asset.assetName">
+                    <pdf-viewer
+                      *ngIf="asset.assetType === 'Brochures' && asset.documents?.length && asset.documents[0]?.safeUrl"
+                      [src]="asset.documents[0]?.safeUrl" [rotation]="0" [original-size]="false" [show-all]="true"
+                      [fit-to-page]="false" [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false"
+                      [render-text]="true" [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false"
+                      style="width: 100%; margin: auto;height: 150px;" class="rounded mb-2"></pdf-viewer>
+
+                    <img *ngIf="asset.assetType != 'Brochures'"
+                      [src]="(asset?.documents ? asset?.documents[0]?.assetImage : '')" class="img-fluid rounded mb-2"
+                      style="width: 100%; margin: auto;height: 150px;">
+                    <h6 class="fw-semibold mb-1 mt-6 text-center text-responsive">{{ asset?.assetName }}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Photos (All Assets) -->
+            <div class="d-flex flex-column gap-10 p-10"
+              *ngIf="selectedAssetCategory == 'Photos' && selectedAsset == null">
+              <div class="row mx-0 g-4">
+                <div class="col-12 col-md-6 col-xl-3"
+                  *ngFor="let asset of dataSourceCards | async; trackBy: trackByAsset; let i = index"
+                  (click)="openGalleryView(i)">
+                  <div class="profile-card position-relative h-100 bg-white rounded-2 border shadow p-3"
+                    *ngIf="asset.assetName">
+                    <div
+                      class="d-flex align-items-center justify-content-end position-absolute top-10 z-3 right-10 bg-white border rounded p-2 cursor-pointer"
+                      (click)="downloadFile(asset)">
+                      <mat-icon>download</mat-icon>
+                    </div>
+
+                    <pdf-viewer *ngIf="asset.assetType === 'Brochures' && asset.safeUrl" [src]="asset.safeUrl"
+                      [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false" [zoom]="1"
+                      [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+                      [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false"
+                      style="width: 100%; margin: auto;height: 150px;" class="rounded mb-2"></pdf-viewer>
+
+                    <img *ngIf="asset.assetType != 'Brochures'" [src]="asset.assetImage"
+                      class="img-fluid w-100 rounded mb-2" style="height: 150px;">
+                    <h6 class="fw-semibold mb-1 mt-6 text-center text-responsive">{{ asset.assetName
+                      }}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedCategory == 'UdyamDetails'">
+        <!-- Udyam Details -->
+        <div class="row ml-0 row-gap-10">
+          <div class="col-xl-12 col-md-12 col-sm-12 px-0 border rounded gap-10 p-20">
+            <div class="d-flex flex-column gap-10 px-20 py-10">
+              <h6 class="text-start fw-bold mb-10 text-24">{{'Profile.UdyamDetails' | translate}}</h6>
+
+              <div class="border rounded-2 px-3 px-md-4 udyam-set">
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.enterpriseName">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <img src="assets/icons/enterprise.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">{{'Common.EnterpriseName' |
+                          translate }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.enterpriseName }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.maskedUdyamRegistrationNo">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">account_balance</mat-icon> -->
+                        <img src="assets/icons/udyam-registration.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.UdyamRegistrationNumber' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.maskedUdyamRegistrationNo }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.udyamRegistrationDate">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">calendar_today</mat-icon> -->
+                        <img src="assets/icons/calendar.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.UdyamRegistrationDate' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.udyamRegistrationDate | date: 'mediumDate' }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.incorporationDate">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">calendar_today</mat-icon> -->
+                        <img src="assets/icons/calendar.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.IncorporationDate' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.incorporationDate | date: 'mediumDate' }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.organisationType">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">domain</mat-icon> -->
+                        <img src="assets/icons/enterprise-category.svg" alt="">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.EnterpriseCategory' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.organisationType }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.enterpriseType">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">business_center</mat-icon> -->
+                        <img src="assets/icons/enterprise.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.EnterpriseType' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.enterpriseType }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row align-items-center py-3 border-bottom" *ngIf="udyamDetails?.ownerNamebyPAN">
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <!-- <mat-icon class="text-secondary-color">person</mat-icon> -->
+                        <img src="assets/icons/entrepreneur.svg" class="text-secondary-color">
+                      </div>
+                      <div>
+                        <span class="text-14 text-dark">
+                          {{'Common.EntrepreneurName' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
+                    <span class="fw-medium text-14 text-dark">
+                      {{ udyamDetails?.ownerNamebyPAN }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- NIC Activities -->
+        <div class="row ml-0 row-gap-10">
+          <div class="col-xl-12 col-md-12 col-sm-12 px-0 border rounded gap-10 p-20">
+            <div class="d-flex flex-column gap-10 px-20 py-10">
+              <h6 class="fw-bold mb-3 text-start mb-10 text-24">{{'Common.NICActivities' | translate}}
+              </h6>
+
+              <mat-accordion>
+                <mat-expansion-panel *ngFor="let activity of udyamDetails?.activities; let i = index"
+                  [expanded]="i === 0" class="mb-2 bg-white rounded-1">
+                  <mat-expansion-panel-header><mat-panel-title class="fw-medium">{{ udyamDetails.majorActivity}} -
+                      {{activity?.NIC5DigitId }}</mat-panel-title></mat-expansion-panel-header>
+
+                  <div class="row g-3" *ngIf="udyamDetails.activities?.length">
+                    <ng-container>
+                      <!-- NIC 2 Digit -->
+                      <div class="col-12 col-md-4">
+                        <div class="border rounded-2 p-3 h-100 nic-card udyam-details">
+                          <div class="text-dark fw-bold text-14 mb-1">{{'Common.NIC2Digit' | translate}}</div>
+                          <div class="fw-bold text-secondary-color mb-2 text-24">
+                            {{ activity.NIC2DigitId }}
+                          </div>
+                          <ul class="ps-3 mb-0 text-12 text-dark">
+                            <li>{{ activity.nic2DigitDescription }}</li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- NIC 4 Digit -->
+                      <div class="col-12 col-md-4">
+                        <div class="border rounded-2 p-3 h-100 nic-card udyam-details">
+                          <div class="text-dark fw-bold text-14 mb-1">{{'Common.NIC4Digit' | translate}}</div>
+                          <div class="fw-bold text-secondary-color mb-2 text-24">
+                            {{ activity.NIC4DigitId }}
+                          </div>
+                          <ul class="ps-3 mb-0 text-12 text-dark">
+                            <li>{{ activity.nic4DigitDescription }}</li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- NIC 5 Digit -->
+                      <div class="col-12 col-md-4">
+                        <div class="border rounded-2 p-3 h-100 nic-card udyam-details">
+                          <div class="text-dark fw-bold text-14 mb-1">{{'Common.NIC5Digit' | translate}}</div>
+                          <div class="fw-bold text-secondary-color mb-2 text-24">
+                            {{ activity.NIC5DigitId }}
+                          </div>
+                          <ul class="ps-3 mb-0 text-12 text-dark">
+                            <li>{{ activity.nic5DigitDescription }}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Pagination -->
+      <div [hidden]="hidePaginator">
+        <mat-paginator [pageSize]="defaultPageSize" [pageSizeOptions]="pageSizeOptions"
+          showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

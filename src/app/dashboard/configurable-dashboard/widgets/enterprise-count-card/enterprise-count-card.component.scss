@@ -1,0 +1,81 @@
+.card-1-bg {
+  background-color: #D3C6F1;
+}
+.card-2-bg {
+  background-color: #E5E6E5;
+}
+.card-3-bg {
+  background-color: #fcf2e7;
+}
+.card-4-bg {
+  background-color: #fff6c9;
+}
+
+.card-sub1-bg {
+  background-color: rgba(211, 198, 241, 0.1);
+}
+.card-sub2-bg {
+  background-color: rgba(229, 230, 229, 0.1);
+}
+.card-sub3-bg {
+  background-color: rgba(254, 254, 249, 0.3);
+}
+.card-sub4-bg {
+  background-color: rgba(255, 248, 223, 0.3);
+}
+
+.sector-card {
+  border-radius: 10px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  margin-bottom: 5px;
+
+  .sector-title {
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px 10px 0px 0px;
+    span {
+      font-weight: 500;
+    }
+  }
+
+  .main-display-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    border-radius: 0px 0px 10px 10px;
+  }
+
+  .content-row {
+    display: flex;
+    flex-direction: row;
+    column-gap: 50px !important;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: -7px 0;
+    text-align: center;
+
+    .left {
+      margin-right: auto;
+    }
+
+    span {
+      color: #000;
+      font-weight: 400;
+    }
+
+    strong {
+      font-weight: 600;
+      color: #000;
+    }
+  }
+}

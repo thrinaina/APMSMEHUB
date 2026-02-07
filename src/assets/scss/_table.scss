@@ -1,0 +1,137 @@
+.mat-mdc-table {
+  background-color: var(--header-bg-color) !important;
+}
+
+.listing-container {
+  background-color: var(--header-bg-color);
+
+  padding: 15px;
+  // height: calc(100vh - 90px);
+  .table-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 175px);
+
+    @media (max-width: 576px) {
+      height: calc(100vh - 225px);
+    }
+  }
+
+  /* Scroll area */
+  .table-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+  }
+
+  /* Table width */
+  table {
+    width: 100%;
+  }
+
+  /* Sticky header */
+  .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--table-bg-color);
+    height: 48px;
+  }
+
+  /* Header cells */
+  .mat-mdc-header-cell {
+    font-weight: 600;
+    font-size: var(--size-14) !important;
+    color: #495057;
+    border-bottom: 1px solid #e4e5e9;
+    // border-bottom: 1px solid #dee2e6;
+  }
+
+  .mat-mdc-cell {
+    border-bottom: 1px solid #e4e5e9;
+    font-size: var(--size-14) !important;
+  }
+
+  .mat-mdc-row:last-child .mat-mdc-cell {
+    border-bottom: 1px solid #e4e5e9;
+  }
+
+  /* Body rows */
+  .mat-mdc-row {
+    height: 48px;
+  }
+
+  /* Chips */
+  .active-chip {
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: var(--size-12) !important;
+    display: inline-block;
+  }
+
+  .inactive-chip {
+    background: var(--red-light-bg-color);
+    color: var(--danger-color);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: var(--size-12) !important;
+    display: inline-block;
+  }
+
+  /* Actions */
+  .actions mat-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-label);
+  }
+
+  /* Empty state */
+  .table-container h2 {
+    font-size: var(--size-16) !important;
+    color: var(--text-label);
+  }
+
+  .selected-row {
+    background-color: var(--secondary-color-light);
+  }
+
+  // search bar
+
+  /* Search bar default border */
+  .search-box {
+    border: 1.5px solid #cccccc;
+    color: #cccccc;
+    border-radius: 4px;
+    padding: 0 5px !important;
+
+    mat-icon {
+      filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(1%)
+        hue-rotate(332deg) brightness(91%) contrast(95%);
+      height: 26px;
+    }
+  }
+
+  /* Remove bootstrap default borders */
+  .search-box .form-control,
+  .search-box .input-group-text {
+    border: none;
+    box-shadow: none;
+    padding: 6px !important;
+    font-size: var(--size-14);
+  }
+
+  .export{
+   filter: brightness(0) saturate(100%) invert(78%) sepia(24%) saturate(5721%) hue-rotate(335deg) brightness(103%) contrast(101%);
+   width: 20px !important;
+   height: 22px !important;
+  }
+
+  /* Focus state */
+  // .search-box:focus-within {
+  //   border-color: #dee2e6;
+  //   box-shadow: 0 0 0 0.15rem rgba(255, 153, 51, 0.25);
+  // }
+}

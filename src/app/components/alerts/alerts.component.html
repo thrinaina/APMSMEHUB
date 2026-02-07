@@ -1,0 +1,39 @@
+<!-- Error Message -->
+<div class="dialog-container" *ngIf="data.type == 'error-type'">
+  <div class="dialog-header">
+    <span> {{data.title}} {{data.title1 ? '('+data.title1+')' : '' }}</span>
+    <mat-icon (click)="dialogRef.close(false)">close</mat-icon>
+  </div>
+  <div class="dialog-body">
+      {{data.message}}
+  </div>
+</div>
+
+<!-- Confirmation -->
+<div class="dialog-container" *ngIf="data.type == 'confirmation'">
+  <div class="dialog-header">
+    <span> {{data.title}}</span>
+    <mat-icon (click)="dialogRef.close(false)">close</mat-icon>
+  </div>
+  <div class="dialog-body">
+    {{data.message}}
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="dialogRef.close(false)">{{'Common.Cancel' | translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="dialogRef.close(true)">{{'Common.Proceed' | translate}}</button>
+  </div>
+</div>
+
+<!-- Export Selection -->
+<div class="dialog-container" *ngIf="data.type == 'export'">
+  <div class="dialog-header">
+    <span> {{data.title}}</span>
+    <mat-icon (click)="dialogRef.close(false)">close</mat-icon>
+  </div>
+  <div class="dialog-body">
+    <div class="d-flex justify-content-center align-items-center gap-12 w-100">
+      <img class="d-none d-sm-block" (click)="dialogRef.close('pdf')" src="assets/images/pdf-download.png">
+      <img (click)="dialogRef.close('excel')" src="assets/images/excel-download.png">
+    </div>
+  </div>
+</div>

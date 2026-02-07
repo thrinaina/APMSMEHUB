@@ -1,0 +1,97 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+    <div class="dialog-header">
+        <span>{{'Profile.ContactPersonDetails' | translate}}</span>
+        <mat-icon (click)="onNoClick()">close</mat-icon>
+    </div>
+    <div class="dialog-body">
+        <form [formGroup]="contactForm">
+
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label>{{ 'Profile.ContactPersonName' | translate }}</mat-label>
+                    <input matInput type="text" autocomplete="off" name="contactPersonName" formControlName="contactPersonName" />
+                </mat-form-field>
+                <div *ngIf="isSavedContact && contactForm.invalid" class="error-div">
+                    <div *ngIf="contactForm.controls['contactPersonName'].errors?.['required']">
+                        {{'Profile.ContactPersonName' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                    <div *ngIf="contactForm.controls['contactPersonName'].errors?.['maxlength']">
+                        {{'Profile.ContactPersonName' | translate}} {{'Common.MaxLengthError' | translate}} 100</div>
+                    <div *ngIf="contactForm.controls['contactPersonName'].errors?.['pattern']">
+                        {{'Profile.ContactPersonName' | translate}} {{'Common.PatternError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                    <mat-label>{{ 'Profile.ContactPersonEmailId' | translate }}</mat-label>
+                    <input matInput type="text" autocomplete="off" name="contactPersonEmailId" formControlName="contactPersonEmailId" />
+                </mat-form-field>
+                <div *ngIf="isSavedContact && contactForm.invalid" class="error-div">
+                    <div *ngIf="contactForm.controls['contactPersonEmailId'].errors?.['required']">
+                        {{'Profile.ContactPersonEmailId' | translate }} {{'Common.RequiredError' | translate}}
+                    </div>
+                    <div *ngIf="contactForm.controls['contactPersonEmailId'].errors?.['pattern']">
+                        {{'Profile.ContactPersonEmailId' | translate}} {{'Common.PatternError' | translate}}
+                    </div>
+                    <div *ngIf="contactForm.controls['contactPersonEmailId'].errors?.['email']">
+                        {{'Common.Invalid' | translate}} {{'Profile.ContactPersonEmailId' | translate}}</div>
+                </div>
+            </div>
+
+            <div class="row row-gap-10">
+                <div class="col-md-2 pe-2">
+                    <mat-form-field appearance="outline" floatLabel="always" class="w-100">
+                        <mat-label>{{'Profile.CountryCode' | translate}}</mat-label>
+                        <span class="ml-2" matPrefix>+</span>
+                        <input matInput type="text" autocomplete="off" name="countryCode" formControlName="countryCode">
+                    </mat-form-field>
+                    <div *ngIf="isSavedContact && contactForm.invalid" class="error-div ">
+                        <div *ngIf="contactForm.controls['countryCode'].errors?.['required']">
+                            {{'Profile.CountryCode' | translate}}
+                            {{'Common.RequiredError' | translate}}</div>
+                        <div *ngIf="contactForm.controls['countryCode'].errors?.['pattern']">
+                            {{'Common.Invalid' | translate}}
+                            {{'Profile.CountryCode' | translate}}</div>
+                        <div *ngIf="contactForm.controls['countryCode'].errors?.['min']">
+                            {{'Profile.CountryCode' | translate}}
+                            {{'Common.MinLengthError' | translate}} 2</div>
+                        <div *ngIf="contactForm.controls['countryCode'].errors?.['max']">
+                            {{'Profile.CountryCode' | translate}}
+                            {{'Common.MaxLengthError' | translate}} 2</div>
+                    </div>
+                </div>
+    
+                <div class="col-md-10">
+                    <mat-form-field appearance="outline" floatLabel="always" class="w-100">
+                        <mat-label>{{'Profile.ContactPersonMobileNo' | translate}}</mat-label>
+                        <input matInput type="text" autocomplete="off" name="contactPersonMobileNo" formControlName="contactPersonMobileNo">
+                    </mat-form-field>
+                    <div *ngIf="isSavedContact && contactForm.invalid" class="error-div ">
+                        <div *ngIf="contactForm.controls['contactPersonMobileNo'].errors?.['required']">
+                            {{'Profile.ContactPersonMobileNo' | translate}}
+                            {{'Common.RequiredError' | translate}}</div>
+                        <div *ngIf="contactForm.controls['contactPersonMobileNo'].errors?.['pattern']">
+                            {{'Common.Invalid' | translate}}
+                            {{'Profile.ContactPersonMobileNo' | translate}}</div>
+                        <div *ngIf="contactForm.controls['contactPersonMobileNo'].errors?.['min']">
+                            {{'Profile.ContactPersonMobileNo' | translate}}
+                            {{'Common.MinLengthError' | translate}} 10</div>
+                        <div *ngIf="contactForm.controls['contactPersonMobileNo'].errors?.['max']">
+                            {{'Profile.ContactPersonMobileNo' | translate}}
+                            {{'Common.MaxLengthError' | translate}} 10</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="dialog-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' |
+            translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="saveContactDetails()">{{'Common.Submit' |
+            translate}}</button>
+    </div>
+</div>

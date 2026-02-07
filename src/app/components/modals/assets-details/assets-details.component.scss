@@ -1,0 +1,24 @@
+.object-wrapper {
+  width: 90%;
+  height: calc(100vh - 230px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: auto;
+}
+
+.object-img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 576px){
+  .object-wrapper {
+    height: auto;
+  }
+  .object-img {
+    height: 250px;
+    width: 90%;
+  }
+}

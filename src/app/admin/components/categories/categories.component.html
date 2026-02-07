@@ -1,0 +1,136 @@
+<!-- Loader -->
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="listing-container">
+  <!-- Title & Buttons -->
+  <div class="d-flex justify-content-between align-items-center mt-1 mb-20">
+    <span class="text-26 fw-semibold d-flex">{{'Admin.Categories' | translate}}</span>
+    <div class="d-flex align-items-center justify-content-end gap-3">
+      <div class="form-group ml-2 mr-2 display-web">
+        <div class="d-flex align-items-center input-group-alternative search-box">
+          <mat-icon class="search-icon" svgIcon="search"></mat-icon>
+          <input class="form-control search-res ml-auto" placeholder="{{ 'Common.SearchHere' | translate }}" type="text"
+            (keyup)="searchFilter($event)" />
+        </div>
+      </div>
+      <button mat-stroked-button class="border-primary text-primary rounded text-14 px-3" (click)="exportSelected()">
+        <mat-icon svgIcon="download-icon" class="export lh-0"></mat-icon>
+        {{'Common.Export' | translate}}
+      </button>
+      <button mat-flat-button class="bg-primary text-14 rounded px-3" (click)="openCategoryDetails()">
+        <mat-icon color="light">add</mat-icon>
+        {{'Admin.Category' | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="display-mobile">
+    <div class="form-group mb-20 mr-2 display-mobile">
+      <div class="d-flex align-items-center input-group-alternative search-box">
+        <mat-icon class="search-icon" svgIcon="search"></mat-icon>
+        <input class="form-control search-res ml-auto" placeholder="{{ 'Common.SearchHere' | translate }}" type="text"
+          (keyup)="searchFilter($event)" />
+      </div>
+    </div>
+  </div>
+  <!-- Table -->
+  <div class="table-content">
+    <div class="table-container d-none d-sm-block">
+      <table id="dataTable" matSort mat-table [dataSource]="dataSource">
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
+
+        <ng-container matColumnDef="categoryName">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef>{{'Admin.CategoryName' | translate}} </th>
+          <td mat-cell *matCellDef="let User"> {{ User.categoryName }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="categoryDescription">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef class="col-4"> {{'Admin.CategoryDescription' |
+            translate}} </th>
+          <td mat-cell *matCellDef="let User" class="col-4">
+            <div class="text-responsive-3-line">
+              {{ User.categoryDescription }}
+            </div>
+
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="isGITag">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef> {{'Admin.GITag' | translate}} </th>
+          <td mat-cell *matCellDef="let User"> {{ User.isGITag == 'Y' ? 'Yes' : 'No' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="inactive">
+          <th mat-header-cell *matHeaderCellDef> {{'Admin.Status' | translate}} </th>
+          <td mat-cell *matCellDef="let User">
+            <span class="active-chip" *ngIf="User.inactive == 'N'">
+              {{ 'Admin.Active' | translate }}
+            </span>
+
+            <span class="inactive-chip" *ngIf="User.inactive == 'Y'">
+              {{ 'Admin.Inactive' | translate }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="align-center"> {{'Admin.Actions' | translate}}</th>
+          <td mat-cell *matCellDef="let user">
+            <div class="actions" (click)="openCategoryDetails(user)">
+              <mat-icon>edit</mat-icon>
+            </div>
+          </td>
+        </ng-container>
+      </table>
+      <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+        class="d-flex w-100 h-50 justify-content-center align-items-center">
+        <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+      </div>
+    </div>
+
+    <div class="d-block d-sm-none table-container border-0" style="overflow-x: hidden;">
+      <div class="row g-2">
+        <div class="col-12" *ngFor="let User of dataSourceCards | async">
+          <div class="card shadow-none border rounded-sm">
+            <div class="card-body flex-column">
+              <div class="mb-1 d-flex  flex-column">
+                <div class="d-flex align-items-start justify-content-between">
+                  <span class="text-12 fw-semibold">{{ 'Admin.CategoryName' | translate }}</span>
+                  <div class="actions" (click)="openCategoryDetails(User)">
+                    <mat-icon>edit</mat-icon>
+                  </div>
+                </div>
+                <span class="text-12 fw-medium mx-2" style="margin-top: -5px;">{{ User.categoryName }}</span>
+              </div>
+              <p class="mb-1 d-flex flex-column">
+                <span class="text-12 fw-semibold">{{ 'Admin.CategoryDescription' | translate }}</span>
+                <span class="text-12 fw-medium mx-2">{{ User.categoryDescription }}</span>
+              </p>
+              <p class="mb-1 d-flex flex-column">
+                <span class="text-12 fw-semibold">{{ 'Admin.GITag' | translate }}</span>
+                <span class="text-12 fw-medium mx-2">{{ User.isGITag == 'Y' ? 'Yes' : 'No' }}</span>
+              </p>
+              <p class="d-flex flex-column mb-0">
+                <span class="text-12 fw-semibold">{{ 'Admin.Status' | translate }}:</span>
+                <span class="active-chip text-center col-3 mx-2 text-12 fw-medium" *ngIf="User.inactive === 'N'">
+                  {{ 'Admin.Active' | translate }}
+                </span>
+                <span class="inactive-chip text-center col-3 mx-2 text-12 fw-medium" *ngIf="User.inactive === 'Y'">
+                  {{ 'Admin.Inactive' | translate }}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!dataSource || dataSource.filteredData.length == 0"
+        class="d-flex w-100 h-50 justify-content-center align-items-center">
+        <h2 class="mt-auto">{{'Common.NoResultsFound' | translate}}</h2>
+      </div>
+    </div>
+    <div [hidden]="!dataSource || dataSource.filteredData.length == 0">
+      <mat-paginator [pageSize]="defaultPageSize" [pageSizeOptions]="pageSizeOptions"
+        showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

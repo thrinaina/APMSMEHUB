@@ -1,0 +1,130 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class=" py-20 justify-content-center">
+
+  <div class="row m-0">
+    <!-- Back -->
+
+    <div class="col-xl-2 col-sm-2 col-md-2 col-lg-2 col-xxl-2 pl-sm-down-3">
+      <div class="w-fit d-flex align-items-center justify-content-center gap-4 py-2 px-3 pointer border rounded ml-3"
+        (click)="backToSearch()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        <h3 class="text-16 fw-medium mb-0">{{ 'Common.Back' | translate }}</h3>
+      </div>
+    </div>
+
+    <div class="col-xl-8 col-md-8 col-lg-8 col-xxl-8 col-sm-8 justify-content-center text-center mb-3">
+      <h2 class="text-30">{{'Discovery.ProductDetails' | translate}}</h2>
+    </div>
+  </div>
+
+
+  <div class="row m-0 row-gap-20 align-items-center justify-content-center">
+    <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8  p-3">
+
+      <div class="row m-0 border rounded py-3">
+        <div class="col-xl-5 col-md-5 px-4" *ngIf="safeImages.length > 0">
+          <div class="carousel-container">
+            <carousel class="carousel-custom" [interval]="0" [showIndicators]="true" [isAnimated]="true"
+              [noPause]="true" [(activeSlide)]="activeIndex" (activeSlideChange)="onActiveSlideChange($event)">
+              <slide *ngFor="let img of safeImages">
+                <div class="object-slide">
+                  <img [src]="img" class="w-100 rounded border product-image">
+                </div>
+              </slide>
+            </carousel>
+          </div>
+          <div class="d-flex justify-content-center gap-4 mt-3">
+            <img
+              *ngFor="let img of safeImages | slice:thumbStartIndex:(thumbStartIndex + thumbWindowSize); let i = index"
+              [src]="img" class="img-thumbnails border rounded-2 flex-shrink-0 pointer" alt="Thumbnail"
+              [class.opacity-50]="activeIndex !== (thumbStartIndex + i)"
+              [class.opacity-100]="activeIndex === (thumbStartIndex + i)"
+              (click)="onActiveSlideChange(thumbStartIndex + i)">
+          </div>
+        </div>
+
+        <div class="col-xl-5 col-md-5 px-4" *ngIf="safeImages.length == 0">
+          <img src="assets/images/no-image-available.png" class="w-100 rounded border product-image">
+          <div class="d-flex justify-content-center gap-4 mt-3">
+            <img src="assets/images/no-image-available.png"
+              class="img-thumbnails border rounded-2 flex-shrink-0 pointer" alt="Thumbnail">
+          </div>
+        </div>
+
+        <div class="col-xl-7 col-md-7 ps-4 d-flex flex-column justify-content-center products-card ">
+          <span class="fw-normal mb-10 product-name">
+            {{ productData.productName }}
+          </span>
+
+          <span class="fw-normal mb-10 text-18">
+            {{ productData.enterpriseName }}
+          </span>
+
+          <span class="fw-normal text-16">
+            {{ 'Common.ProductCategory' | translate }}
+          </span>
+
+          <p class="ms-2 mb-10 text-responsive-3-line text-14 fw-light">
+            {{ productData.categoryName }}
+          </p>
+
+          <div class="mb-10">
+            <div class="fw-normal product-desc">
+              {{ 'Common.Description' | translate }}
+            </div>
+            <p #description class=" text-14 fw-light mb-0 ms-2"
+              [ngClass]="{ 'text-responsive-3-line': !contentExpanded }">
+              {{ productData.productDescription }}
+            </p>
+            <p *ngIf="contentExpanded  || (description && description.scrollHeight > description.clientHeight)"
+              class="text-14 fw-light text-primary cursor-pointer mb-0 ms-2" style="text-decoration: underline;"
+              (click)="contentExpanded = !contentExpanded">
+              {{contentExpanded ? ('Profile.ViewLess' | translate) : ('Profile.ViewMore' | translate)}}
+            </p>
+          </div>
+
+          <p class=" mb-10 text-responsive-3-line text-16 fw-normal">
+            {{ productData.productQuantity }} {{ productData.productUnit }} {{ 'Common.Available' | translate }}
+          </p>
+
+          <div class="d-flex align-items-end gap-10">
+
+            <button (click)="openEnquiry()"
+              class="btn bg-secondary-color text-16 text-white w-fit fw-semibold d-flex justify-content-center align-items-center gap-2">
+              {{ 'Common.EnquiryNow' | translate }}
+              <mat-icon>shopping_cart</mat-icon>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="row-gap-20 align-items-start  mt-3 py-3">
+        <h6 class="fw-semibold justify-content-start mb-0 text-16">{{'Discovery.EnterpriseswiththisProductCategory' |
+          translate}}
+        </h6>
+
+        <div class="product-list-height row row-gap-16">
+          <div class="col-lg-3 col-sm-6 h-100" *ngFor="let enterprise of enterprises"
+            (click)="enterpriseRoute(enterprise?.webAddress)">
+            <div class="profile-card h-100 bg-white rounded-2 border ">
+              <img [src]="enterprise.enterpriseLogo || 'assets/images/no-image-available.png'"
+                [alt]="enterprise.enterpriseName" class="enterprise-img w-100 rounded" />
+            </div>
+
+            <div class=" text-muted mt-2 text-12">
+              {{ enterprise.enterpriseName }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+</div>

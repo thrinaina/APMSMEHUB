@@ -1,0 +1,72 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+    <div class="dialog-header">
+        <span>{{'Profile.MarketDetails' | translate}}</span>
+        <mat-icon (click)="onNoClick()">close</mat-icon>
+    </div>
+    <div class="dialog-body" style="height: 500px;">
+        <form [formGroup]="marketForm">
+            <!-- Domestic Markets -->
+            <div class="col-md-12">
+                <div class="float-select mt-2">
+                    <ng-select formControlName="domesticMarkets" [virtualScroll]="true" [searchable]="true" [clearOnBackspace]="false"
+                        dropdownPosition="auto" notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true"
+                        [closeOnSelect]="true">
+                        <ng-option *ngFor="let domestic of domesticMarkets" [value]="domestic.value">
+                            {{ domestic.value }}
+                        </ng-option>
+                    </ng-select>
+                    <label>{{'Profile.DomesticMarkets' | translate}}*</label>
+                </div>
+                <div *ngIf="isSavedMarket && marketForm.invalid" class="error-div">
+                    <div *ngIf="marketForm.controls['domesticMarkets'].errors?.['required']">
+                        {{'Profile.DomesticMarkets' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- International Markets -->
+            <div class="col-md-12">
+                <div class="float-select mt-2">
+                    <ng-select formControlName="internationalMarkets" [virtualScroll]="true" [searchable]="true" [clearOnBackspace]="false"
+                        dropdownPosition="auto" notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true"
+                        [closeOnSelect]="true">
+                        <ng-option *ngFor="let international of internationalMarkets" [value]="international.value">
+                            {{ international.value }}
+                        </ng-option>
+                    </ng-select>
+                    <label>{{'Profile.InternationalMarkets' | translate}}</label>
+                </div>
+                <div *ngIf="isSavedMarket && marketForm.invalid" class="error-div">
+                    <div *ngIf="marketForm.controls['internationalMarkets'].errors?.['required']">
+                        {{'Profile.InternationalMarkets' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectors Served -->
+            <div class="col-md-12">
+                <div class="float-select mt-2">
+                    <ng-select formControlName="sectorsServed" [virtualScroll]="true" [searchable]="true" [clearOnBackspace]="false"
+                        dropdownPosition="auto" notFoundText="{{'Common.NoResultsFound' | translate}}" [multiple]="true"
+                        [closeOnSelect]="true">
+                        <ng-option *ngFor="let sector of sectorsServed" [value]="sector.sector">
+                            {{ sector.sector }}
+                        </ng-option>
+                    </ng-select>
+                    <label>{{'Profile.SectorsServed' | translate}}*</label>
+                </div>
+                <div *ngIf="isSavedMarket && marketForm.invalid" class="error-div">
+                    <div *ngIf="marketForm.controls['sectorsServed'].errors?.['required']">
+                        {{'Profile.SectorsServed' | translate}} {{'Common.RequiredError' | translate}}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="dialog-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="saveMarketDetails()">{{'Common.Submit' | translate}}</button>
+    </div>
+</div>

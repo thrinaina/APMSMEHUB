@@ -1,0 +1,127 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <span>{{ 'Profile.ClientDetails' | translate }}</span>
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body">
+
+    <div class="flex-column w-100">
+
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" type="button" (click)="addClient()">
+          {{ 'Common.AddClient' | translate }}
+        </button>
+      </div>
+
+      <div class="row m-0" *ngIf="clientsData.length > 0">
+        <div class="col-md-4 my-10" *ngFor="let client of clientsData; let i = index">
+          <div class="border rounded p-10 d-flex flex-column">
+            <div class="d-flex justify-content-end">
+              <mat-icon class="mx-4 pointer" (click)="editClient(client, i)">edit</mat-icon>
+              <mat-icon class="text-danger pointer " (click)="deleteClient(client)">delete</mat-icon>
+            </div>
+
+            <!-- <button class="d-block d-sm-block d-md-none d-lg-none d-xl-none d-xxl-none bg-danger border-danger proceed w-fit ">{{'common.Delete' | translate}}</button> -->
+
+            <div class="d-flex align-items-center">
+              <img class="" [src]="client.clientLogo" style="height: 100px;width:100px;object-fit: contain;" />
+              <div class="flex-column mx-10">
+                <h4 class="text-14 text-responsive text-break text-break-anywhere">{{ client.clientName }}</h4>
+                <p class="text-12 text-break text-break-anywhere">{{ client.clientType }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="clientForm" *ngIf="displayEntryForm">
+        <div class="row border rounded p-20 mx-10 mt-10 mb-20">
+
+          <div class="col-md-3 col-12">
+            <label class="text-12">{{ 'Profile.ImageOfClient' | translate }}*</label>
+
+            <div class="border rounded mb-3" style="height:120px" (dragover)="handleDragOver($event)"
+              (drop)="handleDrop('clientLogo',$event)">
+
+              <div class="position-relative" *ngIf="clientForm.value.clientLogo != null">
+                <mat-icon class="position-absolute top-0 right-0 text-danger pointer"
+                  (click)="removeFile('clientLogo')">close</mat-icon>
+                <img class="p-3 w-100" [src]="clientForm.value.clientLogo"  style="height:120px;object-fit: contain;" />
+              </div>
+
+              <div *ngIf="clientForm.value.clientLogo == null" class="h-100 d-flex flex-column align-items-center justify-content-center pointer" (click)="fileInput.click()">
+                <div>
+                  <mat-icon>add_a_photo</mat-icon>
+                  <input #fileInput type="file" class="d-none" accept="image/jpeg,image/png,image/jpg"
+                    (change)="handleFileChange('clientLogo',$event)" />
+                </div>
+              </div>
+
+            </div>
+
+            <div *ngIf="isSavedClient && clientForm.get('clientLogo')?.errors?.['required']" class="error-div">
+              {{ 'Profile.ImageOfClient' | translate }} {{ 'Common.RequiredError' | translate }}
+            </div>
+
+            <div *ngIf="clientForm.get('clientLogo')?.errors?.['fileLimit']" class="error-div">
+              {{ 'Common.FileSizeExceedsTheMaximumLimitOf5MB' | translate }}
+            </div>
+
+            <div *ngIf="clientForm.get('clientLogo')?.errors?.['limitReached']" class="error-div">
+              {{ 'Common.YouCannotUploadMoreFiles' | translate }}
+            </div>
+          </div>
+
+          <div class="col-md-9 col-12 mt-20">
+            <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+              <mat-label>{{ 'Profile.NameOfTheClient' | translate }}</mat-label>
+              <input matInput formControlName="clientName" />
+            </mat-form-field>
+
+            <div *ngIf="isSavedClient && clientForm.invalid" class="error-div">
+              <div *ngIf="clientForm.controls['clientName'].errors?.['required']">
+                {{'Profile.NameOfTheClient' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+              <div *ngIf="clientForm.controls['clientName'].errors?.['maxlength']">
+                {{'Profile.NameOfTheClient' | translate}} {{'Common.MaxLengthError' | translate}}
+                {{ clientForm.controls['clientName'].errors?.['maxlength']?.requiredLength }}
+              </div>
+              <div *ngIf="clientForm.controls['clientName'].errors?.['pattern']">
+                {{'Common.PatternError' | translate}}
+              </div>
+            </div>
+
+
+            <mat-form-field appearance="outline" class="w-50 mt-20">
+              <mat-label>{{ 'Profile.ClientType' | translate }}</mat-label>
+              <mat-select formControlName="clientType">
+                <mat-option value="DOMESTIC">Domestic</mat-option>
+                <mat-option value="INTERNATIONAL">International</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="isSavedClient && clientForm.invalid" class="error-div">
+              <div *ngIf="clientForm.controls['clientType'].errors?.['required']">
+                {{'Profile.ClientType' | translate}} {{'Common.RequiredError' | translate}}
+              </div>
+            </div>
+
+
+            <div class="d-flex justify-content-end mt-20">
+              <button class="btn btn-outline-primary mx-10" type="button" (click)="discardClients()">
+                {{ 'Common.Discard' | translate }}
+              </button>
+
+              <button class="btn btn-primary" type="button" (click)="saveClientDetails()">
+                {{ 'Common.Save' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

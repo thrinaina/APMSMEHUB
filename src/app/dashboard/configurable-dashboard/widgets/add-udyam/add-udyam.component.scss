@@ -1,0 +1,117 @@
+.widget-div {
+  display: flex;
+  flex-direction: column;
+
+  .radio-div {
+    max-height: 210px;
+    overflow-y: auto;
+    flex-direction: column;
+
+    .radio-box {
+      display: block; /* <-- important */
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      // height: 60px;
+      padding: 8px 10px;
+      position: relative;
+
+      /* Force full-width label */
+      .mat-radio-label {
+        width: 100%;
+      }
+
+      .mat-radio-label-content {
+        width: 100%;
+      }
+
+      .udyam-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .edit-btn {
+        position: absolute;
+        right: 10px;
+      }
+    }
+  }
+}
+
+.mw-37{
+  max-width: 37vw !important;
+}
+
+.example {
+  font-size: var(--size-14);
+  font-weight: 500;
+  line-height: 16.94px;
+  letter-spacing: 0.005em;
+  text-align: left;
+  color: #9ca3af;
+}
+
+.fix-label {
+  white-space: nowrap;
+  color: currentColor;
+  font-size: var(--size-16);
+  font-weight: 500;
+  // padding-right: 10px;
+  border-right: 1px solid #e5e7eb;
+  height: 100%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-wrapper {
+  height: 40px !important;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1px solid #e4e5e9;
+  /* Match the default input border */
+  border-radius: 4px;
+  /* Match the default input border radius */
+  padding: 4px;
+  /* Match the default input padding */
+}
+
+.input-wrapper input {
+  flex-grow: 1;
+  font-size: var(--size-16) !important;
+  border: none !important;
+  /* Remove default input border */
+  outline: none !important;
+  /* Remove default input outline */
+  background-color: none !important;
+  padding: 0 5px !important;
+}
+
+.p-custom {
+  padding: 10px;
+}
+.disabled-Label.disabled {
+  pointer-events: none; /* ⛔ Disable click */
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.declaration-consent {
+  font-size: var(--size-14);
+  line-height: 1.6;
+}
+
+.declaration-consent ul {
+  padding-left: 18px;
+}
+
+.declaration-consent li {
+  margin-bottom: 8px;
+}
+
+.consent-checkbox {
+  margin-top: 12px;
+}

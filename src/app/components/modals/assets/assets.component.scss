@@ -1,0 +1,22 @@
+
+.asset-pdf {
+    height: 150px;
+    width: 100%;
+}
+
+.asset-img {
+    height: 150px;
+    width: 100%;
+}
+
+@media(max-width: 576px) {
+    .dialog-body {
+        margin-bottom: 20px;
+    }
+}
+
+.pdf-preview {
+    width: 100%;
+    height: 160px;
+    border: none;
+}

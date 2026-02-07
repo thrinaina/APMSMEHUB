@@ -1,0 +1,196 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <span>{{'Profile.ComplainceDetails' | translate}}</span>
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </div>
+  <div class="dialog-body">
+    <form [formGroup]="complainceForm">
+      <div class="row row-gap-20">
+        <!-- Pan -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+            <mat-label class="label-text">{{'Profile.PAN' | translate}}</mat-label>
+            <input matInput type="text" name="pan" formControlName="pan" />
+          </mat-form-field>
+          <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+            <div *ngIf="complainceForm.controls['pan'].errors?.['required']">
+              {{'Profile.PAN' | translate}} {{'Common.RequiredError' | translate}}
+            </div>
+            <div *ngIf="complainceForm.controls['pan'].errors?.['pattern']">
+              {{'Common.PatternError' | translate}}
+            </div>
+          </div>
+        </div>
+        <!-- GSTIN -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+            <mat-label class="label-text">{{'Profile.GSTIN' | translate}}</mat-label>
+            <input matInput type="text" name="gstin" formControlName="gstin" />
+          </mat-form-field>
+          <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+            <div *ngIf="complainceForm.controls['gstin'].errors?.['pattern']">
+              {{'Common.PatternError' | translate}}
+            </div>
+            <div *ngIf="complainceForm.controls['gstin'].errors?.['notmatched']">
+              {{'Profile.GSTIN' | translate}} {{'Common.NotMatchingWith' | translate}} {{'Profile.PAN' |
+              translate}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Import Export Code (IEC) -->
+      <div class="col-md-12">
+        <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+          <mat-label class="label-text">{{'Profile.ImportExportCodeIEC' | translate}}</mat-label>
+          <input matInput type="text" name="iecCode" formControlName="iecCode" />
+        </mat-form-field>
+        <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+          <div *ngIf="complainceForm.controls['iecCode'].errors?.['pattern']">
+            {{'Common.PatternError' | translate}}
+          </div>
+          <div *ngIf="complainceForm.controls['iecCode'].errors?.['minlength']">
+            {{'Common.MinLengthError' | translate}} 10
+          </div>
+          <div *ngIf="complainceForm.controls['iecCode'].errors?.['maxlength']">
+            {{'Profile.ImportExportCodeIEC' | translate}} {{'Common.MaxLengthError' | translate}} 10
+          </div>
+        </div>
+      </div>
+
+      <!-- Industry Licenses -->
+      <div class="col-md-12">
+        <div class="mb-2 col-md-12 d-flex align-items-center justify-content-between">
+          <label class="mb-0 text-12">{{'Profile.IndustryLicenses' | translate}}</label>
+          <button type="button" class="btn btn-outline-primary d-flex align-items-center py-2"
+            (click)="addNewComplaince()">
+            <mat-icon>add</mat-icon>
+            <span class="pl-2 pt-1">{{'Common.Add' | translate}}</span>
+          </button>
+        </div>
+        <div formArrayName="industryLicenses" class="d-flex flex-column row-gap-16">
+          <div class="row  align-items-start border rounded row-gap-20 mx-0 px-10 pt-20" [formGroupName]="i"
+            *ngFor="let row of getComplainceRowArray(complainceForm); let i = index">
+
+            <!-- License No -->
+            <div class="col-12 col-md-6">
+              <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                <mat-label>{{ 'Profile.LicenseNo' | translate }}</mat-label>
+                <input matInput type="text" formControlName="licenseNo" />
+              </mat-form-field>
+
+              <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+                <div *ngIf="industryLicensesArray.at(i).get('licenseNo')?.errors?.['required']">
+                  {{ 'Profile.LicenseNo' | translate }} {{ 'Common.RequiredError' | translate }}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseNo')?.errors?.['pattern']">
+                  {{ 'Common.PatternError' | translate }} {{ 'Profile.LicenseNo' | translate }}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseNo')?.errors?.['maxlength']">
+                  {{ 'Profile.LicenseNo' | translate }} {{ 'Common.MaxLengthError' | translate }}
+                  {{industryLicensesArray.at(i).get('licenseNo')?.errors?.['maxlength'].requiredLength}}
+                </div>
+              </div>
+            </div>
+
+            <!-- License Name -->
+            <div class="col-12 col-md-5">
+              <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                <mat-label>{{ 'Profile.Name' | translate }}</mat-label>
+                <input matInput type="text" formControlName="licenseName" />
+              </mat-form-field>
+
+              <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+                <div *ngIf="industryLicensesArray.at(i).get('licenseName')?.errors?.['required']">
+                  {{ 'Profile.Name' | translate }} {{ 'Common.RequiredError' | translate }}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseName')?.errors?.['pattern']">
+                  {{ 'Common.PatternError' | translate }} {{ 'Profile.Name' | translate }}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseName')?.errors?.['maxlength']">
+                  {{ 'Profile.Name' | translate }} {{ 'Common.MaxLengthError' | translate }}
+                  {{industryLicensesArray.at(i).get('licenseName')?.errors?.['maxlength'].requiredLength}}
+                </div>
+              </div>
+            </div>
+
+            <!-- Delete Icon -->
+            <div class="col-auto d-flex align-items-center mt-2 d-none d-sm-none d-md-block d-lg-block d-xl-block d-xxl-block">
+              <mat-icon *ngIf="getComplainceRowArray(complainceForm)?.length > 1" class="text-danger pointer"
+                (click)="deleteComplainceRow(i)">
+                delete
+              </mat-icon>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                <mat-label class="label-text">{{'Profile.Type' | translate}}</mat-label>
+                <input matInput type="text" name="licenseType" formControlName="licenseType" />
+              </mat-form-field>
+              <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+                <div *ngIf="industryLicensesArray.at(i).get('licenseType')?.errors?.['required']">
+                  {{'Profile.Type' | translate}} {{'Common.RequiredError' | translate}}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseType')?.errors?.['pattern']">
+                  {{'Common.PatternError' | translate}} {{'Profile.Type' | translate}}
+                </div>
+                <div *ngIf="industryLicensesArray.at(i).get('licenseType')?.errors?.['maxlength']">
+                  {{'Profile.Type' | translate}} {{'Common.MaxLengthError' | translate}}
+                  {{industryLicensesArray.at(i).get('licenseType')?.errors?.['maxlength'].requiredLength}}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 mt-sm-down-2">
+              <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+                <mat-label>{{'Profile.Validity' | translate}}</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input class="text-dark  text-14" matStartDate name="validFromDate" formControlName="validFromDate"
+                    readonly />
+                  <span class="separator">–</span>
+                  <input class="text-dark  text-14" matEndDate name="validToDate" formControlName="validToDate"
+                    readonly />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker>
+                  <mat-date-range-picker-actions>
+                    <button class="btn btn-primary me-2" mat-button matDateRangePickerCancel>
+                      {{'Cancel' | translate}}
+                    </button>
+                    <button class="btn btn-primary" mat-raised-button color="primary" matDateRangePickerApply>
+                      {{'Apply' | translate}}
+                    </button>
+                  </mat-date-range-picker-actions>
+                </mat-date-range-picker>
+              </mat-form-field>
+              <div *ngIf="isSavedComplaince && complainceForm.invalid" class="error-div">
+                <div
+                  *ngIf="industryLicensesArray.at(i).get('validFromDate')?.errors?.['required'] || industryLicensesArray.at(i).get('validToDate')?.errors?.['required']">
+                  {{'Profile.Validity' | translate}}
+                  {{'Common.RequiredError' | translate}}</div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <button *ngIf="getComplainceRowArray(complainceForm)?.length > 1" (click)="deleteComplainceRow(i)"
+                class="d-block d-sm-block d-md-none d-lg-none d-xl-none d-xxl-none bg-danger border-danger proceed w-fit  h-fit py-2 px-3">{{'Common.Delete'
+                | translate}}</button>
+            </div>
+          </div>
+
+          <div *ngIf="industryLicenseMessage != '' " class="error-div">{{ 'Profile.LicenseNo' | translate }}
+            {{industryLicenseMessage}} {{'Profile.IsRepeated' | translate}}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="onNoClick()">{{'Common.Cancel' |
+      translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="saveProfileDetails()">{{'Common.Submit' |
+      translate}}</button>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <span>{{'Profile.'+data.title | translate}}</span>
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </div>
+
+  <div class="dialog-body">
+    <div class="row g-3 px-3 pb-3 w-100">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let asset of assetData">
+        <div class="card h-100 border rounded-2 pointer text-center" (click)="openAssetDetails(asset)">
+          <img *ngIf="asset.assetType !== 'Brochures'" [src]="asset.documents?.[0]?.assetImage"
+            class="card-img-top asset-img w-100" alt="asset image" />
+          <pdf-viewer *ngIf="asset.assetType === 'Brochures'" [src]="asset.documents?.[0]?.safeUrl" [rotation]="0"
+            [original-size]="false" [show-all]="true" [fit-to-page]="false" [zoom]="1" [zoom-scale]="'page-width'"
+            [stick-to-page]="false" [render-text]="true" [external-link-target]="'blank'" [autoresize]="true"
+            [show-borders]="false" style="width: 100%; margin: auto;" class="asset-pdf"></pdf-viewer>
+          <div class="bg-white p-2">
+            <span class="fw-medium asset-name text-12">
+              {{ asset.assetName }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
