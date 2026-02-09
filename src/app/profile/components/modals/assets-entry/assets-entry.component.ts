@@ -336,9 +336,12 @@ export class AssetsEntryComponent implements OnInit {
         });
       }
 
+      const assetObj = JSON.parse(JSON.stringify(this.assetForm.value));
+      assetObj.assetDocuments = null;
+
       // let response = await this.profileService.asset({ payload: btoa(this.encryptionService.encrypt(this.assetForm.value)) }).toPromise();
       // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.assetForm.value).toPromise();
+      const encryptedData = await this.securityService.encrypt(assetObj).toPromise();
       let response: any = await this.profileService.asset({ payload: encryptedData.encryptedText} ).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
 

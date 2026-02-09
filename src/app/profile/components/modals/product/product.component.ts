@@ -296,9 +296,12 @@ export class ProductComponent implements OnInit {
 
       this.isLoading = true;
 
+      const productObj = JSON.parse(JSON.stringify(this.productForm.value));
+      productObj.productImages = null;
+
       // let response = await this.profileService.product({ payload: btoa(this.encryptionService.encrypt(this.productForm.value)) }).toPromise();
       // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.productForm.value).toPromise();
+      const encryptedData = await this.securityService.encrypt(productObj).toPromise();
       let response: any = await this.profileService.product({ payload: encryptedData.encryptedText} ).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       if (response?.status == 'conflict') {
