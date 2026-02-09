@@ -17,14 +17,16 @@ export class ConfigService {
     } catch (error) {
       console.error('Critical Error: Could not load config.json', error);
       // Fallback for local development if fetch fails
-      this.configData = { bffUrl: 'http://localhost:3001/api/crypto' };
+      // this.configData = { bffUrl: 'http://localhost:3001/api/crypto' };
+      this.configData = { bffUrl: 'https://thrinaina.centralindia.cloudapp.azure.com/bffapi' };
     }
   }
 
   get bffUrl(): string {
     if (!this.configData) {
       console.warn('Accessing bffUrl before config loaded. Returning fallback.');
-      return 'http://localhost:3001/api/crypto'; 
+      // return 'http://localhost:3001/api/crypto'; 
+      return 'https://thrinaina.centralindia.cloudapp.azure.com/bffapi'; 
     }
     return this.configData.bffUrl;
   }
