@@ -80,7 +80,8 @@ export class ProductProfileComponent {
         this.productData.documents = JSON.parse(this.productData.documents);
         this.productData.documents.forEach(async (document: any) => {
           if (document.documentName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: document.documentName}).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader: any = new FileReader();
             reader.onload = () => {
               this.safeImages.push(reader.result)
@@ -113,7 +114,8 @@ export class ProductProfileComponent {
 
       this.allEnterprises.forEach(async (enterprise: any) => {
         if (enterprise.enterpriseLogoDocName) {
-          const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: enterprise.enterpriseLogoDocName}).toPromise() }));
+          const encryptedData = await this.securityService.encrypt({ fileName: enterprise.enterpriseLogoDocName }).toPromise();
+          const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
           const reader = new FileReader();
           reader.onload = () => {
             enterprise['enterpriseLogo'] = reader.result;

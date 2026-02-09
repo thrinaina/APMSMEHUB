@@ -47,9 +47,7 @@ export class CategoryRequestComponent {
       requestId: new FormControl(0),
       requestType: new FormControl('NEW-CATEGORY'),
       categoryName: new FormControl(null, [Validators.required,  Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9 .,()\-@&/]+$/)]),
-      purposeofuse: new FormControl(null, [ Validators.maxLength(500), Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
-      loginName: new FormControl(this.tokenStorageService.getUser().loginName)
+      purposeofuse: new FormControl(null, [ Validators.maxLength(500), Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")])
     });
   }
 

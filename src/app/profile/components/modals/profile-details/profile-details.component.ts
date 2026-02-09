@@ -92,7 +92,6 @@ export class ProfileDetailsComponent implements OnInit {
       socials: new FormArray([this.initSocialRows()]),
       emailId:  new FormControl(null),
       mobileNumber:  new FormControl(null),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 
@@ -115,7 +114,8 @@ export class ProfileDetailsComponent implements OnInit {
       if (this.documents) {
         this.documents.forEach(async document => {
           if (document?.documentName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: document?.documentName}).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader = new FileReader();
             reader.onload = () => {
               let data: any = {
@@ -366,9 +366,13 @@ export class ProfileDetailsComponent implements OnInit {
 
       this.isLoading = true;
 
+      const profileObj = JSON.parse(JSON.stringify(this.profileForm.value));
+      profileObj.coverImage = null;
+      profileObj.enterpriseLogo = null;
+
       // let response = await this.profileService.profileDetail({ payload: btoa(this.encryptionService.encrypt(this.profileForm.value)) }).toPromise();
       // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.profileForm.value).toPromise();
+      const encryptedData = await this.securityService.encrypt(profileObj).toPromise();
       let response: any = await this.profileService.profileDetail({ payload: encryptedData.encryptedText} ).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
 

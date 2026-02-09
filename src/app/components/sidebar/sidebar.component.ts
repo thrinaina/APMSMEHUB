@@ -2,12 +2,16 @@ import { Component } from '@angular/core';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { MatDrawer, MatDrawerMode } from "@angular/material/sidenav";
 import { AuthService } from 'src/app/auth/auth.service';
-import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, NavigationStart, Router, Event } from '@angular/router';
 import { AdminService } from 'src/app/admin/admin.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
 import { SecurityService } from 'src/app/shared/services/security/security.service';
 import { firstValueFrom } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { AlertsComponent } from '../alerts/alerts.component';
+import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-sidebar',
@@ -39,11 +43,33 @@ export class SidebarComponent {
     private authService: AuthService,
     private adminService: AdminService,
     private commonService: CommonService,
-    private encryptionService: EncryptionService,
     private securityService: SecurityService,
     private router: Router,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private translate: TranslateService,
+    public dialog: MatDialog,
+  ) { 
+    this.router.events.pipe(
+      filter((event: Event): event is NavigationStart => event instanceof NavigationStart)
+    ).subscribe((event: NavigationStart) => {
+      if (event.navigationTrigger === 'popstate') {
+        // User likely typed in the address bar or used browser Back/Forward
+        // console.log('Manual or browser-level navigation to:', event.url);
+        const dialogRef = this.dialog.open(AlertsComponent, {
+          data: {
+            type: 'error-type',
+            title: this.translate.instant('Common.AccessDenied'),
+            message: this.translate.instant('Common.AccessNotAllowed'),
+          },
+          width: '300px',
+        });
+        router.navigate(["/"]);
+      } else if (event.navigationTrigger === 'imperative') {
+        // Navigation was triggered by your code (e.g., router.navigate)
+        // console.log('Internal app navigation to:', event.url);
+      }
+    });
+  }
 
   async ngOnInit() {
     this.isMenuOpen = false;
@@ -83,7 +109,7 @@ export class SidebarComponent {
   }
 
   async logout() {
-    await this.authService.inactiveSessions(this.tokenStorageService.getUser(), false, "Logout");
+    await this.authService.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
     this.router.navigate(["/"], { relativeTo: this.route });
@@ -133,9 +159,8 @@ export class SidebarComponent {
   async getUserImage() {
     const userDocs = this.loginUserData.documents ? JSON.parse(this.loginUserData.documents.documents) : [];
     if (userDocs[0]?.documentName) {
-      const responseBlob: Blob = await firstValueFrom(
-        this.commonService.previewFile({ payload: await this.securityService.encrypt({ fileName: userDocs[0].documentName }).toPromise() })
-      );
+      const encryptedData = await this.securityService.encrypt({ fileName: userDocs[0].documentName }).toPromise();
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
 
       const reader = new FileReader();
       reader.onload = () => {
@@ -194,7 +219,6 @@ export class SidebarComponent {
         ];
       } else {
         this.isLoading = true;
-        // const defaultCondition = " AND appuserrole.appUserId = " + this.tokenStorageService.getUser().appUserId;
         const defaultCondition: any = { filters: [] };
         // const response = await this.adminService.userMenu({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
         // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};

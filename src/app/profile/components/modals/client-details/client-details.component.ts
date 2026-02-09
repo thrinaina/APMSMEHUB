@@ -59,7 +59,6 @@ export class ClientDetailsComponent implements OnInit {
       clientName: new FormControl(null, [Validators.required, Validators.pattern(/^[a-zA-Z0-9& ]+$/), Validators.maxLength(100)]),
       clientType: new FormControl('DOMESTIC', [Validators.required]),
       clientLogo: new FormControl(null, [Validators.required]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo())
     });
 
@@ -95,7 +94,8 @@ export class ClientDetailsComponent implements OnInit {
 
     this.clientsData.forEach(async (client: any) => {
       if (client.document?.documentName) {
-        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: client.document?.documentName}).toPromise() }));
+        const encryptedData = await this.securityService.encrypt({ fileName: client.document.documentName }).toPromise();
+        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
         const reader = new FileReader();
         reader.onload = () => {
           client['clientLogo'] = reader.result;
@@ -304,7 +304,6 @@ export class ClientDetailsComponent implements OnInit {
 
       const clientData = {
         clientId: client.clientId,
-        loginUserId: this.tokenStorageService.getUser().appUserId,
         udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo()
       };
 

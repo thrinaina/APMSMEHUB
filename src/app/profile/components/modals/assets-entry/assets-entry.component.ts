@@ -81,7 +81,6 @@ export class AssetsEntryComponent implements OnInit {
       validToDate: new FormControl(null),
       assetDescription: new FormControl(null),
       assetDocuments: new FormControl(null),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 
@@ -113,7 +112,8 @@ export class AssetsEntryComponent implements OnInit {
       if (this.assetsData.documents && this.assetsData.documents.length > 0) {
         for (let i = 0; i < this.assetsData.documents.length; i++) {
           if (assetDocs[i]?.documentName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: this.assetsData.documents[i].documentName}).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: assetDocs[i].documentName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader: any = new FileReader();
             const isPdf = assetDocs[i]?.documentName.toLowerCase().endsWith('.pdf');
             reader.onload = () => {

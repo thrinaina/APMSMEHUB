@@ -48,12 +48,11 @@ export class ProfileApprovalsComponent {
     // Approval Form
     this.approvalForm = new FormGroup({
       enterpriseId: new FormControl(this.data.profileData.enterpriseId),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
-      loginName: new FormControl(this.tokenStorageService.getUser().loginName),
+      enterpriseEmailId: new FormControl(this.data.profileData.emailId),
+      enterpriseMobileNo: new FormControl(this.data.profileData.mobileNumber),
       enterpriseStatus: new FormControl(this.data.profileData.enterpriseStatus),
       enterpriseStatusRemarks: new FormControl(null, [Validators.required, Validators.maxLength(500), Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
     });
-
   }
 
   onNoClick() {

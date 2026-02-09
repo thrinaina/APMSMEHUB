@@ -26,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // Check if the error is from the REFRESH endpoint itself
       // If it is, DO NOT retry. Just log out.
       if (req.url.includes('/auth/refresh')) {
-        authService.inactiveSessions(tokenStorageService.getUser(), false, "Logout");
+        authService.inactiveSessions(tokenStorageService.getUser().accessToken, false, "Logout");
         tokenStorageService.signOut();
         router.navigate(["/"], { relativeTo: route });
         return throwError(() => error);
@@ -47,7 +47,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           }),
           catchError((refreshErr) => {
             // If refresh fails, kill the session to stop the loop
-            authService.inactiveSessions(tokenStorageService.getUser(), false, "Logout");
+            authService.inactiveSessions(tokenStorageService.getUser().accessToken, false, "Logout");
             tokenStorageService.signOut();
             router.navigate(["/"], { relativeTo: route });
             return throwError(() => refreshErr);

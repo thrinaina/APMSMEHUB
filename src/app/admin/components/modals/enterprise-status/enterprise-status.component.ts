@@ -49,8 +49,8 @@ export class EnterpriseStatusComponent {
     // Approval Form
     this.enterpriseForm = new FormGroup({
       enterpriseId: new FormControl(this.data.enterpriseData.enterpriseId),
-      loginName: new FormControl(this.tokenStorageService.getUser().loginName),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
+      enterpriseEmailId: new FormControl(this.data.enterpriseData.emailId),
+      enterpriseMobileNo: new FormControl(this.data.enterpriseData.mobileNumber),
       inactiveRemarks: new FormControl(null, [Validators.required, Validators.maxLength(500), Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
       inactive: new FormControl(false),
     });

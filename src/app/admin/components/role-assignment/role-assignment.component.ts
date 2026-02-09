@@ -56,7 +56,6 @@ export class RoleAssignmentComponent {
       userMenuId: new FormControl(null, [Validators.required]),
       userMenuRoleId: new FormControl(null, [Validators.required]),
       users: new FormControl(null),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId, [Validators.required]),
       inactive: new FormControl('N')
     })
 

@@ -36,9 +36,8 @@ export class CommonService {
   }
 
   // Error Logging
-  errorLog(appUserid: any, tranId: any, componentName: string, errorMessage: string): Observable<any> {
+  errorLog(tranId: any, componentName: string, errorMessage: string): Observable<any> {
     const data = {
-      appUserid: appUserid,
       tranId: tranId,
       componentName: componentName,
       errorMessage: errorMessage
@@ -58,10 +57,9 @@ export class CommonService {
   //   };
   //   return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: btoa(this.encryptionService.encrypt(data)) });
   // }
-  async inactiveSessions(userData: any, status: any, sessionLogDesc: string): Promise<any> {
+  async inactiveSessions(accessToken: string, status: any, sessionLogDesc: string): Promise<any> {
     const data = {
-      token: userData.accessToken,
-      appUserId: userData.appUserId,
+      token: accessToken,
       status: status,
       sessionLogDesc: sessionLogDesc,
       ipAddress: this.tokenStorageService.getIPAddress(),
@@ -141,10 +139,10 @@ export class CommonService {
       });
     }
     
-    await this.errorLog(this.tokenStorageService.getUser().appUserId, data?.appUserId, data?.component, errorMessage).toPromise();
+    await this.errorLog(data?.appUserId, data?.component, errorMessage).toPromise();
 
     if (errorMessage == 'User Session Expired.' || errorMessage == 'No token provided!' || errorMessage == 'Unauthorized!') {
-      await this.inactiveSessions(this.tokenStorageService.getUser(), false, "Logout");
+      await this.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
       this.dialog.closeAll();
       this.tokenStorageService.signOut();
       this.router.navigate(['/'], { relativeTo: this.route });
@@ -194,10 +192,9 @@ export class CommonService {
         const doc = addDocuments[docIndex];
         fileDateString = formatDate(new Date(), "yyyyMMddhhmmssSSSSSS", "en-US").toString();
         statusDate = formatDate(new Date(), "yyyy-MM-dd HH:mm:ss", "en-US");
-        doc["documentName"] = (data?.transactionType || doc?.transactionType) + "_" + data.transactionId + "_" + data.loginUserId + "_" + fileDateString + "." + doc.document.name.split(".")[1];
+        doc["documentName"] = (data?.transactionType || doc?.transactionType) + "_" + data.transactionId + "_" + fileDateString + "." + doc.document.name.split(".")[1];
         await this.uploadFile(doc.document, doc.documentName).toPromise();
         let documentData = {
-          appUserId: data.loginUserId,
           transactionId: data.transactionId,
           transactionType: data?.transactionType || doc?.transactionType,
           documentType: doc.document?.type,
@@ -206,15 +203,17 @@ export class CommonService {
           statusDate: statusDate,
           statusType: "Uploaded"
         };
-        await this.addDocument({ payload: await this.securityService.encrypt(documentData).toPromise() }).toPromise();
+        const encryptedData = await this.securityService.encrypt(documentData).toPromise();
+        await this.addDocument({ payload: encryptedData.encryptedText }).toPromise();
       }
       // Remove documents
       for (let removeDocIndex = 0; removeDocIndex < data.removedDocuments.length; removeDocIndex++) {
         let removeDoc = data.removedDocuments[removeDocIndex];
-        removeDoc.loginUserId =  data.loginUserId;
-        removeDoc.transactionId = data.transactionId,
-        await this.deleteFile({ payload: await this.securityService.encrypt({fileName: removeDoc.documentName}).toPromise() }).toPromise();
-        await this.deleteDocument({ payload: await this.securityService.encrypt(removeDoc).toPromise() }).toPromise();
+        removeDoc.transactionId = data.transactionId;
+        const encryptedData = await this.securityService.encrypt({ fileName: removeDoc.documentName }).toPromise();
+        await this.deleteFile({ payload: encryptedData.encryptedText }).toPromise();
+        const encryptedData2 = await this.securityService.encrypt(removeDoc).toPromise();
+        await this.deleteDocument({ payload: encryptedData2.encryptedText }).toPromise();
       }
     } else if (addDocuments.length > 0 && data.removedDocuments.length == 0) {
       // Add documents only
@@ -222,10 +221,9 @@ export class CommonService {
         const doc = addDocuments[docIndex];
         fileDateString = formatDate(new Date(), "yyyyMMddhhmmssSSSSSS", "en-US").toString();
         statusDate = formatDate(new Date(), "yyyy-MM-dd HH:mm:ss", "en-US");
-        doc["documentName"] = (data?.transactionType || doc?.transactionType) + "_" + data.transactionId + "_" + data.loginUserId + "_" + fileDateString + "." + doc.document.name.split(".")[1];
+        doc["documentName"] = (data?.transactionType || doc?.transactionType) + "_" + data.transactionId + "_" + fileDateString + "." + doc.document.name.split(".")[1];
         await this.uploadFile(doc.document, doc.documentName).toPromise();
         let documentData = {
-          appUserId: data.loginUserId,
           transactionId: data.transactionId,
           transactionType: data?.transactionType || doc?.transactionType,
           documentType: doc.document?.type,
@@ -234,16 +232,18 @@ export class CommonService {
           statusDate: statusDate,
           statusType: "Uploaded"
         };
-        await this.addDocument({ payload: await this.securityService.encrypt(documentData).toPromise() }).toPromise();
+        const encryptedData = await this.securityService.encrypt(documentData).toPromise();
+        await this.addDocument({ payload: encryptedData.encryptedText }).toPromise();
       }
     } else if (addDocuments.length == 0 && data.removedDocuments.length > 0) {
       // Remove documents only
       for (let removeDocIndex = 0; removeDocIndex < data.removedDocuments.length; removeDocIndex++) {
         const removeDoc = data.removedDocuments[removeDocIndex];
-        removeDoc.loginUserId =  data.loginUserId;
-        removeDoc.transactionId = data.transactionId,
-        await this.deleteFile({ payload: await this.securityService.encrypt({fileName: removeDoc.documentName}).toPromise() }).toPromise();
-        await this.deleteDocument({ payload: await this.securityService.encrypt(removeDoc).toPromise() }).toPromise();
+        removeDoc.transactionId = data.transactionId;
+        const encryptedData = await this.securityService.encrypt({ fileName: removeDoc.documentName }).toPromise();
+        await this.deleteFile({ payload: encryptedData.encryptedText }).toPromise();
+        const encryptedData2 = await this.securityService.encrypt(removeDoc).toPromise();
+        await this.deleteDocument({ payload: encryptedData2.encryptedText }).toPromise();
       }
     }
     return true

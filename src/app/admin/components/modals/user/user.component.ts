@@ -61,8 +61,7 @@ export class UserComponent implements OnInit {
       loginName: new FormControl(null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)]),
       userImage: new FormControl(null),
       inactive: new FormControl(false),
-      setDefaultPassword: new FormControl(true),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId)
+      setDefaultPassword: new FormControl(true)
     });
 
     // Patch existing data
@@ -79,7 +78,8 @@ export class UserComponent implements OnInit {
 
       const userDocs = this.userData?.documents ? JSON.parse(this.userData.documents) : [];
       if (userDocs[0]?.documentName) {
-        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: userDocs[0].documentName}).toPromise() }));
+        const encryptedData = await this.securityService.encrypt({ fileName: userDocs[0].documentName }).toPromise();
+        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
         const reader = new FileReader();
         reader.onload = () => {
           let data: any = {
@@ -186,7 +186,8 @@ export class UserComponent implements OnInit {
     }
     if (index !== -1) {
       const doc = this.documents[index];
-      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: doc.documentName}).toPromise() }));
+      const encryptedData = await this.securityService.encrypt({ fileName: doc.documentName }).toPromise();
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
       const url = window.URL.createObjectURL(responseBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -222,8 +223,9 @@ export class UserComponent implements OnInit {
       const result = await dialogRef.afterClosed().toPromise();
       if (!result) return;
 
-      // let response = await this.adminService.user({ payload: btoa(this.encryptionService.encrypt(this.userForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
+      const userObj = JSON.parse(JSON.stringify(this.userForm.value));
+      userObj.userImage = null;
+
       const encryptedData = await this.securityService.encrypt(this.userForm.value).toPromise();
       let response: any = await this.adminService.user({ payload: encryptedData.encryptedText} ).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
@@ -232,8 +234,7 @@ export class UserComponent implements OnInit {
         await this.commonService.handleFiles({
           addDocuments: this.documents,
           removedDocuments: this.removedDocuments,
-          transactionId: this.userForm.value.appUserId,
-          loginUserId: this.userForm.value.loginUserId
+          transactionId: this.userForm.value.appUserId
         });
       }
 

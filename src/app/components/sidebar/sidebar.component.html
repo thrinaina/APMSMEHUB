@@ -15,7 +15,7 @@
           <div class="title-set" *ngIf="isMenuOpen">
             <img [src]="userImage || 'assets/images/profile-picture.jpeg'" alt="User Image">
             <span class="menu-header">{{tokenStorageService.getUserName()}}</span>
-            <span class="menu-subheader"> {{tokenStorageService.getUser().loginName}} </span>
+            <!-- <span class="menu-subheader"> {{tokenStorageService.getUser().loginName}} </span> -->
             <span class="menu-subheader-2"> {{'Menu.lastLogin' | translate}} :
               {{tokenStorageService.getLastSession() | date: 'medium'}} </span>
           </div>

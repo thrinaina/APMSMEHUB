@@ -50,7 +50,6 @@ export class ContactPersonDetailsComponent implements OnInit{
       contactPersonEmailId: new FormControl(null, [Validators.required, Validators.email, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]),
       contactPersonMobileNo: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern('[0-9]{10}$')]),
       countryCode: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(2), Validators.pattern('[0-9]{2}$')]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 

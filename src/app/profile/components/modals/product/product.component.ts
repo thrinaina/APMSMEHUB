@@ -66,7 +66,6 @@ export class ProductComponent implements OnInit {
       productDescription: new FormControl(null, [Validators.required, Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
       productImages: new FormControl(null, [Validators.required]),
       inactive: new FormControl(false),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 
@@ -92,7 +91,8 @@ export class ProductComponent implements OnInit {
       if (this.productData.documents && this.productData.documents.length > 0) {
         for (let i = 0; i < this.productData.documents.length; i++) {
           if (productDocs[i]?.documentName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: productDocs[i].documentName}).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: productDocs[i].documentName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader = new FileReader();
             reader.onload = () => {
               let data: any = {
@@ -255,7 +255,8 @@ export class ProductComponent implements OnInit {
     }
     if (index !== -1) {
       const doc = this.documents[index];
-      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({fileName: doc.documentName}).toPromise() }));
+      const encryptedData = await this.securityService.encrypt({ fileName: doc.documentName }).toPromise();
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
       const url = window.URL.createObjectURL(responseBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -315,8 +316,7 @@ export class ProductComponent implements OnInit {
         await this.commonService.handleFiles({
           addDocuments: this.documents,
           removedDocuments: this.removedDocuments,
-          transactionId: response.id,
-          loginUserId: this.productForm.value.loginUserId
+          transactionId: response.id
         });
         this.toastr.success(response?.message);
         this.dialogRef.close({ type: true, id: 0 });

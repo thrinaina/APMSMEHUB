@@ -76,7 +76,6 @@ export class ComplianceDetailsComponent implements OnInit {
       gstin: new FormControl(null, [Validators.pattern(/^[0-9]{2}[A-Za-z]{5}[0-9]{4}[0-9A-Z]{4}$/)]),
       iecCode: new FormControl(null, [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^[a-zA-Z0-9 ]+$/)]),
       industryLicenses: new FormArray([this.initComplainceRows()]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 

@@ -60,7 +60,7 @@ export class IdleService {
       if (this.countdown() <= 0) {
         clearInterval(interval);
         if (this.showWarning()) {
-          await this.authService.inactiveSessions(this.tokenStorageService.getUser(), false, "Logout");
+          await this.authService.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
           this.tokenStorageService.signOut();
           this.stayLoggedIn();
           this.router.navigate(["/"], { relativeTo: this.route });

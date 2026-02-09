@@ -347,12 +347,18 @@ export class AdminLoginComponent {
         });
       } else if (decryptResponse?.status == 'success') {
         this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
-        this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
-        this.tokenStorageService.saveUser(decryptResponse.data);
+        // this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
+        const userData = {
+          userType: decryptResponse.data.userType,
+          userName: decryptResponse.data.userName,
+          // loginName: decryptResponse.data.loginName,
+          accessToken: decryptResponse.data.accessToken
+        }
+        this.tokenStorageService.saveUser(userData);
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
         this.tokenStorageService.saveDashboardWidgets(decryptResponse.data.dashboardWidgets);
         this.tokenStorageService.saveDashboardWidgetsOrder(JSON.parse(decryptResponse.data.dashboardWidgetsOrder));
-        await this.authService.inactiveSessions(decryptResponse.data, true, "Login");
+        await this.authService.inactiveSessions(decryptResponse.data.accessToken, true, "Login");
         this.tokenStorageService.updateLoginStatus(true);
         this.router.navigate(["/dashboard"]);
       }

@@ -31,7 +31,7 @@ export class AuthService {
     return this.http.post(API_AUTH_URL + "refresh", {}, { withCredentials: true }).pipe(
       tap((res: any) => this.tokenStorageService.saveToken(res.accessToken)),
       catchError(async (err) => {
-        this.inactiveSessions(this.tokenStorageService.getUser(), false, "Logout");
+        this.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
         this.tokenStorageService.signOut();
         this.router.navigate(["/"], { relativeTo: this.route });
         return throwError(() => err);
@@ -88,10 +88,9 @@ export class AuthService {
   //   return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: btoa(this.encryptionService.encrypt(data)) });
   // }
 
-  async inactiveSessions(userData: any, status: any, sessionLogDesc: string): Promise<any> {
+  async inactiveSessions(accessToken: string, status: any, sessionLogDesc: string): Promise<any> {
     const data = {
-      token: userData.accessToken,
-      appUserId: userData.appUserId,
+      token: accessToken,
       status: status,
       sessionLogDesc: sessionLogDesc,
       ipAddress: this.tokenStorageService.getIPAddress(),

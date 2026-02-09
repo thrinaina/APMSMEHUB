@@ -49,8 +49,7 @@ export class CategoryApprovalsComponent {
     // User Form
     this.approvalForm = new FormGroup({
       requestId: new FormControl(this.data.requestData.requestId),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
-      loginName: new FormControl(this.tokenStorageService.getUser().loginName),
+      requestedBy: new FormControl(this.data.requestData.userName),
       requestStatus: new FormControl(this.data.requestData.requestStatus),
       requestStatusRemarks: new FormControl(null, [Validators.required, Validators.maxLength(500), Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
     });

@@ -50,7 +50,6 @@ export class MarketDetailsComponent implements OnInit{
       domesticMarkets: new FormControl(null, [Validators.required]),
       internationalMarkets: new FormControl(null),
       sectorsServed: new FormControl(null, [Validators.required]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 

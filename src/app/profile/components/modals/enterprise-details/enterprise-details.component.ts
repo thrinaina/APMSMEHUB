@@ -50,7 +50,6 @@ export class EnterpriseDetailsComponent implements OnInit{
       vision: new FormControl(null, [ Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
       mission: new FormControl(null, [ Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
       coreValue: new FormControl(null, [ Validators.pattern("^[^<>\"'\/|()\\\\\*]+$")]),
-      loginUserId: new FormControl(this.tokenStorageService.getUser().appUserId),
       udyamRegistrationNo: new FormControl(this.tokenStorageService.getUdyamRegistrationNo()),
     });
 

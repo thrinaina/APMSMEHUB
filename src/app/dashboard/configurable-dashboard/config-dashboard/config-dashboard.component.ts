@@ -19,6 +19,7 @@ export class ConfigDashboardComponent {
   store = inject(DashboardStore);
   isDragging = false;
   isLoading: boolean = false;
+  userType: string = '';
 
   constructor(
     private dashboardService: DashboardService,
@@ -43,13 +44,11 @@ export class ConfigDashboardComponent {
   async UserTypeWidgets() {
     try {
       this.isLoading = true;
-      // User Type Widgets
-      // let response = await this.dashboardService.userTypeWidgets({ payload: btoa(this.encryptionService.encrypt({userType : this.tokenStorageService.getUser().userType})) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
       const defaultCondition: any = { filters: [] };
       const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
       let response: any = await this.dashboardService.userTypeWidgets({ payload: encryptedData.encryptedText} ).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      if (response?.data) this.userType = response?.data[0].userType;
       const userWidgets = (response?.data ?? []).map((widget: any) => ({
         id: widget.dashboardWidgetId ?? 0,
         label: widget.dashboardWidgetName ?? '',
@@ -105,7 +104,6 @@ export class ConfigDashboardComponent {
       this.isLoading = true;
       this.store.setMode("view");
       const dashboardData = {
-        loginUserId: this.tokenStorageService.getUser().appUserId,
         dashboardWidgets: this.tokenStorageService.getDashboardWidgets(),
         dashboardWidgetsOrder: this.tokenStorageService.getDashboardWidgetsOrder(),
       };

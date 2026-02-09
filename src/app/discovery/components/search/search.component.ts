@@ -299,7 +299,8 @@ export class SearchComponent {
         this.udyamData = response.data || [];
         this.udyamData.forEach(async (udyam: any) => {
           if (udyam.enterpriseLogoDocName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({ fileName: udyam.enterpriseLogoDocName }).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: udyam.enterpriseLogoDocName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader = new FileReader();
             reader.onload = () => {
               udyam['enterpriseLogo'] = reader.result;
@@ -377,10 +378,11 @@ export class SearchComponent {
         let response = await this.discoveryService.discoveryProducts({ payload: encryptedData.encryptedText} ).toPromise();
         response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
         this.totalLength = response.total || 0;
-        this.udyamData = response.data || [];
+        this.productsData = response.data || [];
         this.productsData.forEach(async (product: any) => {
           if (product.productDocName) {
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: await this.securityService.encrypt({ fileName: product.productDocName }).toPromise() }));
+            const encryptedData = await this.securityService.encrypt({ fileName: product.productDocName }).toPromise();
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
             const reader = new FileReader();
             reader.onload = () => {
               product['productImage'] = reader.result;

@@ -74,7 +74,7 @@ export class AddUdyamComponent {
     this.udyamForm = new FormGroup({
       selectedudyamRegistrationNo: new FormControl(null, [Validators.required]),
       udyamRegistrationNo: new FormControl(null, [Validators.required, Validators.pattern("[0-9]{2}[-]{1}[0-9]{7}$")]),
-      loginName: new FormControl(this.tokenStorageService.getUser().loginName),
+      // loginName: new FormControl(this.tokenStorageService.getUser().loginName),
       termsAndConditions: new FormControl(false,),
     }),
 
@@ -109,7 +109,7 @@ export class AddUdyamComponent {
       // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
 
       const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.dashboardService.verifyUdyam({ payload: encryptedData.encryptedText} ).toPromise();
+      const response: any = await this.dashboardService.verifyUdyam({ payload: encryptedData.encryptedText }).toPromise();
       const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       if (decryptResponse?.status == 'notexist' || decryptResponse?.status == 'conflict') {
         const dialogRef = this.dialog.open(AlertsComponent, {
@@ -141,7 +141,7 @@ export class AddUdyamComponent {
       // const response = await this.dashboardService.verifyOTP({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
       // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
       const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.dashboardService.verifyOTP({ payload: encryptedData.encryptedText} ).toPromise();
+      const response: any = await this.dashboardService.verifyOTP({ payload: encryptedData.encryptedText }).toPromise();
       const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       if (decryptResponse?.status == 'success') {
         this.tempUdyamData = decryptResponse.data;
@@ -176,11 +176,11 @@ export class AddUdyamComponent {
   async submitUdyam() {
     try {
       this.isLoading = true;
-      const sendData: any = { udyamRegistrationNo: 'UDYAM-AP-' + this.udyamForm.value.udyamRegistrationNo, appUserId: this.tokenStorageService.getUser().appUserId, consentDate: formatDate(this.consentDate, "yyyy-MM-dd HH:mm:ss", "en-US"), otp: this.otpValue };
+      const sendData: any = { udyamRegistrationNo: 'UDYAM-AP-' + this.udyamForm.value.udyamRegistrationNo, consentDate: formatDate(this.consentDate, "yyyy-MM-dd HH:mm:ss", "en-US"), otp: this.otpValue };
       // const response = await this.dashboardService.submitUdyam({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
       // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
       const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.dashboardService.submitUdyam({ payload: encryptedData.encryptedText} ).toPromise();
+      const response: any = await this.dashboardService.submitUdyam({ payload: encryptedData.encryptedText }).toPromise();
       const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       if (decryptResponse?.status == 'success') {
         this.activeDiv = 'UDYAM-SELECTION';
@@ -198,11 +198,11 @@ export class AddUdyamComponent {
   async submitConsent() {
     try {
       this.isLoading = true;
-      const sendData: any = { udyamRegistrationNo: this.udyamForm.value.selectedudyamRegistrationNo, appUserId: this.tokenStorageService.getUser().appUserId, consentDate: formatDate(this.consentDate, "yyyy-MM-dd HH:mm:ss", "en-US") };
+      const sendData: any = { udyamRegistrationNo: this.udyamForm.value.selectedudyamRegistrationNo, consentDate: formatDate(this.consentDate, "yyyy-MM-dd HH:mm:ss", "en-US") };
       // const response = await this.dashboardService.submitConsent({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
       // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
       const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.dashboardService.submitConsent({ payload: encryptedData.encryptedText} ).toPromise();
+      const response: any = await this.dashboardService.submitConsent({ payload: encryptedData.encryptedText }).toPromise();
       const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       if (decryptResponse?.status == 'success') {
         this.router.navigate(["/profile/entry"]);
@@ -217,13 +217,12 @@ export class AddUdyamComponent {
   async getAppUserUdyams() {
     try {
       this.isLoading = true;
-      // const defaultCondition = " AND appuserudyam.appUserId = " + this.tokenStorageService.getUser().appUserId;
-      const defaultCondition:any = { filters: [] };
+      const defaultCondition: any = { filters: [] };
       // const response = await this.dashboardService.appUserUdyams({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
       // this.udyams = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data : [];
 
       const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response: any = await this.dashboardService.appUserUdyams({ payload: encryptedData.encryptedText} ).toPromise();
+      let response: any = await this.dashboardService.appUserUdyams({ payload: encryptedData.encryptedText }).toPromise();
       response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
       this.udyams = response?.data || [];
 

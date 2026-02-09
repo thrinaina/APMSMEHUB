@@ -5,7 +5,7 @@
     <div class="flex-1"></div>
 
     <div class="gap-3 d-flex align-items-center justify-content-between w-100">
-      <div class="mr-auto flex-row align-items-center justify-content-end w-100" *ngIf="tokenStorageService.getUser().userType == 'ADMIN'">
+      <div class="mr-auto flex-row align-items-center justify-content-end w-100" *ngIf="userType == 'ADMIN'">
         <!-- <h3 class="mb-0">{{ 'Dashboard' | translate }}</h3> -->
 
         <div class="d-flex align-items-center justify-content-end">

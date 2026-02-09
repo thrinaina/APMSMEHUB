@@ -13,7 +13,7 @@ export class ConfigService {
       this.configData = await lastValueFrom(
         this.httpClient.get('/assets/config/config.json')
       );
-      console.log('Config Loaded Successfully:', this.configData);
+      // console.log('Config Loaded Successfully:', this.configData);
     } catch (error) {
       console.error('Critical Error: Could not load config.json', error);
       // Fallback for local development if fetch fails
