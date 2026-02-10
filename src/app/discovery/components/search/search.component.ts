@@ -281,7 +281,6 @@ export class SearchComponent {
         this.totalLength = response?.payload ? this.encryptionService.decrypt(response.payload).total : 0;
         this.udyamData = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
         this.totalLength = response.total || 0;
-        this.udyamData = response.data || [];
         this.udyamData.forEach(async (udyam: any) => {
           if (udyam.enterpriseLogoDocName) {
             const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: udyam.enterpriseLogoDocName }) }));
@@ -357,7 +356,6 @@ export class SearchComponent {
         this.totalLength = response?.payload ? this.encryptionService.decrypt(response.payload).total : 0;
         this.productsData = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
         this.totalLength = response.total || 0;
-        this.productsData = response.data || [];
         this.productsData.forEach(async (product: any) => {
           if (product.productDocName) {
             const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: product.productDocName }) }));

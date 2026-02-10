@@ -78,8 +78,8 @@ export class MarketDetailsComponent implements OnInit{
           {
             "table": "staticlist",
             "field": "type",
-            "operator": "=",
-            "value": 'UOM',
+            "operator": "IN",
+            "value": ['STATE','COUNTRY'],
             "sequence": 1,
             "condition": "AND"
           }

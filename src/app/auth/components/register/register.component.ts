@@ -163,7 +163,7 @@ export class RegisterComponent {
       const sendData: any = { loginName: this.registerForm.value.loginName, registerType: this.registerForm.value.registerType };
       const response = await this.authService.verifyLoginName({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
       const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
-      this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
+      if (decryptResponse?.data) this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
       if (decryptResponse?.status == 'alreadysent' && this.activeDiv == 'OTP-INPUT') {
         const dialogRef = this.dialog.open(AlertsComponent, {
           disableClose: true,

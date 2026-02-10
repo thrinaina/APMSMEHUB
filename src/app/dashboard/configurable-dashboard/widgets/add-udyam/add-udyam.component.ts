@@ -206,7 +206,6 @@ export class AddUdyamComponent {
       const defaultCondition: any = { filters: [] };
       const response = await this.dashboardService.appUserUdyams({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
       this.udyams = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
-      this.udyams = response?.data || [];
 
       this.udyamForm.patchValue({
         selectedudyamRegistrationNo: this.udyams.length > 0 ? this.udyams[0].udyamRegistrationNo : null

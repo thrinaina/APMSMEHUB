@@ -49,7 +49,6 @@ export class ProfileCompletionComponent {
     try {
       const response: any = await this.dashboardService.profileCompletion({ payload: this.encryptionService.encrypt({ udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo() }) }).toPromise();
       this.profileStatusData = response?.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
-      this.profileStatusData = response?.data[0] || [];
 
       this.checklist = [
         { label: 'About Enterprise', completed: this.profileStatusData.aboutEnterpriseCount > 0 },

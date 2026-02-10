@@ -140,7 +140,6 @@ export class ProfileEntryComponent implements OnInit {
       const defaultCondition:any = { filters: [] };
       const response = await this.profileService.appUserUdyams({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
       this.udyams = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
-      this.udyams = response?.data || [];
       if(this.udyams.length == 0) {
         const dialogRef = this.dialog.open(AlertsComponent, {
           disableClose: true,
@@ -174,7 +173,6 @@ export class ProfileEntryComponent implements OnInit {
       this.selectedAsset = null;
       this.isLoading = true;
       if (this.selectedCategory === 'About') {
-        // let defaultCondition = " AND udyam.udyamRegistrationNo = '" + this.udyamForm.value.udyamRegistrationNo + "'";
         let defaultCondition: any = {
           "filters": [
             {
@@ -191,7 +189,7 @@ export class ProfileEntryComponent implements OnInit {
         let response = await this.profileService.enterprises({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
         let decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       
-        this.profileData = response?.data ? response?.data[0] : [];
+        this.profileData = decryptResponse?.data ? decryptResponse?.data[0] : [];
         if (this.profileData?.domesticMarkets) this.profileData['domesticMarkets'] = JSON.parse(this.profileData.domesticMarkets);
         if (this.profileData?.internationalMarkets) this.profileData['internationalMarkets'] = JSON.parse(this.profileData.internationalMarkets);
         if (this.profileData?.sectorsServed) this.profileData['sectorsServed'] = JSON.parse(this.profileData.sectorsServed);
@@ -210,7 +208,6 @@ export class ProfileEntryComponent implements OnInit {
           });
         }
 
-        // defaultCondition = " AND client.udyamRegistrationNo = '" + this.udyamForm.value.udyamRegistrationNo + "'";
         defaultCondition = {
           "filters": [
             {
@@ -225,10 +222,8 @@ export class ProfileEntryComponent implements OnInit {
         };
 
         response = await this.profileService.clients({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
-        decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
-
+        decryptResponse = (response && response?.payload) ? this.encryptionService.decrypt(response.payload) : {};
         this.profileData['clients'] = decryptResponse?.data ?? [];
-
         if (this.profileData.clients) {
           this.profileData.clients.forEach(async (client: any) => {
             if (client.document?.documentName) {
@@ -242,7 +237,6 @@ export class ProfileEntryComponent implements OnInit {
           });
         }
       } else if (this.selectedCategory === 'Products') {
-        // const defaultCondition = " AND product.udyamRegistrationNo = '" + this.udyamForm.value.udyamRegistrationNo + "'";
         const defaultCondition: any = {
           "filters": [
             {
@@ -258,9 +252,7 @@ export class ProfileEntryComponent implements OnInit {
 
         let response = await this.profileService.products({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
         response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
-
         this.productsData = response?.data ?? [];
-
         this.productsData.forEach((product: any) => {
           if (product.documents) {
             // product.documents = JSON.parse(product.documents);
@@ -278,7 +270,6 @@ export class ProfileEntryComponent implements OnInit {
         });
       } else if (this.selectedCategory === 'Assets') {
         this.gallaryData = [];
-        // const defaultCondition = " AND asset.udyamRegistrationNo = '" + this.udyamForm.value.udyamRegistrationNo + "'";
         const defaultCondition: any = {
           "filters": [
             {
@@ -293,9 +284,7 @@ export class ProfileEntryComponent implements OnInit {
         };
         let response = await this.profileService.assets({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
         response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
-
         this.assetsData = response?.data ?? [];
-
         for (const asset of this.assetsData) {
           if (!asset.documents) continue;
           for (const document of asset.documents) {
@@ -315,10 +304,8 @@ export class ProfileEntryComponent implements OnInit {
 
             this.gallaryData.push(galaryData);
           }
-          // asset.renderKey = Date.now() + Math.random();
         }
       } else if (this.selectedCategory === 'UdyamDetails') {
-        // const defaultCondition = " AND udyam.udyamRegistrationNo = '" + this.udyamForm.value.udyamRegistrationNo + "'";
         const defaultCondition: any = {
           "filters": [
             {
@@ -333,10 +320,8 @@ export class ProfileEntryComponent implements OnInit {
         };
         let response = await this.profileService.udyams({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
         response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
-
         this.udyamDetails = response?.data ? response?.data[0] : [];
       }
-
       await this.filterData();
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'ProfileEntryComponent' });

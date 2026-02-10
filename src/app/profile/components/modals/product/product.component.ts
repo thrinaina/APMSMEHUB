@@ -116,9 +116,6 @@ export class ProductComponent implements OnInit {
       let defaultCondition:any = { filters: [] };
       let response1: any = await this.profileService.categories({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
       this.productCategories = response1.payload ? this.encryptionService.decrypt(response1.payload).data : [];
-      this.productCategories = response1.data || [];
-
-      // defaultCondition = " AND staticlist.type = 'UOM'";
       defaultCondition = {
         "filters": [
           {
@@ -133,7 +130,6 @@ export class ProductComponent implements OnInit {
       };
       let response2: any = await this.profileService.staticLists({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
       this.productUnits = response2.payload ? this.encryptionService.decrypt(response2.payload).data : [];
-       this.productUnits = response2.data || [];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'ProductComponent' });
     } finally {

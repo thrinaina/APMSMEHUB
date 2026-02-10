@@ -24,7 +24,6 @@ export class EnterpriseCountCardComponent {
     try {
       const response: any = await this.dashboardService.enterpriseCounts({ payload: this.encryptionService.encrypt({}) }).toPromise();
       this.counts = response.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
-      this.counts = response?.data[0] || {};
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'EnterpriseCountCardComponent' });
     }
