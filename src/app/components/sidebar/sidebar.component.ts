@@ -6,7 +6,6 @@ import { ActivatedRoute, NavigationEnd, NavigationStart, Router, Event } from '@
 import { AdminService } from 'src/app/admin/admin.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AlertsComponent } from '../alerts/alerts.component';
@@ -43,7 +42,7 @@ export class SidebarComponent {
     private authService: AuthService,
     private adminService: AdminService,
     private commonService: CommonService,
-    
+    private encryptionService: EncryptionService,   
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
@@ -89,9 +88,8 @@ export class SidebarComponent {
     try {
       this.isLoading = true;
       const defaultCondition: any = { filters: [] };
-      const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      const response: any = await this.adminService.loginUser({ payload: encryptedData.encryptedText }).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.adminService.loginUser({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse) this.loginUserData = decryptResponse.data[0];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'SidebarComponent' });
@@ -159,9 +157,7 @@ export class SidebarComponent {
   async getUserImage() {
     const userDocs = this.loginUserData.documents ? JSON.parse(this.loginUserData.documents.documents) : [];
     if (userDocs[0]?.documentName) {
-      const encryptedData = await this.securityService.encrypt({ fileName: userDocs[0].documentName }).toPromise();
-      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
-
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: userDocs[0].documentName }) }));
       const reader = new FileReader();
       reader.onload = () => {
         let data: any = {
@@ -220,11 +216,8 @@ export class SidebarComponent {
       } else {
         this.isLoading = true;
         const defaultCondition: any = { filters: [] };
-        // const response = await this.adminService.userMenu({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-        // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-        const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-        const response: any = await this.adminService.userMenu({ payload: encryptedData.encryptedText }).toPromise();
-        const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        const response = await this.adminService.userMenu({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+        const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
         this.menuItems = decryptResponse.data || [];
         this.menuItems = this.menuItems.filter((menu: any) => menu.label);
         this.menuItems.forEach((menu: any) => {

@@ -4,19 +4,15 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
-
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { UserComponent } from '../modals/user/user.component';
-
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { CommonService } from '@services/commom/common.service';
 import { DataExportService } from '@services/data-export/data-export.service';
 import { Observable } from 'rxjs';
-
 
 @Component({
     selector: 'app-users',
@@ -51,8 +47,7 @@ export class UsersComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private commonService: CommonService,
-    private encryptionService: EncryptionService,
-    
+    private encryptionService: EncryptionService,    
     public tokenStorageService: TokenStorageService,
     public dataExportService: DataExportService,
     public dialog: MatDialog,
@@ -82,11 +77,8 @@ export class UsersComponent implements OnInit {
             }
           ]
         };
-        // let response = await this.adminService.users({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-        // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-        let response: any = await this.adminService.users({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response = await this.adminService.users({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+        response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
         this.usersData = response?.data || [];
       } else if (tabIndex == 1) {
        this.enterprisesCmp?.loadEnterprises();

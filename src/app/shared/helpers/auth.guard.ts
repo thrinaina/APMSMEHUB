@@ -7,6 +7,7 @@ import { TokenStorageService } from '@services/token-storage/token-storage.servi
 import { Observable } from 'rxjs';
 import { AdminService } from 'src/app/admin/admin.service';
 import { CommonService } from '../services/commom/common.service';
+import { EncryptionService } from '../services/encryption/encryption.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class AuthGuard{
     private tokenStorageService: TokenStorageService,
     private router: Router,
     public dialog: MatDialog,
-    
+    private encryptionService: EncryptionService,  
     private adminService: AdminService,
     private commonService: CommonService
   ) { 
@@ -34,10 +35,9 @@ export class AuthGuard{
       }
       this.isLoading = true;
       const defaultCondition: any = { filters: [] };
-      const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      const response: any = await this.adminService.loginUser({ payload: encryptedData.encryptedText }).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
-      if (decryptResponse) this.loginUserData = decryptResponse.data[0];
+      const response = await this.adminService.loginUser({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
+       if (decryptResponse) this.loginUserData = decryptResponse.data[0];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'SidebarComponent' });
     } finally {

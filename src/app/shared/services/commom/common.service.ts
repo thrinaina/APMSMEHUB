@@ -45,28 +45,16 @@ export class CommonService {
   }
 
   // Check inactive session
-  // inactiveSessions(userData: any, status: any, sessionLogDesc: string): Observable<any> {
-  //   const data = {
-  //     token: userData.accessToken,
-  //     appUserId: userData.appUserId,
-  //     status: status,
-  //     sessionLogDesc: sessionLogDesc,
-  //     ipAddress: this.tokenStorageService.getIPAddress(),
-  //     browserName: this.tokenStorageService.getBrowserName()
-  //   };
-  //   return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: btoa(this.encryptionService.encrypt(data)) });
-  // }
-  async inactiveSessions(accessToken: string, status: any, sessionLogDesc: string): Promise<any> {
+  inactiveSessions(userData: any, status: any, sessionLogDesc: string): Observable<any> {
     const data = {
-      token: accessToken,
+      token: userData.accessToken,
+      appUserId: userData.appUserId,
       status: status,
       sessionLogDesc: sessionLogDesc,
       ipAddress: this.tokenStorageService.getIPAddress(),
       browserName: this.tokenStorageService.getBrowserName()
     };
-
-    const encryptedData = await this.securityService.encrypt(data).toPromise();
-    return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: encryptedData }).toPromise();
+    return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
   // Refresh Token
@@ -82,7 +70,7 @@ export class CommonService {
     // Detailed error message
     if (err?.error?.payload) {
       try {
-        const payload = await this.securityService.decrypt(err?.error?.payload).toPromise();
+        const payload = this.encryptionService.decrypt(err?.error?.payload);
         errorMessage = payload.message;
       } catch (e) {
         errorMessage = err?.error?.message;
@@ -202,17 +190,17 @@ export class CommonService {
           statusDate: statusDate,
           statusType: "Uploaded"
         };
-        const encryptedData = await this.securityService.encrypt(documentData).toPromise();
-        await this.addDocument({ payload: encryptedData.encryptedText }).toPromise();
+
+        await this.addDocument({ payload: this.encryptionService.encrypt(documentData) }).toPromise();
       }
       // Remove documents
       for (let removeDocIndex = 0; removeDocIndex < data.removedDocuments.length; removeDocIndex++) {
         let removeDoc = data.removedDocuments[removeDocIndex];
         removeDoc.transactionId = data.transactionId;
-        const encryptedData = await this.securityService.encrypt({ fileName: removeDoc.documentName }).toPromise();
-        await this.deleteFile({ payload: encryptedData.encryptedText }).toPromise();
-        const encryptedData2 = await this.securityService.encrypt(removeDoc).toPromise();
-        await this.deleteDocument({ payload: encryptedData2.encryptedText }).toPromise();
+
+        await this.deleteFile({ payload: this.encryptionService.encrypt({ fileName: removeDoc.documentName }) }).toPromise();
+        await this.deleteDocument({ payload: this.encryptionService.encrypt(removeDoc) }).toPromise();
+
       }
     } else if (addDocuments.length > 0 && data.removedDocuments.length == 0) {
       // Add documents only
@@ -231,18 +219,16 @@ export class CommonService {
           statusDate: statusDate,
           statusType: "Uploaded"
         };
-        const encryptedData = await this.securityService.encrypt(documentData).toPromise();
-        await this.addDocument({ payload: encryptedData.encryptedText }).toPromise();
+
+        await this.addDocument({ payload: this.encryptionService.encrypt(documentData) }).toPromise();
       }
     } else if (addDocuments.length == 0 && data.removedDocuments.length > 0) {
       // Remove documents only
       for (let removeDocIndex = 0; removeDocIndex < data.removedDocuments.length; removeDocIndex++) {
         const removeDoc = data.removedDocuments[removeDocIndex];
         removeDoc.transactionId = data.transactionId;
-        const encryptedData = await this.securityService.encrypt({ fileName: removeDoc.documentName }).toPromise();
-        await this.deleteFile({ payload: encryptedData.encryptedText }).toPromise();
-        const encryptedData2 = await this.securityService.encrypt(removeDoc).toPromise();
-        await this.deleteDocument({ payload: encryptedData2.encryptedText }).toPromise();
+        await this.deleteFile({ payload: this.encryptionService.encrypt({ fileName: removeDoc.documentName }) }).toPromise();
+        await this.deleteDocument({ payload: this.encryptionService.encrypt(removeDoc) }).toPromise();
       }
     }
     return true

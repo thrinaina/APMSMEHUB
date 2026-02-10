@@ -9,7 +9,6 @@ import { TokenStorageService } from '../../../shared/services/token-storage/toke
 import { interval, Subscription } from 'rxjs';
 import { AuthService } from '../../auth.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -162,11 +161,8 @@ export class RegisterComponent {
       this.isVerifyLogin = true;
       this.isLoading = true;
       const sendData: any = { loginName: this.registerForm.value.loginName, registerType: this.registerForm.value.registerType };
-      // const response = await this.authService.verifyLoginName({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.verifyLoginName({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.verifyLoginName({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
       if (decryptResponse?.status == 'alreadysent' && this.activeDiv == 'OTP-INPUT') {
         const dialogRef = this.dialog.open(AlertsComponent, {
@@ -193,18 +189,14 @@ export class RegisterComponent {
     try {
       this.isLoading = true;
       const sendData: any = { loginName: this.registerForm.value.loginName, registerType: this.registerForm.value.registerType, otp: this.ngOtpInput.currentVal };
-      // const response = await this.authService.verifyOTP({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.verifyOTP({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.verifyOTP({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') this.activeDiv = 'PASSWORD-INPUT';
     } catch (err: any) {
       let payload: any = {}, errorMessage = '', status = '';
       if (err?.error?.payload) {
         try {
-          // payload = this.encryptionService.decrypt(atob(err?.error?.payload));
-          payload = await this.securityService.decrypt(err?.error?.payload).toPromise();
+          payload = this.encryptionService.decrypt(err?.error?.payload);
           errorMessage = payload.message;
           status = payload.status;
         } catch (e) {
@@ -231,11 +223,8 @@ export class RegisterComponent {
       if (this.registerForm.invalid) return;
       this.isLoading = true;
       const sendData: any = { loginName: this.registerForm.value.loginName, password: this.registerForm.value.password, otp: this.otpValue };
-      // const response = await this.authService.register({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.register({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.register({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') this.activeDiv = 'SUCCESS';
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'RegisterComponent' });

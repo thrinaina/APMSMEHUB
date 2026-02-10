@@ -6,7 +6,6 @@ import { TokenStorageService } from '../shared/services/token-storage/token-stor
 import { ActivatedRoute, Router } from '@angular/router';
 import { EncryptionService } from '../shared/services/encryption/encryption.service';
 
-
 const API_AUTH_URL = environment.apiUrl + 'api/auth/';
 @Injectable({
   providedIn: 'root'
@@ -76,18 +75,6 @@ export class AuthService {
     return this.http.post(API_AUTH_URL + 'updatepassword', passwordData);
   }
 
-  // inactiveSessions(userData: any, status: any, sessionLogDesc: string): Observable<any> {
-  //   const data = {
-  //     token: userData.accessToken,
-  //     appUserId: userData.appUserId,
-  //     status: status,
-  //     sessionLogDesc: sessionLogDesc,
-  //     ipAddress: this.tokenStorageService.getIPAddress(),
-  //     browserName: this.tokenStorageService.getBrowserName()
-  //   };
-  //   return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: btoa(this.encryptionService.encrypt(data)) });
-  // }
-
   async inactiveSessions(accessToken: string, status: any, sessionLogDesc: string): Promise<any> {
     const data = {
       token: accessToken,
@@ -97,8 +84,7 @@ export class AuthService {
       browserName: this.tokenStorageService.getBrowserName()
     };
 
-    const encryptedData = await this.securityService.encrypt(data).toPromise();
-    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: encryptedData });
+    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
   getAppProduction() {

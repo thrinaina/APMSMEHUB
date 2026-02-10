@@ -271,11 +271,8 @@ export class LoginComponent {
       if (this.loginForm.get('loginName')?.invalid) return;
       this.isSaved = true;
       this.isLoading = true;
-      // const response = await this.authService.sendOTP({ payload: btoa(this.encryptionService.encrypt(this.loginForm.value)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.loginForm.value).toPromise();
-      const response: any = await this.authService.sendOTP({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.sendOTP({ payload: this.encryptionService.encrypt(this.loginForm.value) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
       if (decryptResponse?.status == 'alreadysent' && this.activeDiv == 'FORGOT-PASSWORD-OTP-INPUT') {
         const dialogRef = this.dialog.open(AlertsComponent, {
@@ -320,11 +317,8 @@ export class LoginComponent {
         return;
       }
 
-      // const response = await this.authService.loginWithPassword({ payload: btoa(this.encryptionService.encrypt(this.loginForm.value)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.loginForm.value).toPromise();
-      const response: any = await this.authService.loginWithPassword({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.loginWithPassword({ payload: this.encryptionService.encrypt(this.loginForm.value) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'Unauthorized') {
         const dialogRef = this.dialog.open(AlertsComponent, {
           disableClose: true,
@@ -441,18 +435,13 @@ export class LoginComponent {
       this.isSaved = true;
       this.isLoading = true;
       const sendData: any = { loginName: this.loginForm.value.loginName, loginType: this.loginForm.value.loginType, otp: this.ngOtpInput.currentVal, userType: this.loginForm.value.userType };
-      // const response = await this.authService.loginWithOTP({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.loginWithOTP({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.loginWithOTP({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') {
         this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
-        // this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
         const userData = {
           userType: decryptResponse.data.userType,
           userName: decryptResponse.data.userName,
-          // loginName: decryptResponse.data.loginName,
           accessToken: decryptResponse.data.accessToken
         }
         this.tokenStorageService.saveUser(userData);
@@ -465,7 +454,7 @@ export class LoginComponent {
       let payload: any = {}, errorMessage = '', status = '';
       if (err?.error?.payload) {
         try {
-          payload = await this.securityService.decrypt(err?.error?.payload).toPromise();
+          payload = this.encryptionService.decrypt(err?.error?.payload);
           errorMessage = payload.message;
           status = payload.status;
         } catch (e) {
@@ -622,18 +611,14 @@ export class LoginComponent {
       this.isSaved = true;
       this.isLoading = true;
       const sendData: any = { loginName: this.loginForm.value.loginName, registerType: this.loginForm.value.loginType, otp: this.ngOtpInput.currentVal };
-      // const response = await this.authService.verifyOTP({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.verifyOTP({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.verifyOTP({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') this.activeDiv = 'SET-PASSWORD-INPUT';
     } catch (err: any) {
       let payload: any = {}, errorMessage = '', status = '';
       if (err?.error?.payload) {
         try {
-          // payload = this.encryptionService.decrypt(atob(err?.error?.payload));
-          payload = await this.securityService.decrypt(err?.error?.payload).toPromise();
+          payload = this.encryptionService.decrypt(err?.error?.payload);
           errorMessage = payload.message;
           status = payload.status;
         } catch (e) {
@@ -663,11 +648,8 @@ export class LoginComponent {
       this.isSaved = true;
       this.isLoading = true;
       const sendData: any = { loginName: this.loginForm.value.loginName, password: this.loginForm.value.password, otp: this.otpValue };
-      // const response = await this.authService.updatePassword({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.authService.updatePassword({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.authService.updatePassword({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') {
         this.loginForm.patchValue({ loginName: null, password: null, confirmPassword: null });
         this.activeDiv = 'SUCCESS';
