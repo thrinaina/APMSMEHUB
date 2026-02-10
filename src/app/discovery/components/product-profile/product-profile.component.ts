@@ -68,8 +68,6 @@ export class ProductProfileComponent {
       };
       const response = await this.discoveryService.discoveryProductById({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
       this.productData = response?.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
-      this.productData = response?.data[0] || [];
-
       if (this.productData.documents) {
         this.productData.documents = JSON.parse(this.productData.documents);
         this.productData.documents.forEach(async (document: any) => {
@@ -99,8 +97,6 @@ export class ProductProfileComponent {
       };
       const response1 = await this.discoveryService.enterprisesByCategoryId({ payload: this.encryptionService.encrypt({defaultCondition: defaultCondition1}) }).toPromise();
       this.allEnterprises = response1?.payload ? this.encryptionService.decrypt(response1.payload).data : [];
-      this.allEnterprises = response1?.data || [];
-
       this.allEnterprises.forEach(async (enterprise: any) => {
         if (enterprise.enterpriseLogoDocName) {
           const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: enterprise.enterpriseLogoDocName }) }));

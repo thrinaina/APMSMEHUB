@@ -89,7 +89,8 @@ export class ApprovalsComponent {
 
   searchFilter(e: any) {
     const value = e.target.value;
-    this.searchInput = value.trim().toLowerCase();
+    // this.searchInput = value.trim().toLowerCase();
+    this.searchInput = value;
     this.filterData();
   }
 

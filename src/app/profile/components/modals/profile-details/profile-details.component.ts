@@ -366,7 +366,7 @@ export class ProfileDetailsComponent implements OnInit {
       profileObj.coverImage = null;
       profileObj.enterpriseLogo = null;
 
-      let response = await this.profileService.profileDetail({ payload: this.encryptionService.encrypt(this.profileForm.value) }).toPromise();
+      let response = await this.profileService.profileDetail({ payload: this.encryptionService.encrypt(profileObj) }).toPromise();
       response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'conflict') {

@@ -220,7 +220,7 @@ export class UserComponent implements OnInit {
       const userObj = JSON.parse(JSON.stringify(this.userForm.value));
       userObj.userImage = null;
 
-      let response = await this.adminService.requeststatus({ payload: this.encryptionService.encrypt(this.userForm.value) }).toPromise();
+      let response = await this.adminService.user({ payload: this.encryptionService.encrypt(userObj) }).toPromise();
       response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'success') {

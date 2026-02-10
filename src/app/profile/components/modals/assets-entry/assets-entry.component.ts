@@ -333,7 +333,7 @@ export class AssetsEntryComponent implements OnInit {
       const assetObj = JSON.parse(JSON.stringify(this.assetForm.value));
       assetObj.assetDocuments = null;
 
-      let response = await this.profileService.asset({ payload: this.encryptionService.encrypt(this.assetForm.value) }).toPromise();
+      let response = await this.profileService.asset({ payload: this.encryptionService.encrypt(assetObj) }).toPromise();
       response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status != 'success') return;

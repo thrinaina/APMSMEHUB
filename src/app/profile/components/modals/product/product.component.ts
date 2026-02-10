@@ -285,7 +285,7 @@ export class ProductComponent implements OnInit {
       const productObj = JSON.parse(JSON.stringify(this.productForm.value));
       productObj.productImages = null;
 
-      let response = await this.profileService.product({ payload: this.encryptionService.encrypt(this.productForm.value) }).toPromise();
+      let response = await this.profileService.product({ payload: this.encryptionService.encrypt(productObj) }).toPromise();
       response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (response?.status == 'conflict') {
         const dialogRef = this.dialog.open(AlertsComponent, {

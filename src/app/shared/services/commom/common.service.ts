@@ -126,7 +126,7 @@ export class CommonService {
       });
     }
     
-    await this.errorLog(data?.appUserId, data?.component, errorMessage).toPromise();
+    await this.errorLog(data?.id, data?.component, errorMessage).toPromise();
 
     if (errorMessage == 'User Session Expired.' || errorMessage == 'No token provided!' || errorMessage == 'Unauthorized!') {
       await this.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");

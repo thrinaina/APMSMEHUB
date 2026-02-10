@@ -123,7 +123,7 @@ export class EnterprisesComponent {
         (this.displayedColumns.indexOf('enterpriseName') != -1 && data?.enterpriseName?.toLowerCase().includes(this.searchInput)) ||
         (this.displayedColumns.indexOf('mobileNumber') != -1 && JSON.stringify(data?.mobileNumber)?.trim().toLowerCase().includes(this.searchInput)) ||
         (this.displayedColumns.indexOf('emailId') != -1 && data?.emailId?.toLowerCase().includes(this.searchInput)) ||
-        (this.displayedColumns.indexOf('entrepreneurName') != -1 && data?.entrepreneurName?.toLowerCase().includes(this.searchInput)) ||
+        (this.displayedColumns.indexOf('entrepreneurName') != -1 && data?.ownerNamebyPAN?.toLowerCase().includes(this.searchInput)) ||
         (this.displayedColumns.indexOf('inactive') != -1 && statusText.includes(this.searchInput))
       )
     }

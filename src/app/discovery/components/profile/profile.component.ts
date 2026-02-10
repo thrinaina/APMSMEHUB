@@ -91,6 +91,7 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    await this.publicSession();
     this.route.paramMap.subscribe(async (params) => {
       const webAddress = params.get('webAddress');
       if (!webAddress) return this.backToSearch();
@@ -99,6 +100,19 @@ export class ProfileComponent implements OnInit {
       // Load All endpoints on load
       await this.onLoad();
     });
+  }
+
+  async publicSession() {
+    try {
+      this.isLoading = true;
+      const publicSession: any = await this.discoveryService.publicSession().toPromise();
+      const decryptResponse = publicSession.payload ? this.encryptionService.decrypt(publicSession.payload) : {};
+      this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
+    } catch (err) {
+      this.commonService.handleError(err, { type: 'GET', id: 0, component: 'ProfileComponent' });
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   async onLoad() {

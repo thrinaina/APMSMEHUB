@@ -48,7 +48,7 @@ export class IdleService {
   }
 
   private displayWarning() {
-    if(this.tokenStorageService.isLoggedIn()) {
+    if(this.tokenStorageService.getUser()?.userType != null) {
       this.showWarning.set(true);
       this.countdown.set(60);
     }

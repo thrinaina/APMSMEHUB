@@ -5,51 +5,27 @@ import { AlertsComponent } from '@components/alerts/alerts.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { Observable } from 'rxjs';
-import { AdminService } from 'src/app/admin/admin.service';
-import { CommonService } from '../services/commom/common.service';
-import { EncryptionService } from '../services/encryption/encryption.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard{
+export class AuthGuard {
 
-  isLoading:boolean = false;
+  isLoading: boolean = false;
   loginUserData: any;
 
   constructor(
     private translate: TranslateService,
     private tokenStorageService: TokenStorageService,
     private router: Router,
-    public dialog: MatDialog,
-    private encryptionService: EncryptionService,  
-    private adminService: AdminService,
-    private commonService: CommonService
-  ) { 
+    public dialog: MatDialog
+  ) {
   }
 
-  async getLoginUserDetails() {
-    try {
-      if (this.loginUserData) {
-        return;
-      }
-      this.isLoading = true;
-      const defaultCondition: any = { filters: [] };
-      const response = await this.adminService.loginUser({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
-      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
-       if (decryptResponse) this.loginUserData = decryptResponse.data[0];
-    } catch (err) {
-      this.commonService.handleError(err, { type: 'GET', id: 0, component: 'SidebarComponent' });
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-   private checkAccess(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  private checkAccess(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (route.data && route.data['roles']) {
-      this.getLoginUserDetails();
       for (const allowedRole of route.data['roles']) {
-        if ((this.loginUserData?.userType.toUpperCase() ?? this.tokenStorageService?.getUser()?.userType.toUpperCase())  === allowedRole.toUpperCase()) {
+        if (this.tokenStorageService?.getUser()?.userType.toUpperCase() === allowedRole.toUpperCase()) {
           return true;
         }
       }

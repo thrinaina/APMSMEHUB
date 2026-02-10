@@ -133,11 +133,11 @@ export class CategoriesComponent implements OnInit {
       let tempColumns = this.displayedColumns;
       this.displayedColumns = ['categoryName', 'categoryDescription', 'isGITag', 'inactive'];
       if (result == 'pdf') {
-        await this.dataExportService.exportToPDF('dataTable', this.paginator, 'Users');
+        await this.dataExportService.exportToPDF('dataTable', this.paginator, 'Categories');
         this.displayedColumns = tempColumns;
       } else if (result == 'excel') {
         setTimeout(async () => {
-          await this.dataExportService.exportToExcel('Users', 'dataTable', 'Users');
+          await this.dataExportService.exportToExcel('Categories', 'dataTable', 'Categories');
           this.displayedColumns = tempColumns;
         }, 500)
       }
