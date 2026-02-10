@@ -2,7 +2,6 @@ import { Component, ElementRef, inject, viewChild } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { DashboardService } from "@dashboard/dashboard.service";
 import { EncryptionService } from "@services/encryption/encryption.service";
-
 import { DashboardStore } from '../configurable-dashboard.store';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { wrapGrid } from "animate-css-grid";
@@ -23,8 +22,7 @@ export class ConfigDashboardComponent {
 
   constructor(
     private dashboardService: DashboardService,
-    private encryptionService: EncryptionService,
-    
+    private encryptionService: EncryptionService,    
     public commonService: CommonService,
     public tokenStorageService: TokenStorageService
   ) { }
@@ -45,9 +43,8 @@ export class ConfigDashboardComponent {
     try {
       this.isLoading = true;
       const defaultCondition: any = { filters: [] };
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response: any = await this.dashboardService.userTypeWidgets({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.dashboardService.userTypeWidgets({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       if (response?.data) this.userType = response?.data[0].userType;
       const userWidgets = (response?.data ?? []).map((widget: any) => ({
         id: widget.dashboardWidgetId ?? 0,
@@ -107,11 +104,8 @@ export class ConfigDashboardComponent {
         dashboardWidgets: this.tokenStorageService.getDashboardWidgets(),
         dashboardWidgetsOrder: this.tokenStorageService.getDashboardWidgetsOrder(),
       };
-      // var response = await this.dashboardService.postUserDashboard({ payload: btoa(this.encryptionService.encrypt(dashboardData)) }).toPromise();
-      // response = response.data ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(dashboardData).toPromise();
-      var response: any = await this.dashboardService.postUserDashboard({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      var response = await this.dashboardService.postUserDashboard({ payload: this.encryptionService.encrypt(dashboardData) }).toPromise();
+      response = response.data ? this.encryptionService.decrypt(response.payload) : {};
     } catch (err) {
       this.commonService.handleError(err, { type: 'POST', id: response?.appUserDashboardId, component: 'ConfigDashboardComponent' });
     } finally {

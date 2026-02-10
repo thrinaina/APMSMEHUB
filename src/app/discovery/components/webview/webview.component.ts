@@ -166,11 +166,9 @@ export class WebviewComponent implements OnInit {
           }
         ]
       };
-      // let response = await this.discoveryService.enterprises({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response: any = await this.discoveryService.enterprises({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.discoveryService.enterprises({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
       this.profileData = response?.data ? response?.data[0] : {};
       this.setMenuItems();
       // Fallback if profileData or udyamRegistrationNo does not exist
@@ -185,8 +183,7 @@ export class WebviewComponent implements OnInit {
       if (this.profileData.documents) {
         this.profileData.documents.forEach(async (document: any) => {
           if (document?.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               if (document.transactionType == 'coverImage') this.profileData['coverImage'] = reader.result;
@@ -210,18 +207,14 @@ export class WebviewComponent implements OnInit {
           }
         ]
       };
-      // response = await this.discoveryService.clients({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData2 = await this.securityService.encrypt({defaultCondition}).toPromise();
-      response = await this.discoveryService.clients({ payload: encryptedData2.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      response = await this.discoveryService.clients({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.profileData['clients'] = response?.data ?? [];
 
       if (this.profileData.clients) {
         this.profileData.clients.forEach(async (client: any) => {
           if (client.document?.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: client.document.documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: client.document.documentName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               client['clientLogo'] = reader.result;
@@ -231,7 +224,6 @@ export class WebviewComponent implements OnInit {
         });
       }
 
-      // defaultCondition = " AND product.udyamRegistrationNo = '" + this.profileData.udyamRegistrationNo + "'";
       defaultCondition = {
         "filters": [
           {
@@ -244,11 +236,8 @@ export class WebviewComponent implements OnInit {
           }
         ]
       };
-      // response = await this.discoveryService.products({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData3 = await this.securityService.encrypt({defaultCondition}).toPromise();
-      response = await this.discoveryService.products({ payload: encryptedData3.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      response = await this.discoveryService.products({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.productsData = response?.data ?? [];
       this.setMenuItems();
 
@@ -256,8 +245,7 @@ export class WebviewComponent implements OnInit {
         if (product.documents) {
           product.documents.forEach(async (document: any) => {
             if (document.documentName) {
-              const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
-              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
               const reader = new FileReader();
               reader.onload = () => {
                 document['productImage'] = reader.result;
@@ -268,7 +256,6 @@ export class WebviewComponent implements OnInit {
         }
       });
 
-      // defaultCondition = " AND udyam.udyamRegistrationNo = '" + this.profileData.udyamRegistrationNo + "'";
       defaultCondition = {
         "filters": [
           {
@@ -281,14 +268,10 @@ export class WebviewComponent implements OnInit {
           }
         ]
       };
-      // response = await this.discoveryService.udyams({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData4 = await this.securityService.encrypt({defaultCondition}).toPromise();
-      response = await this.discoveryService.udyams({ payload: encryptedData4.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      response = await this.discoveryService.udyams({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.udyamDetails = response?.data ? response?.data[0] : [];
 
-      // defaultCondition = " AND asset.udyamRegistrationNo = '" + this.profileData.udyamRegistrationNo + "'";
       defaultCondition = {
         "filters": [
           {
@@ -301,11 +284,8 @@ export class WebviewComponent implements OnInit {
           }
         ]
       };
-      // response = await this.discoveryService.assets({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData5 = await this.securityService.encrypt({defaultCondition}).toPromise();
-      response = await this.discoveryService.assets({ payload: encryptedData5.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      response = await this.discoveryService.assets({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.assetsData = response?.data ?? [];
       this.setMenuItems();
 
@@ -313,8 +293,7 @@ export class WebviewComponent implements OnInit {
         if (!asset.documents) continue;
         for (const document of asset.documents) {
           if (!document.documentName) continue;
-          const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
-          const blob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+          const blob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
           document['assetImage'] = await new Promise<string>((resolve) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result as string);

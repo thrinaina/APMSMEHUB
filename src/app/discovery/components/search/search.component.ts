@@ -150,10 +150,8 @@ export class SearchComponent {
   async publicSession() {
     try {
       this.isLoading = true;
-      // const publicSession: any = await this.discoveryService.publicSession().toPromise();
-      // const decryptResponse = publicSession.payload ? this.encryptionService.decrypt(atob(publicSession.payload)) : {};
-      const publicSession = await this.discoveryService.publicSession().toPromise();
-      const decryptResponse = publicSession.payload ? await this.securityService.decrypt(publicSession.payload).toPromise() : {};
+      const publicSession: any = await this.discoveryService.publicSession().toPromise();
+      const decryptResponse = publicSession.payload ? this.encryptionService.decrypt(publicSession.payload) : {};
       this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'SearchComponent' });
@@ -179,12 +177,9 @@ export class SearchComponent {
       try {
         this.isLoading = true;
         const defaultCondition = { filters: [] };
-        // let response1: any = await this.discoveryService.categories({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-        // this.productCategories = response1.payload ? this.encryptionService.decrypt(atob(response1.payload)).data : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let response = await this.discoveryService.categories({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
-        this.productCategories = response.data || [];
+        let response1: any = await this.discoveryService.categories({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+        this.productCategories = response1.payload ? this.encryptionService.decrypt(response1.payload).data : [];
+        this.productCategories = response1.data || [];
       } catch (err) {
         this.commonService.handleError(err, { type: 'GET', id: 0, component: 'SearchComponent' });
       } finally {
@@ -241,7 +236,6 @@ export class SearchComponent {
             return;
           }
 
-          // defaultCondition = `AND udyam.enterpriseName LIKE '%${this.filterForm.value.searchText}%'`;
           filters.push({
             table: "udyam",
             field: "enterpriseName",
@@ -252,12 +246,6 @@ export class SearchComponent {
             condition: "AND"
           });
         }
-
-        // if (this.filterForm.value.organisationType?.length > 0) defaultCondition += ` AND UPPER(udyam.organisationType) IN (${this.filterForm.value.organisationType.map((element: string) => `'${element}'`).join(',')})`;
-        // if (this.filterForm.value.enterpriseType?.length > 0) defaultCondition += ` AND UPPER(udyam.enterpriseType) IN (${this.filterForm.value.enterpriseType.map((element: string) => `'${element}'`).join(',')})`;
-        // if (this.filterForm.value.district?.length > 0) defaultCondition += ` AND UPPER(udyam.district) IN (${this.filterForm.value.district.map((element: string) => `'${element}'`).join(',')})`;
-        // if (this.filterForm.value.majorActivity?.length > 0) defaultCondition += ` AND UPPER(udyam.majorActivity) IN (${this.filterForm.value.majorActivity.map((element: string) => `'${element}'`).join(',')})`;
-        // if (this.filterForm.value.registeredEnterprises) defaultCondition += ` AND enterprise.enterpriseId IS NOT NULL`;
 
         if (this.filterForm.value.organisationType?.length > 0) addInFilter("udyam", "organisationType", this.filterForm.value.organisationType);
         if (this.filterForm.value.enterpriseType?.length > 0) addInFilter("udyam", "enterpriseType", this.filterForm.value.enterpriseType);
@@ -289,18 +277,14 @@ export class SearchComponent {
 
         const defaultCondition = { filters };
         this.selectedPage = 'LIST';
-        // let response: any = await this.discoveryService.discoveryUdyams({ payload: btoa(this.encryptionService.encrypt({ defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset })) }).toPromise();
-        // this.totalLength = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).total : 0;
-        // this.udyamData = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset}).toPromise();
-        let response = await this.discoveryService.discoveryUdyams({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response: any = await this.discoveryService.discoveryUdyams({ payload: this.encryptionService.encrypt({ defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset }) }).toPromise();
+        this.totalLength = response?.payload ? this.encryptionService.decrypt(response.payload).total : 0;
+        this.udyamData = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
         this.totalLength = response.total || 0;
         this.udyamData = response.data || [];
         this.udyamData.forEach(async (udyam: any) => {
           if (udyam.enterpriseLogoDocName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: udyam.enterpriseLogoDocName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: udyam.enterpriseLogoDocName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               udyam['enterpriseLogo'] = reader.result;
@@ -328,9 +312,7 @@ export class SearchComponent {
             return;
           }
         }
-        // if (this.filterForm.value.searchText) defaultCondition = `AND product.productName LIKE '%${this.filterForm.value.searchText}%'`;
-        // if (this.filterForm.value.productCategory?.length > 0) defaultCondition += ` AND product.categoryId IN (${this.filterForm.value.productCategory.map((element: string) => `'${element}'`).join(',')})`;
-        // if (this.filterForm.value.gitags) defaultCondition += ` AND category.isGITag = 'Y'`;
+
         if (this.filterForm.value.searchText) {
           filters.push({
             table: "product",
@@ -371,18 +353,14 @@ export class SearchComponent {
         }
         const defaultCondition = { filters };
         this.selectedPage = 'LIST';
-        // const response = await this.discoveryService.discoveryProducts({ payload: btoa(this.encryptionService.encrypt({ defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset, })) }).toPromise();
-        // this.totalLength = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).total : 0;
-        // this.productsData = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset}).toPromise();
-        let response = await this.discoveryService.discoveryProducts({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        const response = await this.discoveryService.discoveryProducts({ payload: this.encryptionService.encrypt({ defaultCondition: defaultCondition, limit: this.defaultPageSize, offset: this.defaultPageOffset, }) }).toPromise();
+        this.totalLength = response?.payload ? this.encryptionService.decrypt(response.payload).total : 0;
+        this.productsData = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
         this.totalLength = response.total || 0;
         this.productsData = response.data || [];
         this.productsData.forEach(async (product: any) => {
           if (product.productDocName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: product.productDocName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: product.productDocName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               product['productImage'] = reader.result;

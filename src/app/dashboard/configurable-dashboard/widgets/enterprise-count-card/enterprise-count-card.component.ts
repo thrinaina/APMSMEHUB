@@ -22,12 +22,8 @@ export class EnterpriseCountCardComponent {
   async ngOnInit() {
 
     try {
-      // const response: any = await this.dashboardService.enterpriseCounts({ payload: btoa(this.encryptionService.encrypt({})) }).toPromise();
-      // this.counts = response.payload ? this.encryptionService.decrypt(atob(response.payload)).data[0] : {};
-
-      const encryptedData = await this.securityService.encrypt({}).toPromise();
-      let response: any = await this.dashboardService.enterpriseCounts({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response: any = await this.dashboardService.enterpriseCounts({ payload: this.encryptionService.encrypt({}) }).toPromise();
+      this.counts = response.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
       this.counts = response?.data[0] || {};
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'EnterpriseCountCardComponent' });

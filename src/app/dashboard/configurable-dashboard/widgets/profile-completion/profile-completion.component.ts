@@ -6,7 +6,6 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 
 
@@ -22,20 +21,17 @@ export class ProfileCompletionComponent {
   chartOptions!: Highcharts.Options;
 
   checklist: any = [];
-  profileStatusData: any
-
+  profileStatusData: any;
   udyamChange!: Subscription;
 
   private destroySub = new Subject<void>();
-
 
   constructor(
     private router: Router,
     public translate: TranslateService,
     private dashboardService: DashboardService,
     private commonService: CommonService,
-    private encryptionService: EncryptionService,
-    
+    private encryptionService: EncryptionService,    
     private tokenStorageService: TokenStorageService
   ) { }
 
@@ -51,12 +47,8 @@ export class ProfileCompletionComponent {
 
   async setProfileCompletion() {
     try {
-      // const response: any = await this.dashboardService.profileCompletion({ payload: btoa(this.encryptionService.encrypt({ udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo() })) }).toPromise();
-      // this.profileStatusData = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data[0] : {};
-
-      const encryptedData = await this.securityService.encrypt({ udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo() }).toPromise();
-      let response: any = await this.dashboardService.profileCompletion({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response: any = await this.dashboardService.profileCompletion({ payload: this.encryptionService.encrypt({ udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo() }) }).toPromise();
+      this.profileStatusData = response?.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
       this.profileStatusData = response?.data[0] || [];
 
       this.checklist = [

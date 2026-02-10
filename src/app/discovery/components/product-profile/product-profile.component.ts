@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { DiscoveryService } from '../../discovery.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EnquiryComponent } from '../../modals/enquiry/enquiry.component';
@@ -37,8 +36,7 @@ export class ProductProfileComponent {
   constructor(
     private router: Router,
     public tokenStorageService: TokenStorageService,
-    private encryptionService: EncryptionService,
-    
+    private encryptionService: EncryptionService,    
     private discoveryService: DiscoveryService,
     private commonService: CommonService,
     public dialog: MatDialog
@@ -68,20 +66,15 @@ export class ProductProfileComponent {
           }
         ]
       };
-      // const response = await this.discoveryService.discoveryProductById({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // this.productData = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data[0] : {};
-
-      const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response: any = await this.discoveryService.discoveryProductById({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.discoveryService.discoveryProductById({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      this.productData = response?.payload ? this.encryptionService.decrypt(response.payload).data[0] : {};
       this.productData = response?.data[0] || [];
 
       if (this.productData.documents) {
         this.productData.documents = JSON.parse(this.productData.documents);
         this.productData.documents.forEach(async (document: any) => {
           if (document.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
             const reader: any = new FileReader();
             reader.onload = () => {
               this.safeImages.push(reader.result)
@@ -104,18 +97,13 @@ export class ProductProfileComponent {
           }
         ]
       };
-      // const response1 = await this.discoveryService.enterprisesByCategoryId({ payload: btoa(this.encryptionService.encrypt({defaultCondition: defaultCondition1})) }).toPromise();
-      // this.allEnterprises = response1?.payload ? this.encryptionService.decrypt(atob(response1.payload)).data : [];
-
-      const encryptedData1 = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response1: any = await this.discoveryService.enterprisesByCategoryId({ payload: encryptedData1.encryptedText} ).toPromise();
-      response = response1.payload ? await this.securityService.decrypt(response1.payload).toPromise() : {};
+      const response1 = await this.discoveryService.enterprisesByCategoryId({ payload: this.encryptionService.encrypt({defaultCondition: defaultCondition1}) }).toPromise();
+      this.allEnterprises = response1?.payload ? this.encryptionService.decrypt(response1.payload).data : [];
       this.allEnterprises = response1?.data || [];
 
       this.allEnterprises.forEach(async (enterprise: any) => {
         if (enterprise.enterpriseLogoDocName) {
-          const encryptedData = await this.securityService.encrypt({ fileName: enterprise.enterpriseLogoDocName }).toPromise();
-          const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+          const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: enterprise.enterpriseLogoDocName }) }));
           const reader = new FileReader();
           reader.onload = () => {
             enterprise['enterpriseLogo'] = reader.result;
