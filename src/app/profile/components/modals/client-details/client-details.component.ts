@@ -2,16 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
-
 @Component({
     selector: 'app-client-details',
     templateUrl: './client-details.component.html',
@@ -85,17 +82,14 @@ export class ClientDetailsComponent implements OnInit {
         }
       ]
     };
-    // let response = await this.profileService.clients({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-    // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-    const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-    let response: any = await this.profileService.clients({ payload: encryptedData.encryptedText} ).toPromise();
-    response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+    let response = await this.profileService.clients({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+    response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
     this.clientsData = response?.data ?? [];
 
     this.clientsData.forEach(async (client: any) => {
       if (client.document?.documentName) {
-        const encryptedData = await this.securityService.encrypt({ fileName: client.document.documentName }).toPromise();
-        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: client.document.documentName }) }));
         const reader = new FileReader();
         reader.onload = () => {
           client['clientLogo'] = reader.result;
@@ -257,11 +251,8 @@ export class ClientDetailsComponent implements OnInit {
         udyamRegistrationNo: this.clientForm.value.udyamRegistrationNo
       };
 
-      // let response = await this.profileService.client({ payload: btoa(this.encryptionService.encrypt(clientData)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(clientData).toPromise();
-      let response: any = await this.profileService.client({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.client({ payload: this.encryptionService.encrypt(clientData) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'success') {
         await this.commonService.handleFiles({
@@ -307,11 +298,8 @@ export class ClientDetailsComponent implements OnInit {
         udyamRegistrationNo: this.tokenStorageService.getUdyamRegistrationNo()
       };
 
-      // let response = await this.profileService.deleteClient({ payload: btoa(this.encryptionService.encrypt(clientData)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(clientData).toPromise();
-      let response: any = await this.profileService.deleteClient({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.deleteClient({ payload: this.encryptionService.encrypt(clientData) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'success') {
         await this.onLoad();

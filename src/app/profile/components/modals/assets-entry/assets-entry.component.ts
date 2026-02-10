@@ -3,11 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter, } from '@angular/material-moment-adapter';
-
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { ToastrService } from 'ngx-toastr';
@@ -111,9 +109,8 @@ export class AssetsEntryComponent implements OnInit {
       const assetDocs = this.assetsData?.documents || [];
       if (this.assetsData.documents && this.assetsData.documents.length > 0) {
         for (let i = 0; i < this.assetsData.documents.length; i++) {
-          if (assetDocs[i]?.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: assetDocs[i].documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+          if (assetDocs[i]?.documentName) {     
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: assetDocs[i].documentName }) }));
             const reader: any = new FileReader();
             const isPdf = assetDocs[i]?.documentName.toLowerCase().endsWith('.pdf');
             reader.onload = () => {
@@ -149,11 +146,8 @@ export class AssetsEntryComponent implements OnInit {
           }
         ]
       };
-      // let response = await this.profileService.staticLists({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response: any = await this.profileService.staticLists({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.staticLists({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.assetNames = response?.data ?? [];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'AssetsEntryComponent' });
@@ -339,11 +333,8 @@ export class AssetsEntryComponent implements OnInit {
       const assetObj = JSON.parse(JSON.stringify(this.assetForm.value));
       assetObj.assetDocuments = null;
 
-      // let response = await this.profileService.asset({ payload: btoa(this.encryptionService.encrypt(this.assetForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(assetObj).toPromise();
-      let response: any = await this.profileService.asset({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.asset({ payload: this.encryptionService.encrypt(this.assetForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status != 'success') return;
 

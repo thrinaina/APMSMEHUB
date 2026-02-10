@@ -18,8 +18,6 @@ import { ToastrModule } from 'ngx-toastr'
 import { authInterceptor } from './shared/helpers/auth.interceptor'
 import { TimeoutModalComponent } from './components/timeout-modal/timeout-modal.component';
 
-import { ConfigService } from './shared/services/config/config.service';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,10 +44,6 @@ import { ConfigService } from './shared/services/config/config.service';
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    provideAppInitializer(() => {
-        const initializerFn = ((c: ConfigService) => () => c.loadConfig())(inject(ConfigService));
-        return initializerFn();
-      })
   ],
   bootstrap: [AppComponent]
 })

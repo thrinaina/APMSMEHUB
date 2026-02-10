@@ -5,12 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-
 import { TranslateService } from '@ngx-translate/core';
 import { CommonService } from '@shared/services/commom/common.service';
 import { EncryptionService } from '@shared/services/encryption/encryption.service';
-
-
 import { ProfileDetailsComponent } from '../modals/profile-details/profile-details.component';
 import { EnterpriseDetailsComponent } from '../modals/enterprise-details/enterprise-details.component';
 import { MarketDetailsComponent } from '../modals/market-details/market-details.component';
@@ -123,11 +120,8 @@ export class ProfileEntryComponent implements OnInit {
     try {
       this.isLoading = true;
       const sendData: any = { udyamRegistrationNo: this.udyamForm.value.udyamRegistrationNo, consentDate: formatDate(this.consentDate, "yyyy-MM-dd HH:mm:ss", "en-US") };
-      // const response = await this.profileService.submitConsent({ payload: btoa(this.encryptionService.encrypt(sendData)) }).toPromise();
-      // const decryptResponse = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(sendData).toPromise();
-      const response: any = await this.profileService.submitConsent({ payload: encryptedData.encryptedText} ).toPromise();
-      const decryptResponse = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.profileService.submitConsent({ payload: this.encryptionService.encrypt(sendData) }).toPromise();
+      const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') {
         this.udyamForm.get('udyamRegistrationNo')?.reset();
         this.tempUdyamData = {};
@@ -144,11 +138,8 @@ export class ProfileEntryComponent implements OnInit {
     try {
       this.isLoading = true;
       const defaultCondition:any = { filters: [] };
-      // const response = await this.profileService.appUserUdyams({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // this.udyams = response?.payload ? this.encryptionService.decrypt(atob(response.payload)).data : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response: any = await this.profileService.appUserUdyams({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      const response = await this.profileService.appUserUdyams({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      this.udyams = response?.payload ? this.encryptionService.decrypt(response.payload).data : [];
       this.udyams = response?.data || [];
       if(this.udyams.length == 0) {
         const dialogRef = this.dialog.open(AlertsComponent, {
@@ -197,9 +188,9 @@ export class ProfileEntryComponent implements OnInit {
           ]
         };
 
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let response: any = await this.profileService.enterprises({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response = await this.profileService.enterprises({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        let decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
+      
         this.profileData = response?.data ? response?.data[0] : [];
         if (this.profileData?.domesticMarkets) this.profileData['domesticMarkets'] = JSON.parse(this.profileData.domesticMarkets);
         if (this.profileData?.internationalMarkets) this.profileData['internationalMarkets'] = JSON.parse(this.profileData.internationalMarkets);
@@ -208,8 +199,7 @@ export class ProfileEntryComponent implements OnInit {
         if (this.profileData?.documents) {
           this.profileData.documents.forEach(async (document: any) => {
             if (document?.documentName) {
-              const encryptedData = await this.securityService.encrypt({fileName: document?.documentName}).toPromise();
-              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document?.documentName }) }));
               const reader = new FileReader();
               reader.onload = () => {
                 if (document.transactionType == 'coverImage') this.profileData['coverImage'] = reader.result;
@@ -234,16 +224,15 @@ export class ProfileEntryComponent implements OnInit {
           ]
         };
 
-        const encryptedData2 = await this.securityService.encrypt({defaultCondition}).toPromise();
-        response = await this.profileService.clients({ payload: encryptedData2.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
-        this.profileData['clients'] = response?.data ?? [];
+        response = await this.profileService.clients({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
+
+        this.profileData['clients'] = decryptResponse?.data ?? [];
 
         if (this.profileData.clients) {
           this.profileData.clients.forEach(async (client: any) => {
             if (client.document?.documentName) {
-              const encryptedData = await this.securityService.encrypt({fileName: client.document?.documentName}).toPromise();
-              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+              const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: client.document?.documentName }) }));
               const reader = new FileReader();
               reader.onload = () => {
                 client['clientLogo'] = reader.result;
@@ -267,11 +256,9 @@ export class ProfileEntryComponent implements OnInit {
           ]
         };
 
-        // let response = await this.profileService.products({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-        // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let response = await this.profileService.products({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response = await this.profileService.products({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
         this.productsData = response?.data ?? [];
 
         this.productsData.forEach((product: any) => {
@@ -279,8 +266,7 @@ export class ProfileEntryComponent implements OnInit {
             // product.documents = JSON.parse(product.documents);
             product.documents.forEach(async (document: any) => {
               if (document.documentName) {
-                const encryptedData = await this.securityService.encrypt({fileName: document.documentName}).toPromise();
-                const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+                const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
                 const reader = new FileReader();
                 reader.onload = () => {
                   document['productImage'] = reader.result;
@@ -305,19 +291,16 @@ export class ProfileEntryComponent implements OnInit {
             }
           ]
         };
-        // let response = await this.profileService.assets({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-        // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let response = await this.profileService.assets({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response = await this.profileService.assets({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
         this.assetsData = response?.data ?? [];
 
         for (const asset of this.assetsData) {
           if (!asset.documents) continue;
           for (const document of asset.documents) {
             if (!document.documentName) continue;
-            const encryptedData = await this.securityService.encrypt({fileName: document.documentName}).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
             document['assetImage'] = await new Promise<string>((resolve) => {
               const reader = new FileReader();
               reader.onload = () => resolve(reader.result as string);
@@ -348,11 +331,9 @@ export class ProfileEntryComponent implements OnInit {
             }
           ]
         };
-        // let response = await this.profileService.udyams({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-        // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let response = await this.profileService.udyams({ payload: encryptedData.encryptedText} ).toPromise();
-        response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+        let response = await this.profileService.udyams({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
         this.udyamDetails = response?.data ? response?.data[0] : [];
       }
 
@@ -588,8 +569,7 @@ export class ProfileEntryComponent implements OnInit {
   }
 
   async downloadFile(doc: any) {
-    const encryptedData = await this.securityService.encrypt({ fileName: doc.documentName }).toPromise();
-    const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+    const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: doc.documentName }) }));
     const url = window.URL.createObjectURL(responseBlob);
     const a = document.createElement('a');
     a.href = url;

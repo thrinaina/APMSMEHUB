@@ -4,7 +4,6 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { DiscoveryService } from '../../discovery.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
@@ -174,11 +173,8 @@ export class EnquiryComponent {
       });
       if (!payload.enterprisesData) return;
 
-      // let response = await this.discoveryService.sendEnquiry({ payload: btoa(this.encryptionService.encrypt(payload)) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(payload).toPromise();
-      let response: any = await this.discoveryService.sendEnquiry({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.discoveryService.sendEnquiry({ payload: this.encryptionService.encrypt(payload) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : {};
       if(response.status == 'success') this.toastr.success(response?.message);
       this.dialogRef.close({ type: true, id: 0 });
     } catch (err) {

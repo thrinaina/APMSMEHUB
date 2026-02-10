@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { ToastrService } from 'ngx-toastr';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
@@ -86,21 +85,17 @@ export class MarketDetailsComponent implements OnInit{
           }
         ]
       };
-      // let response = await this.profileService.staticLists({ payload: btoa(this.encryptionService.encrypt({ defaultCondition }))}).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response: any = await this.profileService.staticLists({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.staticLists({ payload: this.encryptionService.encrypt({ defaultCondition })}).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+        
       this.domesticMarkets = response?.data.filter((staticList: any) => staticList.type == 'STATE') ?? [];
       this.internationalMarkets = response?.data.filter((staticList: any) => staticList.type == 'COUNTRY') ?? [];
 
       // Domestic Markets - States
       defaultCondition = { filters: [] };
-      // response = await this.profileService.sectors({ payload: btoa(this.encryptionService.encrypt({ defaultCondition }))}).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData2 = await this.securityService.encrypt({ defaultCondition }).toPromise();
-      let response2: any = await this.profileService.sectors({ payload: encryptedData2.encryptedText} ).toPromise();
-      response2 = response2.payload ? await this.securityService.decrypt(response2.payload).toPromise() : {};
+      response = await this.profileService.sectors({ payload: this.encryptionService.encrypt({ defaultCondition })}).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
+
       this.sectorsServed = response?.data ?? [];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'MarketDetailsComponent' });
@@ -136,11 +131,8 @@ export class MarketDetailsComponent implements OnInit{
 
       this.isLoading = true;
 
-      // let response = await this.profileService.marketPresence({ payload: btoa(this.encryptionService.encrypt(this.marketForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.marketForm.value).toPromise();
-      let response: any = await this.profileService.marketPresence({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.marketPresence({ payload: this.encryptionService.encrypt(this.marketForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       this.toastr.success(response?.message);
 

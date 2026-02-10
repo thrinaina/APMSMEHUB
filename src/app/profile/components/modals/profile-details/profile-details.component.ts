@@ -1,14 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
-
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
@@ -114,8 +111,7 @@ export class ProfileDetailsComponent implements OnInit {
       if (this.documents) {
         this.documents.forEach(async document => {
           if (document?.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: document.documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: document.documentName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               let data: any = {
@@ -370,11 +366,8 @@ export class ProfileDetailsComponent implements OnInit {
       profileObj.coverImage = null;
       profileObj.enterpriseLogo = null;
 
-      // let response = await this.profileService.profileDetail({ payload: btoa(this.encryptionService.encrypt(this.profileForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(profileObj).toPromise();
-      let response: any = await this.profileService.profileDetail({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.profileDetail({ payload: this.encryptionService.encrypt(this.profileForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'conflict') {
         const dialogRef = this.dialog.open(AlertsComponent, {

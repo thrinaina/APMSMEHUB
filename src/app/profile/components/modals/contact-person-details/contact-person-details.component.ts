@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -93,11 +92,8 @@ export class ContactPersonDetailsComponent implements OnInit{
 
       this.isLoading = true;
 
-      // let response = await this.profileService.enterpriseContactDetail({ payload: btoa(this.encryptionService.encrypt(this.contactForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.contactForm.value).toPromise();
-      let response: any = await this.profileService.enterpriseContactDetail({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.enterpriseContactDetail({ payload: this.encryptionService.encrypt(this.contactForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       this.toastr.success(response?.message);
       this.dialogRef.close({ type: true, id: 0 });

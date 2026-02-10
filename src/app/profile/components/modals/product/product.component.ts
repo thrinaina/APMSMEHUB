@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
@@ -91,8 +89,7 @@ export class ProductComponent implements OnInit {
       if (this.productData.documents && this.productData.documents.length > 0) {
         for (let i = 0; i < this.productData.documents.length; i++) {
           if (productDocs[i]?.documentName) {
-            const encryptedData = await this.securityService.encrypt({ fileName: productDocs[i].documentName }).toPromise();
-            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+            const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: productDocs[i].documentName }) }));
             const reader = new FileReader();
             reader.onload = () => {
               let data: any = {
@@ -117,11 +114,8 @@ export class ProductComponent implements OnInit {
     try {
       this.isLoading = true;
       let defaultCondition:any = { filters: [] };
-      // let response1: any = await this.profileService.categories({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-      // this.productCategories = response1.payload ? this.encryptionService.decrypt(atob(response1.payload)).data : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response1: any = await this.profileService.categories({ payload: encryptedData.encryptedText} ).toPromise();
-      response1 = response1.payload ? await this.securityService.decrypt(response1.payload).toPromise() : {};
+      let response1: any = await this.profileService.categories({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+      this.productCategories = response1.payload ? this.encryptionService.decrypt(response1.payload).data : [];
       this.productCategories = response1.data || [];
 
       // defaultCondition = " AND staticlist.type = 'UOM'";
@@ -137,12 +131,9 @@ export class ProductComponent implements OnInit {
           }
         ]
       };
-      // let response2: any = await this.profileService.staticLists({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-      // this.productUnits = response2.payload ? this.encryptionService.decrypt(atob(response2.payload)).data : [];
-      const encryptedData2 = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response2: any = await this.profileService.staticLists({ payload: encryptedData2.encryptedText} ).toPromise();
-      response2 = response2.payload ? await this.securityService.decrypt(response2.payload).toPromise() : {};
-      this.productUnits = response2.data || [];
+      let response2: any = await this.profileService.staticLists({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+      this.productUnits = response2.payload ? this.encryptionService.decrypt(response2.payload).data : [];
+       this.productUnits = response2.data || [];
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'ProductComponent' });
     } finally {
@@ -255,8 +246,7 @@ export class ProductComponent implements OnInit {
     }
     if (index !== -1) {
       const doc = this.documents[index];
-      const encryptedData = await this.securityService.encrypt({ fileName: doc.documentName }).toPromise();
-      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: doc.documentName }) }));
       const url = window.URL.createObjectURL(responseBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -299,11 +289,8 @@ export class ProductComponent implements OnInit {
       const productObj = JSON.parse(JSON.stringify(this.productForm.value));
       productObj.productImages = null;
 
-      // let response = await this.profileService.product({ payload: btoa(this.encryptionService.encrypt(this.productForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(productObj).toPromise();
-      let response: any = await this.profileService.product({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.profileService.product({ payload: this.encryptionService.encrypt(this.productForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (response?.status == 'conflict') {
         const dialogRef = this.dialog.open(AlertsComponent, {
           disableClose: true,
