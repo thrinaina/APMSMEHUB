@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 
@@ -74,7 +74,7 @@ export class ProfileDetailsComponent implements OnInit {
     private commonService: CommonService,
     private profileService: ProfileService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public translate: TranslateService,
     private toastr: ToastrService,
     public dialog: MatDialog,

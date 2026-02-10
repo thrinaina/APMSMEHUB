@@ -1,14 +1,11 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-
 import { AlertsComponent } from "@components/alerts/alerts.component";
-
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from "@services/security/security.service";
 import { CommonService } from '@services/commom/common.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -34,8 +31,7 @@ export class CategoryApprovalsComponent {
 
   constructor(
     private adminService: AdminService,
-    private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    private encryptionService: EncryptionService,    
     public tokenStorageService: TokenStorageService,
     private commonService: CommonService,
     public translate: TranslateService,
@@ -80,11 +76,8 @@ export class CategoryApprovalsComponent {
       const result = await dialogRef.afterClosed().toPromise();
       if (!result) return;
       this.approvalForm.patchValue({ requestStatus: statusType });
-      // let response = await this.adminService.requeststatus({ payload: btoa(this.encryptionService.encrypt(this.approvalForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.approvalForm.value).toPromise();
-      let response: any = await this.adminService.requeststatus({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.adminService.requeststatus({ payload: this.encryptionService.encrypt(this.approvalForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       this.toastr.success(
         this.translate.instant(response?.message)
       );

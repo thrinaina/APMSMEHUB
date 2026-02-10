@@ -1,17 +1,13 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-
 import { AlertsComponent } from "@components/alerts/alerts.component";
-
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from "src/app/shared/services/security/security.service";
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { ToastrService } from 'ngx-toastr';
-
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -42,7 +38,7 @@ export class UserComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     private commonService: CommonService,
     public translate: TranslateService,
@@ -78,8 +74,7 @@ export class UserComponent implements OnInit {
 
       const userDocs = this.userData?.documents ? JSON.parse(this.userData.documents) : [];
       if (userDocs[0]?.documentName) {
-        const encryptedData = await this.securityService.encrypt({ fileName: userDocs[0].documentName }).toPromise();
-        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+        const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: userDocs[0].documentName }) }));
         const reader = new FileReader();
         reader.onload = () => {
           let data: any = {
@@ -186,8 +181,7 @@ export class UserComponent implements OnInit {
     }
     if (index !== -1) {
       const doc = this.documents[index];
-      const encryptedData = await this.securityService.encrypt({ fileName: doc.documentName }).toPromise();
-      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: encryptedData.encryptedText }));
+      const responseBlob: Blob = await firstValueFrom(this.commonService.previewFile({ payload: this.encryptionService.encrypt({ fileName: doc.documentName }) }));
       const url = window.URL.createObjectURL(responseBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -226,9 +220,8 @@ export class UserComponent implements OnInit {
       const userObj = JSON.parse(JSON.stringify(this.userForm.value));
       userObj.userImage = null;
 
-      const encryptedData = await this.securityService.encrypt(this.userForm.value).toPromise();
-      let response: any = await this.adminService.user({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.adminService.requeststatus({ payload: this.encryptionService.encrypt(this.userForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
 
       if (response?.status == 'success') {
         await this.commonService.handleFiles({

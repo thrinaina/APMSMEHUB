@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from '@services/security/security.service';
 import { CommonService } from '@services/commom/common.service';
 import { DataExportService } from '@services/data-export/data-export.service';
 import { CategoryApprovalsComponent } from '../modals/category-approvals/category-approvals.component';
@@ -50,7 +49,7 @@ export class ApprovalsComponent {
     private adminService: AdminService,
     private commonService: CommonService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     public dataExportService: DataExportService,
     public dialog: MatDialog,
@@ -70,19 +69,13 @@ export class ApprovalsComponent {
 
       if (this.selectedTabIndex == 0) {
         const defaultCondition:any = { filters: [] };
-        // let profileResponse = await this.adminService.profiles({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-        // profileResponse = profileResponse?.payload ? this.encryptionService.decrypt(atob(profileResponse.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let profileResponse: any = await this.adminService.profiles({ payload: encryptedData.encryptedText} ).toPromise();
-        profileResponse = profileResponse.payload ? await this.securityService.decrypt(profileResponse.payload).toPromise() : {};
+        let profileResponse = await this.adminService.profiles({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        profileResponse = profileResponse?.payload ? this.encryptionService.decrypt(profileResponse.payload) : [];
         this.profileData = profileResponse?.data || [];
       } else if (this.selectedTabIndex == 1) {
         const defaultCondition:any = { filters: [] };
-        // let requestResponse = await this.adminService.requests({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-        // requestResponse = requestResponse?.payload ? this.encryptionService.decrypt(atob(requestResponse.payload)) : [];
-        const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-        let requestResponse: any = await this.adminService.requests({ payload: encryptedData.encryptedText} ).toPromise();
-        requestResponse = requestResponse.payload ? await this.securityService.decrypt(requestResponse.payload).toPromise() : {};
+        let requestResponse = await this.adminService.requests({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+        requestResponse = requestResponse?.payload ? this.encryptionService.decrypt(requestResponse.payload) : [];
         this.requestData = requestResponse?.data || [];
       }
     } catch (err) {

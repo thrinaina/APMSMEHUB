@@ -40,11 +40,6 @@
                 "glob": "**/*",
                 "input": "node_modules/pdfjs-dist/build",
                 "output": "assets/pdfjs"
-              },
-              {
-                "glob": "**/*",
-                "input": "src/assets/config",
-                "output": "assets/config"
               }
             ],
             "styles": [

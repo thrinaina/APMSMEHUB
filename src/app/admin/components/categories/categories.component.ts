@@ -4,15 +4,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
-
 import { AlertsComponent } from '@components/alerts/alerts.component';
 import { CategoryComponent } from '../modals/category/category.component';
-
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from '@services/security/security.service';
 import { CommonService } from '@services/commom/common.service';
 import { DataExportService } from '@services/data-export/data-export.service';
 import { Observable } from 'rxjs';
@@ -48,7 +45,7 @@ export class CategoriesComponent implements OnInit {
     private commonService: CommonService,
     private adminService: AdminService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     public dataExportService: DataExportService,
     public dialog: MatDialog,
@@ -63,13 +60,9 @@ export class CategoriesComponent implements OnInit {
   async onLoad() {
     try {
       this.isLoading = true;
-      // const defaultCondition = "";
       const defaultCondition:any = { filters: [] };
-      // let response = await this.adminService.categories({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // response = response?.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let response: any = await this.adminService.categories({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.adminService.categories({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      response = response?.payload ? this.encryptionService.decrypt(response.payload) : [];
       this.categoriesData = response?.data || [];
       this.dataSource = new MatTableDataSource(this.categoriesData);
       this.dataSourceCards = this.dataSource.connect();

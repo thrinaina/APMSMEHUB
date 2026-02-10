@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { EncryptionService } from '../encryption/encryption.service';
-import { SecurityService } from '../security/security.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '../token-storage/token-storage.service';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +24,7 @@ export class CommonService {
     private httpClient: HttpClient,
     public tokenStorageService: TokenStorageService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,

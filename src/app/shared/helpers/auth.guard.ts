@@ -5,7 +5,6 @@ import { AlertsComponent } from '@components/alerts/alerts.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { Observable } from 'rxjs';
-import { SecurityService } from '../services/security/security.service';
 import { AdminService } from 'src/app/admin/admin.service';
 import { CommonService } from '../services/commom/common.service';
 
@@ -22,7 +21,7 @@ export class AuthGuard{
     private tokenStorageService: TokenStorageService,
     private router: Router,
     public dialog: MatDialog,
-    private securityService: SecurityService,
+    
     private adminService: AdminService,
     private commonService: CommonService
   ) { 

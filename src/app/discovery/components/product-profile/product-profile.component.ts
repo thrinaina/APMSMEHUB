@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { DiscoveryService } from '../../discovery.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EnquiryComponent } from '../../modals/enquiry/enquiry.component';
@@ -38,7 +38,7 @@ export class ProductProfileComponent {
     private router: Router,
     public tokenStorageService: TokenStorageService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private discoveryService: DiscoveryService,
     private commonService: CommonService,
     public dialog: MatDialog

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 
 @Component({
     selector: 'app-enterprise-count-card',
@@ -16,8 +16,7 @@ export class EnterpriseCountCardComponent {
   constructor(
     private dashboardService: DashboardService,
     private commonService: CommonService,
-    private encryptionService: EncryptionService,
-    private securityService: SecurityService
+    private encryptionService: EncryptionService
   ) { }
 
   async ngOnInit() {

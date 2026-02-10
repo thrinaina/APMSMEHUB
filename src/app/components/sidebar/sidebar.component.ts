@@ -6,7 +6,7 @@ import { ActivatedRoute, NavigationEnd, NavigationStart, Router, Event } from '@
 import { AdminService } from 'src/app/admin/admin.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AlertsComponent } from '../alerts/alerts.component';
@@ -43,7 +43,7 @@ export class SidebarComponent {
     private authService: AuthService,
     private adminService: AdminService,
     private commonService: CommonService,
-    private securityService: SecurityService,
+    
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,

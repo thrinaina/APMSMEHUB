@@ -8,7 +8,7 @@ import { TokenStorageService } from '../../../shared/services/token-storage/toke
 import { CommonService } from '../../../shared/services/commom/common.service';
 import { interval, Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { AuthService } from '../../auth.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { ToastrService } from 'ngx-toastr';
@@ -75,7 +75,7 @@ export class LoginComponent {
     private commonService: CommonService,
     private authService: AuthService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private toastr: ToastrService
   ) { }
 

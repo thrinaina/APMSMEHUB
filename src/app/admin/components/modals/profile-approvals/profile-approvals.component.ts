@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from "src/app/shared/services/security/security.service";
+
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -34,7 +34,7 @@ export class ProfileApprovalsComponent {
   constructor(
     private adminService: AdminService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     private commonService: CommonService,
     public translate: TranslateService,
@@ -78,11 +78,8 @@ export class ProfileApprovalsComponent {
       const result = await dialogRef.afterClosed().toPromise();
       if (!result) return;
       this.approvalForm.patchValue({ enterpriseStatus: statusType });
-      // let response = await this.adminService.profileStatus({ payload: btoa(this.encryptionService.encrypt(this.approvalForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : {};
-      const encryptedData = await this.securityService.encrypt(this.approvalForm.value).toPromise();
-      let response: any = await this.adminService.profileStatus({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.adminService.profileStatus({ payload: this.encryptionService.encrypt(this.approvalForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       this.toastr.success(this.translate.instant(response?.message));
       this.dialogRef.close({type: true});
     } catch (err) {

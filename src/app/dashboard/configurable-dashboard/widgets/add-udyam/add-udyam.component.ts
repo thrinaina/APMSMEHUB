@@ -7,7 +7,7 @@ import { NgOtpInputComponent } from 'ng-otp-input';
 import { interval, Subscription } from 'rxjs';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 import { formatDate } from '@angular/common';
@@ -62,7 +62,7 @@ export class AddUdyamComponent {
     private router: Router,
     public translate: TranslateService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private commonService: CommonService,
     private dashboardService: DashboardService,
     private dialog: MatDialog,

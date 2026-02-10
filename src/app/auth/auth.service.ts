@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../shared/services/token-storage/token-storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EncryptionService } from '../shared/services/encryption/encryption.service';
-import { SecurityService } from '../shared/services/security/security.service';
+
 
 const API_AUTH_URL = environment.apiUrl + 'api/auth/';
 @Injectable({
@@ -17,7 +17,7 @@ export class AuthService {
     private http: HttpClient,
     private tokenStorageService: TokenStorageService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private router: Router,
     private route: ActivatedRoute
   ) { }

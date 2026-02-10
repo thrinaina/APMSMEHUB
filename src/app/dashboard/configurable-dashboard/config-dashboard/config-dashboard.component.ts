@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, viewChild } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { DashboardService } from "@dashboard/dashboard.service";
 import { EncryptionService } from "@services/encryption/encryption.service";
-import { SecurityService } from "src/app/shared/services/security/security.service";
+
 import { DashboardStore } from '../configurable-dashboard.store';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { wrapGrid } from "animate-css-grid";
@@ -24,7 +24,7 @@ export class ConfigDashboardComponent {
   constructor(
     private dashboardService: DashboardService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public commonService: CommonService,
     public tokenStorageService: TokenStorageService
   ) { }

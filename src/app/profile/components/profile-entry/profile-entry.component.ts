@@ -9,7 +9,7 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonService } from '@shared/services/commom/common.service';
 import { EncryptionService } from '@shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 
 import { ProfileDetailsComponent } from '../modals/profile-details/profile-details.component';
 import { EnterpriseDetailsComponent } from '../modals/enterprise-details/enterprise-details.component';
@@ -102,7 +102,6 @@ export class ProfileEntryComponent implements OnInit {
     private readonly translate: TranslateService,
     public readonly commonService: CommonService,
     private readonly encryptionService: EncryptionService,
-    private readonly securityService: SecurityService,
     private readonly dialog: MatDialog,
     private readonly profileService: ProfileService,
     private readonly tokenStorageService: TokenStorageService

@@ -9,7 +9,7 @@ import { TokenStorageService } from '../../../shared/services/token-storage/toke
 import { interval, Subscription } from 'rxjs';
 import { AuthService } from '../../auth.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -64,7 +64,7 @@ export class RegisterComponent {
     public translate: TranslateService,
     private authService: AuthService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private commonService: CommonService,
     private toastr: ToastrService
   ) { }

@@ -7,7 +7,7 @@ import { NgOtpInputComponent } from 'ng-otp-input';
 import { AuthService } from '../../auth.service';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { Subscription, interval } from 'rxjs';
@@ -71,7 +71,7 @@ export class AdminLoginComponent {
     public dialog: MatDialog,
     public translate: TranslateService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private commonService: CommonService,
     private toastr: ToastrService
   ) { }

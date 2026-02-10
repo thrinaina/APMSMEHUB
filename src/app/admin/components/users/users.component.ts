@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AdminService } from '@admin/admin.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { CommonService } from '@services/commom/common.service';
 import { DataExportService } from '@services/data-export/data-export.service';
 import { Observable } from 'rxjs';
@@ -52,7 +52,7 @@ export class UsersComponent implements OnInit {
     private adminService: AdminService,
     private commonService: CommonService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     public dataExportService: DataExportService,
     public dialog: MatDialog,

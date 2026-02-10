@@ -5,7 +5,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AdminService } from '../../admin.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from '@services/security/security.service';
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { DataExportService } from '@services/data-export/data-export.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,7 +47,7 @@ export class EnterprisesComponent {
     private adminService: AdminService,
     private commonService: CommonService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public tokenStorageService: TokenStorageService,
     public dataExportService: DataExportService,
     public dialog: MatDialog,
@@ -76,11 +75,8 @@ export class EnterprisesComponent {
           }
         ]
       };
-      // let enterpriseResponse = await this.adminService.profiles({ payload: btoa(this.encryptionService.encrypt({ defaultCondition })) }).toPromise();
-      // enterpriseResponse = enterpriseResponse?.payload ? this.encryptionService.decrypt(atob(enterpriseResponse.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let enterpriseResponse: any = await this.adminService.profiles({ payload: encryptedData.encryptedText} ).toPromise();
-      enterpriseResponse = enterpriseResponse.payload ? await this.securityService.decrypt(enterpriseResponse.payload).toPromise() : {};
+      let enterpriseResponse = await this.adminService.profiles({ payload: this.encryptionService.encrypt({ defaultCondition }) }).toPromise();
+      enterpriseResponse = enterpriseResponse?.payload ? this.encryptionService.decrypt(enterpriseResponse.payload) : [];
       this.enterpriseData = enterpriseResponse?.data || [];
       this.filterData();
     } catch (err) {

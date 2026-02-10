@@ -7,7 +7,7 @@ import { AssetsComponent } from 'src/app/components/modals/assets/assets.compone
 import { ProductDetailsComponent } from 'src/app/components/modals/product-details/product-details.component';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { EncryptionService } from '@shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { DiscoveryService } from '../../discovery.service';
 import { firstValueFrom } from 'rxjs';
@@ -110,7 +110,6 @@ export class WebviewComponent implements OnInit {
     public readonly tokenStorageService: TokenStorageService,
     public readonly commonService: CommonService,
     private readonly encryptionService: EncryptionService,
-    private readonly securityService: SecurityService,
     private readonly discoveryService: DiscoveryService,
   ) { }
 

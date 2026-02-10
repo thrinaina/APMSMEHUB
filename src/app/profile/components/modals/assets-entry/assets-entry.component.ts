@@ -7,7 +7,7 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter, } from '@angular/ma
 import { ProfileService } from '@profile/profile.service';
 import { CommonService } from '@services/commom/common.service';
 import { EncryptionService } from '@services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { TokenStorageService } from '@services/token-storage/token-storage.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { ToastrService } from 'ngx-toastr';
@@ -63,7 +63,7 @@ export class AssetsEntryComponent implements OnInit {
     private commonService: CommonService,
     private profileService: ProfileService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     public dialog: MatDialog,
     public translate: TranslateService,
     private toastr: ToastrService,

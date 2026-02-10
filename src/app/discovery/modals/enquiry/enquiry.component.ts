@@ -4,7 +4,7 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { DiscoveryService } from '../../discovery.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
@@ -64,7 +64,7 @@ export class EnquiryComponent {
     public dialogRef: MatDialogRef<EnquiryComponent>,
     public dialog: MatDialog,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private discoveryService: DiscoveryService,
     private commonService: CommonService,
     private toastr: ToastrService,

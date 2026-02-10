@@ -7,7 +7,7 @@ import { CommonService } from '@services/commom/common.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { DiscoveryService } from '../../discovery.service';
 import { firstValueFrom } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -117,7 +117,7 @@ export class SearchComponent {
     private commonService: CommonService,
     private tokenStorageService: TokenStorageService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private discoveryService: DiscoveryService,
     private toastr: ToastrService,
   ) { }

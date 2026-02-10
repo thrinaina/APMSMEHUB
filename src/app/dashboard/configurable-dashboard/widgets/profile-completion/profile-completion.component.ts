@@ -6,7 +6,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 
 
@@ -35,7 +35,7 @@ export class ProfileCompletionComponent {
     private dashboardService: DashboardService,
     private commonService: CommonService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private tokenStorageService: TokenStorageService
   ) { }
 

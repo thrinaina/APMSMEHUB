@@ -13,7 +13,7 @@ import { ProductDetailsComponent } from '@components/modals/product-details/prod
 import { AssetsDetailsComponent } from 'src/app/components/modals/assets-details/assets-details.component';
 
 import { EncryptionService } from '@shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
+
 import { TokenStorageService } from 'src/app/shared/services/token-storage/token-storage.service';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -89,7 +89,6 @@ export class ProfileComponent implements OnInit {
     private readonly translate: TranslateService,
     public readonly commonService: CommonService,
     private readonly encryptionService: EncryptionService,
-    private readonly securityService: SecurityService,
     private readonly dialog: MatDialog,
     private readonly discoveryService: DiscoveryService,
     private readonly tokenStorageService: TokenStorageService

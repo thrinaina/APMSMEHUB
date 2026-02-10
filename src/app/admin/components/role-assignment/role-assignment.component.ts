@@ -8,7 +8,6 @@ import { MatSort } from '@angular/material/sort';
 import { AdminService } from '../../admin.service';
 import { CommonService } from 'src/app/shared/services/commom/common.service';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-import { SecurityService } from 'src/app/shared/services/security/security.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
@@ -43,7 +42,7 @@ export class RoleAssignmentComponent {
     private adminService: AdminService,
     private commonService: CommonService,
     private encryptionService: EncryptionService,
-    private securityService: SecurityService,
+    
     private router: Router,
     private route: ActivatedRoute,
     public dialog: MatDialog,
@@ -63,11 +62,8 @@ export class RoleAssignmentComponent {
 
       this.isLoading = true;
       const defaultCondition: any = { filters: [] };
-      // let roleResponse = await this.adminService.userMenuRoles({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-      // roleResponse = roleResponse.payload ? this.encryptionService.decrypt(atob(roleResponse.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let roleResponse: any = await this.adminService.userMenuRoles({ payload: encryptedData.encryptedText} ).toPromise();
-      roleResponse = roleResponse.payload ? await this.securityService.decrypt(roleResponse.payload).toPromise() : {};
+      let roleResponse = await this.adminService.userMenuRoles({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+      roleResponse = roleResponse.payload ? this.encryptionService.decrypt(roleResponse.payload) : [];
       this.rolesData = roleResponse.data;
       if (this.rolesData.length) {
         this.roleAssignForm.patchValue({
@@ -75,11 +71,9 @@ export class RoleAssignmentComponent {
           userMenuId: this.rolesData[0].userMenuId
         })
       }
-      // let userResponse = await this.adminService.userRoleAssignments({ payload: btoa(this.encryptionService.encrypt(this.roleAssignForm.value)) }).toPromise();
-      // userResponse = userResponse.payload ? this.encryptionService.decrypt(atob(userResponse.payload)) : [];
-      const encryptedData2 = await this.securityService.encrypt(this.roleAssignForm.value).toPromise();
-      let userResponse: any = await this.adminService.userRoleAssignments({ payload: encryptedData2.encryptedText} ).toPromise();
-      userResponse = userResponse.payload ? await this.securityService.decrypt(userResponse.payload).toPromise() : {};
+      let userResponse = await this.adminService.userRoleAssignments({ payload: this.encryptionService.encrypt(this.roleAssignForm.value) }).toPromise();
+      userResponse = userResponse.payload ? this.encryptionService.decrypt(userResponse.payload) : [];
+      
       this.userRoleAssignmentData = userResponse.data;
       this.userRoleAssignmentData.forEach((element: any) => {
         if (element.isSelected) this.selection.select(element);
@@ -148,11 +142,9 @@ export class RoleAssignmentComponent {
     try {
       this.isLoading = true;
       const defaultCondition: any = { filters: [] };
-      // let roleResponse = await this.adminService.userMenuRoles({ payload: btoa(this.encryptionService.encrypt({defaultCondition})) }).toPromise();
-      // roleResponse = roleResponse.payload ? this.encryptionService.decrypt(atob(roleResponse.payload)) : [];
-      const encryptedData = await this.securityService.encrypt({defaultCondition}).toPromise();
-      let roleResponse: any = await this.adminService.userMenuRoles({ payload: encryptedData.encryptedText} ).toPromise();
-      roleResponse = roleResponse.payload ? await this.securityService.decrypt(roleResponse.payload).toPromise() : {};
+      let roleResponse = await this.adminService.userMenuRoles({ payload: this.encryptionService.encrypt({defaultCondition}) }).toPromise();
+      roleResponse = roleResponse.payload ? this.encryptionService.decrypt(roleResponse.payload) : [];
+      
       this.rolesData = roleResponse.data;
       if (this.rolesData.length) {
         this.roleAssignForm.patchValue({
@@ -171,11 +163,9 @@ export class RoleAssignmentComponent {
   async getUserRoleAssignments() {
     try {
       this.isLoading = true;
-      // let userResponse = await this.adminService.userRoleAssignments({ payload: btoa(this.encryptionService.encrypt(this.roleAssignForm.value)) }).toPromise();
-      // userResponse = userResponse.payload ? this.encryptionService.decrypt(atob(userResponse.payload)) : [];
-      const encryptedData = await this.securityService.encrypt(this.roleAssignForm.value).toPromise();
-      let userResponse: any = await this.adminService.userRoleAssignments({ payload: encryptedData.encryptedText} ).toPromise();
-      userResponse = userResponse.payload ? await this.securityService.decrypt(userResponse.payload).toPromise() : {};
+      let userResponse = await this.adminService.userRoleAssignments({ payload: this.encryptionService.encrypt(this.roleAssignForm.value) }).toPromise();
+      userResponse = userResponse.payload ? this.encryptionService.decrypt(userResponse.payload) : [];
+
       this.userRoleAssignmentData = userResponse.data || [];
       this.userRoleAssignmentData.forEach((element: any) => {
         if (element.isSelected) this.selection.select(element);
@@ -212,11 +202,8 @@ export class RoleAssignmentComponent {
       const result = await dialogRef.afterClosed().toPromise();
       if (!result) return;
       this.roleAssignForm.patchValue({ users: this.userRoleAssignmentData.filter((data: any) => data.isSelected == true) });
-      // let response = await this.adminService.userRoleAssignment({ payload: btoa(this.encryptionService.encrypt(this.roleAssignForm.value)) }).toPromise();
-      // response = response.payload ? this.encryptionService.decrypt(atob(response.payload)) : [];
-      const encryptedData = await this.securityService.encrypt(this.roleAssignForm.value).toPromise();
-      let response: any = await this.adminService.userRoleAssignment({ payload: encryptedData.encryptedText} ).toPromise();
-      response = response.payload ? await this.securityService.decrypt(response.payload).toPromise() : {};
+      let response = await this.adminService.userRoleAssignment({ payload: this.encryptionService.encrypt(this.roleAssignForm.value) }).toPromise();
+      response = response.payload ? this.encryptionService.decrypt(response.payload) : [];
       await this.getUserRoleAssignments();
     } catch (err) {
       this.commonService.handleError(err, { type: 'GET', id: 0, component: 'RoleAssignmentComponent' });
