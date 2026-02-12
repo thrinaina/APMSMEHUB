@@ -33,7 +33,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       // Handle 401 Unauthorized (Audit-compliant silent refresh)
-      if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
         return authService.refreshAccessToken().pipe(
           switchMap((res: any) => {
             // Retry original request with NEW token
