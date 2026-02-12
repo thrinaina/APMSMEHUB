@@ -341,12 +341,10 @@ export class AdminLoginComponent {
         });
       } else if (decryptResponse?.status == 'success') {
         this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
-        // this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
+        this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
         const userData = {
           userType: decryptResponse.data.userType,
           userName: decryptResponse.data.userName,
-          // loginName: decryptResponse.data.loginName,
-          accessToken: decryptResponse.data.accessToken
         }
         this.tokenStorageService.saveUser(userData);
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);

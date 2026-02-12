@@ -54,7 +54,7 @@ export class CommonService {
       ipAddress: this.tokenStorageService.getIPAddress(),
       browserName: this.tokenStorageService.getBrowserName()
     };
-    return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) }, { withCredentials: true });
+    return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
   // Refresh Token

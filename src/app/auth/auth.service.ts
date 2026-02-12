@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -16,7 +16,6 @@ export class AuthService {
     private http: HttpClient,
     private tokenStorageService: TokenStorageService,
     private encryptionService: EncryptionService,
-    
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -27,7 +26,10 @@ export class AuthService {
 
   // Silent Refresh: Sends HttpOnly cookie automatically
   refreshAccessToken(): Observable<any> {
-    return this.http.post(API_AUTH_URL + "refresh", {}, { withCredentials: true }).pipe(
+    const refreshToken = this.tokenStorageService.getRefreshToken();
+    // Passing the refresh token in a custom header
+    const headers = new HttpHeaders().set('x-refresh-token', refreshToken || '');
+    return this.http.post(API_AUTH_URL + "refresh", {}, { headers }).pipe(
       tap((res: any) => this.tokenStorageService.saveToken(res.accessToken)),
       catchError(async (err) => {
         this.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
@@ -60,11 +62,11 @@ export class AuthService {
   }
 
   loginWithPassword(data: any): Observable<any> {
-    return this.http.post(API_AUTH_URL + "loginwithpassword", data, { withCredentials: true });
+    return this.http.post(API_AUTH_URL + "loginwithpassword", data);
   }
 
   loginWithOTP(data: any): Observable<any> {
-    return this.http.post(API_AUTH_URL + "loginwithotp", data, { withCredentials: true });
+    return this.http.post(API_AUTH_URL + "loginwithotp", data);
   }
 
   verifyActiveLogin(): Observable<any> {
@@ -84,7 +86,7 @@ export class AuthService {
       browserName: this.tokenStorageService.getBrowserName()
     };
 
-    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) }, { withCredentials: true });
+    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
   getAppProduction() {

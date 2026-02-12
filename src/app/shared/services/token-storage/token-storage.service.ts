@@ -20,7 +20,7 @@ const USER_ROLES = 'userRoles';
 
 // Token
 const TOKEN_KEY = 'auth-token';
-// const REFRESHTOKEN_KEY = 'auth-refreshtoken';
+const REFRESHTOKEN_KEY = 'auth-refreshtoken';
 
 // User
 const USER_KEY = 'auth-user';
@@ -34,7 +34,6 @@ const DASHBOARDWIDGETS = 'dashboardWidgets';
 const DASHBOARDWIDGETSORDER = 'dashboardWidgetsOrder';
 
 const UDYAMREGISTRATIONNO_KEY = 'udyamRegistrationNo';
-
 
 @Injectable({
   providedIn: 'root'
@@ -119,14 +118,14 @@ export class TokenStorageService {
     return window.sessionStorage.getItem(TOKEN_KEY);
   }
 
-  // public saveRefreshToken(token: string): void {
-  //   window.sessionStorage.removeItem(REFRESHTOKEN_KEY);
-  //   window.sessionStorage.setItem(REFRESHTOKEN_KEY, token);
-  // }
+  public saveRefreshToken(token: string): void {
+    window.sessionStorage.removeItem(REFRESHTOKEN_KEY);
+    window.sessionStorage.setItem(REFRESHTOKEN_KEY, token);
+  }
 
-  // public getRefreshToken(): string | null {
-  //   return window.sessionStorage.getItem(REFRESHTOKEN_KEY);
-  // }
+  public getRefreshToken(): string | null {
+    return window.sessionStorage.getItem(REFRESHTOKEN_KEY);
+  }
 
   // User
 

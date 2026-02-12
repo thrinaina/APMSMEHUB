@@ -8,7 +8,6 @@ import { TokenStorageService } from '../../../shared/services/token-storage/toke
 import { CommonService } from '../../../shared/services/commom/common.service';
 import { interval, Subscription } from 'rxjs';
 import { EncryptionService } from 'src/app/shared/services/encryption/encryption.service';
-
 import { AuthService } from '../../auth.service';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { ToastrService } from 'ngx-toastr';
@@ -333,12 +332,10 @@ export class LoginComponent {
         this.refreshCaptcha();
       } else if (decryptResponse?.status == 'success') {
         this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
-        // this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
+        this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
         const userData = {
           userType: decryptResponse.data.userType,
           userName: decryptResponse.data.userName,
-          // loginName: decryptResponse.data.loginName,
-          accessToken: decryptResponse.data.accessToken
         }
         this.tokenStorageService.saveUser(userData);
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
@@ -439,10 +436,10 @@ export class LoginComponent {
       const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
       if (decryptResponse?.status == 'success') {
         this.tokenStorageService.saveToken(decryptResponse.data.accessToken);
+        this.tokenStorageService.saveRefreshToken(decryptResponse.data.refreshToken);
         const userData = {
           userType: decryptResponse.data.userType,
-          userName: decryptResponse.data.userName,
-          accessToken: decryptResponse.data.accessToken
+          userName: decryptResponse.data.userName
         }
         this.tokenStorageService.saveUser(userData);
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
