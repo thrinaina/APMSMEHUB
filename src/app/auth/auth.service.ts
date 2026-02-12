@@ -84,7 +84,7 @@ export class AuthService {
       browserName: this.tokenStorageService.getBrowserName()
     };
 
-    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
+    return this.http.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) }, { withCredentials: true });
   }
 
   getAppProduction() {
