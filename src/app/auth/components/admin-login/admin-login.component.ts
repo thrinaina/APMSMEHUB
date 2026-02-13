@@ -350,7 +350,7 @@ export class AdminLoginComponent {
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
         this.tokenStorageService.saveDashboardWidgets(decryptResponse.data.dashboardWidgets);
         this.tokenStorageService.saveDashboardWidgetsOrder(JSON.parse(decryptResponse.data.dashboardWidgetsOrder));
-        await this.authService.inactiveSessions(decryptResponse.data.accessToken, true, "Login");
+        this.authService.inactiveSessions(true, "Login");
         this.tokenStorageService.updateLoginStatus(true);
         this.router.navigate(["/dashboard"]);
       }

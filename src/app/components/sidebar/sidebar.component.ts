@@ -107,7 +107,7 @@ export class SidebarComponent {
   }
 
   async logout() {
-    await this.authService.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
+    this.authService.inactiveSessions(false, "Logout");
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
     this.router.navigate(["/"], { relativeTo: this.route });

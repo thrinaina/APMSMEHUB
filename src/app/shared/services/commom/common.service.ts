@@ -45,15 +45,15 @@ export class CommonService {
   }
 
   // Check inactive session
-  inactiveSessions(userData: any, status: any, sessionLogDesc: string): Observable<any> {
+  inactiveSessions(status: any, sessionLogDesc: string): Observable<any> {
     const data = {
-      token: userData.accessToken,
-      appUserId: userData.appUserId,
+      token: this.tokenStorageService.getToken(),
       status: status,
       sessionLogDesc: sessionLogDesc,
       ipAddress: this.tokenStorageService.getIPAddress(),
       browserName: this.tokenStorageService.getBrowserName()
     };
+
     return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
@@ -129,7 +129,7 @@ export class CommonService {
     await this.errorLog(data?.id, data?.component, errorMessage).toPromise();
 
     if (errorMessage == 'User Session Expired.' || errorMessage == 'No token provided!' || errorMessage == 'Unauthorized!') {
-      await this.inactiveSessions(this.tokenStorageService.getUser().accessToken, false, "Logout");
+      await this.inactiveSessions(false, "Logout");
       this.dialog.closeAll();
       this.tokenStorageService.signOut();
       this.router.navigate(['/'], { relativeTo: this.route });
