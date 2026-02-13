@@ -13,10 +13,10 @@ import { Subscription, interval } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-    selector: 'app-admin-login',
-    templateUrl: './admin-login.component.html',
-    styleUrl: './admin-login.component.scss',
-    standalone: false
+  selector: 'app-admin-login',
+  templateUrl: './admin-login.component.html',
+  styleUrl: './admin-login.component.scss',
+  standalone: false
 })
 export class AdminLoginComponent {
   @Output() childEvent = new EventEmitter();
@@ -70,7 +70,7 @@ export class AdminLoginComponent {
     public dialog: MatDialog,
     public translate: TranslateService,
     private encryptionService: EncryptionService,
-    
+
     private commonService: CommonService,
     private toastr: ToastrService
   ) { }
@@ -80,7 +80,7 @@ export class AdminLoginComponent {
       loginName: new FormControl(null, [Validators.required, Validators.email]),
       loginType: new FormControl('EMAIL'),
       userType: new FormControl('ADMIN'),
-      password: new FormControl(null, [Validators.required,Validators.minLength(8), Validators.maxLength(50)]),
+      password: new FormControl(null, [Validators.required, Validators.minLength(8), Validators.maxLength(50)]),
       confirmPassword: new FormControl(null),
       captcha: new FormControl(null)
     });
@@ -133,7 +133,7 @@ export class AdminLoginComponent {
       this.validSpecial,
     ].filter((criteria) => criteria).length;
 
-   if (criteriaMet <= 1) {
+    if (criteriaMet <= 1) {
       return "Auth.Weak";
     } else if (criteriaMet === 2) {
       return "Auth.Moderate";
@@ -327,7 +327,7 @@ export class AdminLoginComponent {
 
       const response = await this.authService.loginWithPassword({ payload: this.encryptionService.encrypt(this.loginForm.value) }).toPromise();
       const decryptResponse = response.payload ? this.encryptionService.decrypt(response.payload) : {};
-    
+
       if (decryptResponse?.status == 'Unauthorized') {
         const dialogRef = this.dialog.open(AlertsComponent, {
           disableClose: true,
@@ -350,7 +350,14 @@ export class AdminLoginComponent {
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
         this.tokenStorageService.saveDashboardWidgets(decryptResponse.data.dashboardWidgets);
         this.tokenStorageService.saveDashboardWidgetsOrder(JSON.parse(decryptResponse.data.dashboardWidgetsOrder));
-        this.authService.inactiveSessions(true, "Login");
+        const data = {
+          token: this.tokenStorageService.getToken(),
+          status: true,
+          sessionLogDesc: "Login",
+          ipAddress: this.tokenStorageService.getIPAddress(),
+          browserName: this.tokenStorageService.getBrowserName()
+        };
+        await this.authService.inactiveSessions({ payload: this.encryptionService.encrypt(data) }).toPromise();
         this.tokenStorageService.updateLoginStatus(true);
         this.router.navigate(["/dashboard"]);
       }
@@ -399,7 +406,7 @@ export class AdminLoginComponent {
         data: {
           type: 'error-type',
           title: this.translate.instant('Common.InvalidData'),
-          message:  this.translate.instant('Common.PleaseEnterEmailID'),
+          message: this.translate.instant('Common.PleaseEnterEmailID'),
         },
         width: '300px',
       });
@@ -442,7 +449,7 @@ export class AdminLoginComponent {
       this.isLoading = false;
       this.isSaved = false;
       this.invalidOTP = true;
-      this.loginForm.patchValue({loginType: 'EMAIL', userType: 'ADMIN'});
+      this.loginForm.patchValue({ loginType: 'EMAIL', userType: 'ADMIN' });
     }
   }
 
@@ -464,7 +471,7 @@ export class AdminLoginComponent {
       this.isLoading = false;
       this.isSaved = false;
       this.invalidOTP = true;
-      this.loginForm.patchValue({loginType: 'EMAIL', userType: 'ADMIN'});
+      this.loginForm.patchValue({ loginType: 'EMAIL', userType: 'ADMIN' });
     }
   }
 

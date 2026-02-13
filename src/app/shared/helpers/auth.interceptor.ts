@@ -5,11 +5,13 @@ import { AuthService } from '@auth/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { TokenStorageService } from '@shared/services/token-storage/token-storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EncryptionService } from '@services/encryption/encryption.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const tokenStorageService = inject(TokenStorageService);
   const token = authService.accessToken();
+  const encryptionService = inject(EncryptionService);
   const router = inject(Router);
   const route = inject(ActivatedRoute);
 
@@ -26,7 +28,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // Check if the error is from the REFRESH endpoint itself
       // If it is, DO NOT retry. Just log out.
       if (req.url.includes('/auth/refresh')) {
-        authService.inactiveSessions(false, "Logout");
+        const data = {
+          token: tokenStorageService.getToken(),
+          status: false,
+          sessionLogDesc: "Logout",
+          ipAddress: tokenStorageService.getIPAddress(),
+          browserName: tokenStorageService.getBrowserName()
+        };
+        authService.inactiveSessions({ payload: encryptionService.encrypt(data) }).toPromise();
         tokenStorageService.signOut();
         router.navigate(["/"], { relativeTo: route });
         return throwError(() => error);
@@ -47,7 +56,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           }),
           catchError((refreshErr) => {
             // If refresh fails, kill the session to stop the loop
-            authService.inactiveSessions(false, "Logout");
+            const data = {
+              token: tokenStorageService.getToken(),
+              status: false,
+              sessionLogDesc: "Logout",
+              ipAddress: tokenStorageService.getIPAddress(),
+              browserName: tokenStorageService.getBrowserName()
+            };
+            authService.inactiveSessions({ payload: encryptionService.encrypt(data) }).toPromise();
             tokenStorageService.signOut();
             router.navigate(["/"], { relativeTo: route });
             return throwError(() => refreshErr);

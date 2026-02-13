@@ -4,6 +4,7 @@ import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AuthService } from '@auth/auth.service';
 import { TokenStorageService } from '@shared/services/token-storage/token-storage.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { EncryptionService } from '../encryption/encryption.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdleService {
@@ -12,6 +13,7 @@ export class IdleService {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private ngZone = inject(NgZone);
+  private encryptionService = inject(EncryptionService)
 
   private idleSubscription?: Subscription;
 
@@ -24,7 +26,7 @@ export class IdleService {
   countdown = signal<number>(60);
 
   startTracking() {
-    
+
     // Ensure we don't have multiple listeners if called twice
     this.stopTracking();
 
@@ -48,7 +50,7 @@ export class IdleService {
   }
 
   private displayWarning() {
-    if(this.tokenStorageService.getUser()?.userType != null) {
+    if (this.tokenStorageService.getUser()?.userType != null) {
       this.showWarning.set(true);
       this.countdown.set(60);
     }
@@ -60,7 +62,14 @@ export class IdleService {
       if (this.countdown() <= 0) {
         clearInterval(interval);
         if (this.showWarning()) {
-          this.authService.inactiveSessions(false, "Logout");
+          const data = {
+            token: this.tokenStorageService.getToken(),
+            status: false,
+            sessionLogDesc: "Logout",
+            ipAddress: this.tokenStorageService.getIPAddress(),
+            browserName: this.tokenStorageService.getBrowserName()
+          };
+          await this.authService.inactiveSessions({ payload: this.encryptionService.encrypt(data) }).toPromise();
           this.tokenStorageService.signOut();
           this.stayLoggedIn();
           this.router.navigate(["/"], { relativeTo: this.route });

@@ -13,10 +13,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'app-sidebar',
-    templateUrl: './sidebar.component.html',
-    styleUrl: './sidebar.component.scss',
-    standalone: false
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.scss',
+  standalone: false
 })
 export class SidebarComponent {
   // Default
@@ -42,12 +42,12 @@ export class SidebarComponent {
     private authService: AuthService,
     private adminService: AdminService,
     private commonService: CommonService,
-    private encryptionService: EncryptionService,   
+    private encryptionService: EncryptionService,
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
     public dialog: MatDialog,
-  ) { 
+  ) {
     this.router.events.pipe(
       filter((event: Event): event is NavigationStart => event instanceof NavigationStart)
     ).subscribe((event: NavigationStart) => {
@@ -107,7 +107,14 @@ export class SidebarComponent {
   }
 
   async logout() {
-    this.authService.inactiveSessions(false, "Logout");
+    const data = {
+      token: this.tokenStorageService.getToken(),
+      status: false,
+      sessionLogDesc: "Logout",
+      ipAddress: this.tokenStorageService.getIPAddress(),
+      browserName: this.tokenStorageService.getBrowserName()
+    };
+    await this.authService.inactiveSessions({ payload: this.encryptionService.encrypt(data) }).toPromise();
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
     this.router.navigate(["/"], { relativeTo: this.route });

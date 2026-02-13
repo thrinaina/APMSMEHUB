@@ -341,7 +341,14 @@ export class LoginComponent {
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
         this.tokenStorageService.saveDashboardWidgets(decryptResponse.data.dashboardWidgets);
         this.tokenStorageService.saveDashboardWidgetsOrder(JSON.parse(decryptResponse.data.dashboardWidgetsOrder));
-        this.authService.inactiveSessions(true, "Login");
+        const data = {
+          token: this.tokenStorageService.getToken(),
+          status: true,
+          sessionLogDesc: "Login",
+          ipAddress: this.tokenStorageService.getIPAddress(),
+          browserName: this.tokenStorageService.getBrowserName()
+        };
+        await this.authService.inactiveSessions({ payload: this.encryptionService.encrypt(data) }).toPromise();
         this.tokenStorageService.updateLoginStatus(true);
         this.router.navigate(["/dashboard"]);
       }
@@ -445,7 +452,14 @@ export class LoginComponent {
         this.tokenStorageService.saveLastSession(decryptResponse.data.lastSession);
         this.tokenStorageService.saveDashboardWidgets(decryptResponse.data.dashboardWidgets);
         this.tokenStorageService.saveDashboardWidgetsOrder(JSON.parse(decryptResponse.data.dashboardWidgetsOrder));
-        this.authService.inactiveSessions(true, "Login");
+        const data = {
+          token: this.tokenStorageService.getToken(),
+          status: true,
+          sessionLogDesc: "Login",
+          ipAddress: this.tokenStorageService.getIPAddress(),
+          browserName: this.tokenStorageService.getBrowserName()
+        };
+        await this.authService.inactiveSessions({ payload: this.encryptionService.encrypt(data) }).toPromise();
         this.tokenStorageService.updateLoginStatus(true);
         this.router.navigate(["/dashboard"]);
       }

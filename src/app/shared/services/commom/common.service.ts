@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertsComponent } from 'src/app/components/alerts/alerts.component';
 import { formatDate } from '@angular/common';
+import { AuthService } from 'src/app/auth/auth.service';
 
 const API_AUTH_URL = environment.apiUrl + 'api/auth/';
 const API_ADMIN_URL = environment.apiUrl + 'api/admin/';
@@ -22,8 +23,9 @@ export class CommonService {
   constructor(
     public translate: TranslateService,
     private httpClient: HttpClient,
+    private authService: AuthService,
     public tokenStorageService: TokenStorageService,
-    private encryptionService: EncryptionService,    
+    private encryptionService: EncryptionService,
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
@@ -41,19 +43,6 @@ export class CommonService {
       errorMessage: errorMessage
     };
     return this.httpClient.post(API_AUTH_URL + 'errorlog', data);
-  }
-
-  // Check inactive session
-  inactiveSessions(status: any, sessionLogDesc: string): Observable<any> {
-    const data = {
-      token: this.tokenStorageService.getToken(),
-      status: status,
-      sessionLogDesc: sessionLogDesc,
-      ipAddress: this.tokenStorageService.getIPAddress(),
-      browserName: this.tokenStorageService.getBrowserName()
-    };
-
-    return this.httpClient.post(API_AUTH_URL + 'inactivesessions', { payload: this.encryptionService.encrypt(data) });
   }
 
   // Refresh Token
@@ -89,12 +78,12 @@ export class CommonService {
 
     if (message == '') return;
 
-    if (errorMessage == 'User Session Expired.' || errorMessage == 'No token provided!' || errorMessage == 'Unauthorized!') {
+    if (errorMessage == 'Your session has expired') {
       const dialogRef = this.dialog.open(AlertsComponent, {
         disableClose: true,
         data: {
           type: "error-type",
-          title: errorMessage,
+          title: "Session Expired",
           message: errorMessage,
         },
         width: '550px',
@@ -123,15 +112,14 @@ export class CommonService {
         width: '550px',
         maxWidth: '60vw'
       });
-    }
-    
-    await this.errorLog(data?.id, data?.component, errorMessage).toPromise();
+    }   
 
-    if (errorMessage == 'User Session Expired.' || errorMessage == 'No token provided!' || errorMessage == 'Unauthorized!') {
-      await this.inactiveSessions(false, "Logout");
-      this.dialog.closeAll();
+    if (errorMessage == 'Your session has expired') {
+      // this.dialog.closeAll();
       this.tokenStorageService.signOut();
       this.router.navigate(['/'], { relativeTo: this.route });
+    } else {
+      await this.errorLog(data?.id, data?.component, errorMessage).toPromise();
     }
   }
 
