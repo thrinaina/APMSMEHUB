@@ -23,8 +23,7 @@ export class CommonService {
     public translate: TranslateService,
     private httpClient: HttpClient,
     public tokenStorageService: TokenStorageService,
-    private encryptionService: EncryptionService,
-    
+    private encryptionService: EncryptionService,    
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,

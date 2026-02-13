@@ -77,7 +77,7 @@ export class AuthService {
     return this.http.post(API_AUTH_URL + 'updatepassword', passwordData);
   }
 
-  async inactiveSessions(status: any, sessionLogDesc: string): Promise<any> {
+  inactiveSessions(status: any, sessionLogDesc: string): Observable<any> {
     const data = {
       token: this.tokenStorageService.getToken(),
       status: status,
